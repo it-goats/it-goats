@@ -1,0 +1,8 @@
+{
+  "type": "python",
+  "steps": [
+    { "name": "flake", "command": "poetry run flake8 bode migrations" },
+    { "name": "black", "command": "poetry run black bode migrations" },
+    { "name": "isort", "command": "poetry run isort bode migrations" }
+  ]
+}
