@@ -11,6 +11,18 @@ services:
     volumes:
       - ./bode:/bode/
 
+  cabra:
+    build: ./cabra
+    depends_on:
+      - bode
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env.example
+    volumes:
+      - ./cabra:/cabra/
+      - /cabra/node_modules/esbuild
+
   postgres:
     image: postgres:latest
     volumes:
