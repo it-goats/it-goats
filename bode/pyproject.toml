@@ -1,0 +1,32 @@
+[tool.poetry]
+name = "bode"
+version = "0.1.0"
+description = ""
+authors = ["Jan Zborowski <janzborowski99@gmail.com>"]
+
+[tool.black]
+line-length = 79
+
+[tool.isort]
+profile = 'black'
+lines_between_types = 1
+combine_as_imports = true
+
+[tool.poetry.dependencies]
+python = "^3.10"
+Flask = "^2.0.3"
+Flask-SQLAlchemy = "^2.5.1"
+Flask-Migrate = "^3.1.0"
+Flask-Cors = "^3.0.10"
+flask-smorest = "^0.37.0"
+psycopg2 = "^2.9.3"
+
+[tool.poetry.dev-dependencies]
+pytest = "^5.2"
+flake8 = "^4.0.1"
+black = "^22.1.0"
+isort = "^5.10.1"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
