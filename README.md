@@ -57,3 +57,37 @@ W tym przypadku aplikacja też będzie dostępna po adresem http://localhost:300
 
 ### Możliwe problemy
 Jeśli w trakcie instalacji zależności przez poetry pojawi się błąd dotyczący `psycopg2` to konieczne może być doinstalowanie odpowiednich pakietów zgodnie ze [stackiem](https://stackoverflow.com/questions/11618898/pg-config-executable-not-found).
+
+
+## Przygotowanie VS Code
+
+Oczywiście można pisać dowolnym edytorze, ale jeżeli ktoś ma chęć to polecam korzystać z VS Code. Poniżej kilka porad dla łatwiejszej i przyjemniejszej pracy.
+
+### Workspace
+
+VS Code lepiej działa mając dodane foldery z poszczególnymi częściami aplikacji do workspace'a. Dlatego jeśli nie potrzebujemy robić nic w głównych katalogu projektu to wygodnie otworzyć sobie puste okno i wrzucić do niego foldery `bode` i `cabra`, zamiast otwierać cały projekt.
+
+### Interpreter pythona
+
+VS Code będzie chciał żeby podać mu ścieżkę do używanego przez interpretera pythona. Wtedy wskazujemy ten w katalogu `bode/.venv`.
+
+
+### Lista fajnych i przydatnych dla naszego projektu dodatków:
+- Frontend/React/Tailwind
+  - [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) **MUST HAVE**
+  - [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) **MUST HAVE**
+  - [sort-imports](https://marketplace.visualstudio.com/items?itemName=amatiasq.sort-imports) - **MUST HAVE** automatycznie sortuje importy w TS
+  - [Tailwind CSS IntelliSense](https://marketplace.visualstudio.com/items?itemName=bradlc.vscode-tailwindcss) razem z [Tailwind Twin IntelliSense](https://marketplace.visualstudio.com/items?itemName=lightyen.tailwindcss-intellisense-twin) - dobra rzecz, nie trzeba dokładnie pamiętać nazw klas
+  - [ES7+ React/Redux/React-Native snippets](https://marketplace.visualstudio.com/items?itemName=dsznajder.es7-react-js-snippets) - przydatne snippety
+  - [glean](https://marketplace.visualstudio.com/items?itemName=wix.glean) - refactoring do React'a
+- Python
+  - [Python](https://marketplace.visualstudio.com/items?itemName=ms-python.python) **MUST HAVE**
+  - [Pylance](https://marketplace.visualstudio.com/items?itemName=ms-python.vscode-pylance) **MUST HAVE**
+- DevOps
+  - [Docker](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-docker)
+  - [Remote - Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) 
+  - [Remote - WSL](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-wsl) **MUST HAVE** przy WSL
+- Inne
+  - [Git Graph](https://marketplace.visualstudio.com/items?itemName=mhutchie.git-graph) - ładnie pokazuje drzewo gita
+  - [Git Lens](https://marketplace.visualstudio.com/items?itemName=eamodio.gitlens) - można łatwo wyklikiwać rzeczy związane z gitem
+  - [indent-rainbow](https://marketplace.visualstudio.com/items?itemName=oderwat.indent-rainbow) - koloruje wcięcia
