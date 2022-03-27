@@ -16,7 +16,7 @@ IT-GOATS
 - [WSL2](https://docs.microsoft.com/en-us/windows/wsl/install) w przypadku Windows'a
 - [asdf](https://github.com/asdf-vm/asdf)
 
-### Wymagania (alternatywne i niezalecana):
+### Wymagania (alternatywne i niezalecane):
 - [PostgreSQL](https://www.postgresql.org/) w rozsądnej wersji
 - [Node.js + npm](https://nodejs.org/en/) najlepiej w wersji 16.14.12
 - [Poetry](https://python-poetry.org/) najlepiej w wersji 1.1.13
