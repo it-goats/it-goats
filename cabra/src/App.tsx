@@ -1,6 +1,7 @@
 import { QueryClient, QueryClientProvider } from "react-query";
 import tw, { styled } from "twin.macro";
 
+import RandomGoat from "./components/RandomGoat";
 import TaskForm from "./components/TaskForm";
 import TasksList from "./components/TasksList";
 
@@ -14,11 +15,12 @@ export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <Container>
-        <div tw="w-[90%] max-w-xl space-y-6">
+        <div tw="w-[90%] max-w-xl space-y-6 relative z-10">
           <TaskForm />
           <TasksList />
         </div>
       </Container>
+      <RandomGoat />
     </QueryClientProvider>
   );
 }
