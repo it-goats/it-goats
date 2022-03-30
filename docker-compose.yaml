@@ -21,7 +21,6 @@ services:
       - .env.example
     volumes:
       - ./cabra:/cabra/
-      - /cabra/node_modules/esbuild
 
   postgres:
     image: postgres:latest
