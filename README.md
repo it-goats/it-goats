@@ -40,6 +40,16 @@ Skrypt po kolei:
 
 Po tym wszystkim aplikacja będzie dostępna po adresem http://localhost:3000.
 
+Setup wystarczy wykonać pomyślnie tylko raz, potem aplikację stawiamy:
+- na Linuxie
+```
+docker-compose up
+```
+- na Macu/WSL:
+```
+docker compose up
+```
+
 ### Alternatywna i niezalecana instrukcja:
 
 Można spróbować uruchomić projekt bez Docker'a i/lub asdf'a. Wtedy trzeba samemu zapewnić, że wszystkie wymagane narzędzia są zainstalowane i  serwer PostgreSQL jest uruchomiony. Następnie należy uruchamiać kolejne kroki z [setup.sh](setup.sh) pomijając ostatni oraz ręcznie ustawić w powłoce zmienne środowiskowe z pliku [.env.example](.env.example).
