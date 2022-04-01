@@ -1,0 +1,15 @@
+name: "PR Jira check"
+on:
+  pull_request:
+    branches:
+      - develop
+    types: [opened, edited, reopened, synchronize]
+
+jobs:
+  check-jira-presence:
+    name: "Verify PR title starts with [NOJIRA] or [PROJECT-123]"
+    runs-on: ubuntu-latest
+    env:
+      PR_TITLE: ${{ github.event.pull_request.title }}
+    steps:
+      - run: egrep '^\[(NOJIRA|([[:upper:]]{3,}\-[[:digit:]]+[[:blank:],]+)*[[:upper:]]{3,}\-[[:digit:]]+)\]' <<< ${PR_TITLE}
