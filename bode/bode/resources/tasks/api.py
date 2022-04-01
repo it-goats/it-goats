@@ -17,3 +17,8 @@ class Tasks(MethodView):
     @blueprint.response(201, TaskSchema)
     def post(self, task_data):
         return Task.create(**task_data)
+    
+    @blueprint.arguments(TaskSchema)
+    @blueprint.response(204)
+    def delete(self, task_data):
+        Task.delete(**task_data)

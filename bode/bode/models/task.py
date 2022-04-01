@@ -19,5 +19,11 @@ class Task(db.Model):
 
         return task
 
+    def delete(**kwargs):
+        task = Task.query.filter_by(id=kwargs['id']).first()
+
+        db.session.delete(task)
+        db.session.commit()
+
     def __repr__(self):
         return f'<Task {self.id} \n  title="{self.title}">'
