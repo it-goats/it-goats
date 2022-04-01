@@ -39,5 +39,8 @@ export default defineConfig((_configEnv) => ({
   ],
   server: {
     proxy: { "/api/v1": API_URL },
+    watch: {
+      usePolling: true,
+    },
   },
 }));
