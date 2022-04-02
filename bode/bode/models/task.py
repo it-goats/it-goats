@@ -21,7 +21,7 @@ class Task(db.Model):
         return task
 
     def delete(task_id):
-        task = Task.query.filter_by(id=task_id).first()
+        task = Task.query.get(task_id)
 
         if (task==None):
             raise NoResultFound
