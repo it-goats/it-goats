@@ -1,6 +1,7 @@
 import uuid
 
 from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.orm.exc import NoResultFound
 
 from bode.app import db
 
@@ -15,6 +16,17 @@ class Task(db.Model):
         task = Task(**kwargs)
 
         db.session.add(task)
+        db.session.commit()
+
+        return task
+
+    def delete(task_id):
+        task = Task.query.get(task_id)
+
+        if task is None:
+            raise NoResultFound
+
+        db.session.delete(task)
         db.session.commit()
 
         return task
