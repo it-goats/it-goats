@@ -1,6 +1,7 @@
 import uuid
 
 from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.orm.exc import NoResultFound
 
 from bode.app import db
 
@@ -19,11 +20,16 @@ class Task(db.Model):
 
         return task
 
-    def delete(**kwargs):
-        task = Task.query.filter_by(id=kwargs['id']).first()
+    def delete(task_id):
+        task = Task.query.filter_by(id=task_id).first()
+
+        if (task==None):
+            raise NoResultFound
 
         db.session.delete(task)
         db.session.commit()
+
+        return task
 
     def __repr__(self):
         return f'<Task {self.id} \n  title="{self.title}">'
