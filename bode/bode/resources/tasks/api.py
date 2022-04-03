@@ -23,7 +23,7 @@ class Tasks(MethodView):
 
 @blueprint.route("/<task_id>")
 class TasksById(MethodView):
-    @blueprint.response(201, TaskSchema)
+    @blueprint.response(200, TaskSchema)
     def delete(self, task_id):
         try:
             return Task.delete(task_id)
