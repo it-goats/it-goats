@@ -18,7 +18,7 @@ IT-GOATS
 
 ### Wymagania (alternatywne i niezalecane):
 - [PostgreSQL](https://www.postgresql.org/) w rozsądnej wersji
-- [Node.js + npm](https://nodejs.org/en/) najlepiej w wersji 16.14.12
+- [Node.js + npm](https://nodejs.org/en/) najlepiej w wersji 16.14.2
 - [Poetry](https://python-poetry.org/) najlepiej w wersji 1.1.13
 - [Python](https://www.python.org/downloads/) najlepiej w wersji 3.10.4
 
