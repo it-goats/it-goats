@@ -31,7 +31,7 @@ class TasksById(MethodView):
         except DataError:
             abort(404)
 
-    @blueprint.response(201, TaskSchema)
+    @blueprint.response(200, TaskSchema)
     def delete(self, task_id):
         try:
             return Task.delete(task_id)
