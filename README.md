@@ -94,6 +94,10 @@ VS Code będzie chciał żeby podać mu ścieżkę do używanego przez nas inter
 
 ### Lista fajnych i przydatnych dla naszego projektu dodatków:
 
+Poniższe rozszerzenia znajdują się w rekomendacjach dla projektu. Przy uruchomieniu projektu powinno się wyświetlić powiadomienie z opcją ich instalacji.
+
+Rozszerzenie [Remote - WSL](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-wsl) należy zainstalować manualnie, jeśli korzystasz z WSL.
+
 - Frontend/React/Tailwind
   - [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) **MUST HAVE**
   - [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) **MUST HAVE**
