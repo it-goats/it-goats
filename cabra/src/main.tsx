@@ -1,3 +1,5 @@
+import "react-datepicker/dist/react-datepicker.css";
+
 import App from "./App";
 import { BrowserRouter } from "react-router-dom";
 import GlobalStyles from "./styles/GlobalStyles";
