@@ -15,12 +15,12 @@ export default function TaskDetailsPage() {
   const navigate = useNavigate();
   const { id } = useParams();
   const { data, isLoading } = useQuery(
-    "task",
+    ["task", id],
     () => axios.get<ITask>(`/tasks/${id}`),
     { onError: () => navigate("/not-found", { replace: true }), retry: 1 }
   );
 
-  if (isLoading || data?.data?.id !== id) return <Container>Loading</Container>;
+  if (isLoading) return <Container>Loading</Container>;
 
   return (
     <>
