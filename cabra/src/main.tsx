@@ -1,4 +1,5 @@
 import App from "./App";
+import { BrowserRouter } from "react-router-dom";
 import GlobalStyles from "./styles/GlobalStyles";
 import ReactDOM from "react-dom";
 import { StrictMode } from "react";
@@ -10,7 +11,9 @@ axios.defaults.headers.common["Content-Type"] = "application/json";
 ReactDOM.render(
   <StrictMode>
     <GlobalStyles />
-    <App />
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
   </StrictMode>,
   document.getElementById("root")
 );

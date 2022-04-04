@@ -2,6 +2,7 @@ from flask import abort
 from flask.views import MethodView
 from flask_smorest import Blueprint
 from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy.exc import DataError
 
 from bode.models.task import Task
 from bode.resources.tasks.schemas import TaskSchema
@@ -23,6 +24,13 @@ class Tasks(MethodView):
 
 @blueprint.route("/<task_id>")
 class TasksById(MethodView):
+    @blueprint.response(200, TaskSchema)
+    def get(self, task_id):
+        try:
+            return Task.query.get(task_id) or abort(404)
+        except DataError:
+            abort(404)
+
     @blueprint.response(200, TaskSchema)
     def delete(self, task_id):
         try:
