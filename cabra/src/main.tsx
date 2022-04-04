@@ -1,3 +1,5 @@
+import "react-datepicker/dist/react-datepicker.css";
+
 import App from "./App";
 import GlobalStyles from "./styles/GlobalStyles";
 import ReactDOM from "react-dom";
