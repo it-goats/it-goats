@@ -20,7 +20,7 @@ IT-GOATS
 ### Wymagania (alternatywne i niezalecane):
 
 - [PostgreSQL](https://www.postgresql.org/) w rozsądnej wersji
-- [Node.js + npm](https://nodejs.org/en/) najlepiej w wersji 16.14.12
+- [Node.js + npm](https://nodejs.org/en/) najlepiej w wersji 16.14.2
 - [Poetry](https://python-poetry.org/) najlepiej w wersji 1.1.13
 - [Python](https://www.python.org/downloads/) najlepiej w wersji 3.10.4
 
@@ -93,6 +93,10 @@ VS Code lepiej działa mając dodane foldery z poszczególnymi częściami aplik
 VS Code będzie chciał żeby podać mu ścieżkę do używanego przez nas interpretera pythona. Wtedy wskazujemy ten w katalogu `bode/.venv`.
 
 ### Lista fajnych i przydatnych dla naszego projektu dodatków:
+
+Poniższe rozszerzenia znajdują się w rekomendacjach dla projektu. Przy uruchomieniu projektu powinno się wyświetlić powiadomienie z opcją ich instalacji.
+
+Rozszerzenie [Remote - WSL](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-wsl) należy zainstalować manualnie, jeśli korzystasz z WSL.
 
 - Frontend/React/Tailwind
   - [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) **MUST HAVE**
