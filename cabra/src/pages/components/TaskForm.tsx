@@ -1,34 +1,54 @@
 import * as yup from "yup";
 
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { DATE_TIME_FORMAT, TIME_FORMAT, getTimezone } from "../../utils/dates";
+import {
+  DATE_TIME_FORMAT,
+  TIME_FORMAT,
+  getTimezone,
+  parseUTC,
+} from "../../utils/dates";
 import tw, { styled } from "twin.macro";
-import { useMutation, useQueryClient } from "react-query";
 
 import DatePicker from "react-datepicker";
 import { ITask } from "../../types/task";
-import axios from "axios";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { zonedTimeToUtc } from "date-fns-tz";
 
-type TaskInputs = Omit<ITask, "id" | "dueDate"> & { dueDate: Date | null };
+type Props = {
+  onSubmit: (inputs: TaskFormInputs) => Promise<unknown>;
+  task: Omit<ITask, "id">;
+};
+export type TaskFormInputs = Omit<ITask, "id" | "dueDate"> & {
+  dueDate: Date | null;
+};
 
 const schema = yup.object({
   title: yup.string().required("Your task's name is needed!").max(80),
   description: yup.string().max(1024),
-  dueDate: yup.date(),
+  dueDate: yup.date().nullable(),
 });
-
-const SubmitButton = styled.button(
-  tw`bg-gradient-to-r from-green-400 to-cyan-500 py-2 text-white font-semibold`,
-  tw`rounded shadow-2xl transition-transform transform hover:( scale-105) disabled:opacity-50`
-);
-
-const Label = styled.label(tw`text-gray-50`);
 
 const fieldStyles = tw`w-full px-4 py-2 rounded shadow-2xl text-blue-800 placeholder:text-blue-800/60`;
 
-export default function TaskForm() {
+const Form = styled.form`
+  ${tw`flex flex-col space-y-4 w-full`}
+
+  .react-datepicker-wrapper {
+    ${tw` text-blue-800 placeholder:text-blue-800/60`}
+
+    input[type="text"] {
+      max-width: 100%;
+      ${tw`rounded shadow-2xl`}
+    }
+  }
+`;
+const Label = styled.label(tw`text-gray-50`);
+const SubmitButton = styled.button(
+  tw`bg-gradient-to-r from-green-400 to-cyan-500 py-2 text-white font-semibold`,
+  tw`rounded shadow-2xl transition-transform transform hover:scale-105 disabled:opacity-50`
+);
+
+export default function TaskForm({ task, onSubmit }: Props) {
   const {
     control,
     formState: { errors, isSubmitting },
@@ -36,28 +56,25 @@ export default function TaskForm() {
     register,
     reset,
     setError,
-  } = useForm<TaskInputs>({
+  } = useForm<TaskFormInputs>({
     resolver: yupResolver(schema),
-    defaultValues: { description: "", dueDate: null },
+    defaultValues: {
+      ...task,
+      dueDate: parseUTC(task.dueDate),
+    },
   });
 
-  const addTask = useMutation((task: TaskInputs) =>
-    axios.post<ITask>("/tasks", task)
-  );
-  const client = useQueryClient();
-
-  const onSubmit: SubmitHandler<TaskInputs> = async ({ dueDate, ...data }) => {
+  const internalOnSubmit: SubmitHandler<TaskFormInputs> = async ({
+    dueDate,
+    ...data
+  }) => {
     try {
-      const variables = {
+      const inputs = {
         ...data,
         dueDate: dueDate && zonedTimeToUtc(dueDate, getTimezone()),
       };
+      await onSubmit(inputs);
 
-      await addTask.mutateAsync(variables, {
-        onSuccess: () => {
-          client.invalidateQueries("tasks");
-        },
-      });
       reset();
     } catch (error) {
       setError("title", { message: "Something went wrong :C" });
@@ -65,7 +82,7 @@ export default function TaskForm() {
   };
 
   return (
-    <form tw="flex flex-col space-y-4 w-full" onSubmit={handleSubmit(onSubmit)}>
+    <Form onSubmit={handleSubmit(internalOnSubmit)}>
       <div tw="grid gap-4 grid-cols-1 sm:grid-cols-[1fr 200px]">
         <div tw="w-full">
           <Label htmlFor="task-title">Title</Label>
@@ -114,9 +131,9 @@ export default function TaskForm() {
         ></textarea>
       </div>
       <SubmitButton type="submit" disabled={isSubmitting}>
-        Add!
+        Submit!
       </SubmitButton>
       <div tw="text-orange-500 pt-1">&nbsp;{errors.title?.message}</div>
-    </form>
+    </Form>
   );
 }

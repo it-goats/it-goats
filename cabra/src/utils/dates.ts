@@ -9,10 +9,19 @@ export function getTimezone(): string {
 }
 
 export function formatDateTime(
-  date?: Date | string | number | null,
+  date: Date | string | number | null,
   timeZone: string = getTimezone()
 ): string | null {
   if (!date) return null;
 
   return format(utcToZonedTime(date, timeZone), DATE_TIME_FORMAT, { timeZone });
+}
+
+export function parseUTC(
+  dateStr: string | null,
+  timeZone: string = getTimezone()
+): Date | null {
+  if (!dateStr) return null;
+
+  return utcToZonedTime(dateStr, timeZone);
 }
