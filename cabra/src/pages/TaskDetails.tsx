@@ -31,16 +31,13 @@ export default function TaskDetailsPage() {
 
         <div tw="flex justify-end w-full gap-4">
           <NavigationButton
-            tw="text-warmGray-50 bg-blue-800"
+            tw="text-stone-50 bg-blue-800"
             onClick={() => navigate(-1)}
           >
             <ArrowLeftIcon height={20} width={20} /> Go Back
           </NavigationButton>
           <Link to={routeHelpers.task.edit(id)}>
-            <NavigationButton
-              tw="text-warmGray-50 bg-lime-700"
-              onClick={() => navigate(-1)}
-            >
+            <NavigationButton tw="text-stone-50 bg-lime-700">
               <PencilAltIcon height={20} width={20} /> Edit
             </NavigationButton>
           </Link>
