@@ -15,10 +15,24 @@ class Task(db.Model):
     description = db.Column(db.String(1024), nullable=False, server_default="")
     due_date = db.Column(UTCDateTime(), nullable=True)
 
-    def create(**kwargs):
-        task = Task(**kwargs)
+    def create(**task_data):
+        task = Task(**task_data)
 
         db.session.add(task)
+        db.session.commit()
+
+        return task
+
+    def edit(task_id, **task_data):
+        task = Task.query.get(task_id)
+
+        if task is None:
+            raise NoResultFound
+
+        task.title = task_data["title"]
+        task.description = task_data["description"]
+        task.due_date = task_data["due_date"]
+
         db.session.commit()
 
         return task
