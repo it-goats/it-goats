@@ -31,7 +31,7 @@ class TasksById(MethodView):
             abort(404)
 
     @blueprint.arguments(TaskInputSchema)
-    @blueprint.response(201, TaskSchema)
+    @blueprint.response(200, TaskSchema)
     def put(self, task_data, task_id):
         try:
             return Task.edit(task_id, **task_data)
