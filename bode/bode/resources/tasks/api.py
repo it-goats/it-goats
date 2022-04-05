@@ -30,6 +30,14 @@ class TasksById(MethodView):
         except DataError:
             abort(404)
 
+    @blueprint.arguments(TaskInputSchema)
+    @blueprint.response(201, TaskSchema)
+    def put(self, task_data, task_id):
+        try:
+            return Task.edit(task_id, **task_data)
+        except NoResultFound:
+            abort(404, message="Item not found.")
+
     @blueprint.response(200, TaskSchema)
     def delete(self, task_id):
         try:
