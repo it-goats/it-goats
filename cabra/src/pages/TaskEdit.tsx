@@ -9,15 +9,19 @@ import { ITask } from "../types/task";
 import Layout from "./components/Layout";
 import NavigationButton from "./components/NavigationButton";
 import axios from "axios";
+import { routeHelpers } from "../routes";
 
-export default function TaskEdit() {
+export default function TaskEditPage() {
   const navigate = useNavigate();
   const { id } = useParams();
   const client = useQueryClient();
   const { data, isLoading } = useQuery(
     ["task", id],
     () => axios.get<ITask>(`/tasks/${id}`),
-    { onError: () => navigate("/not-found", { replace: true }), retry: 1 }
+    {
+      onError: () => navigate(routeHelpers.notFound, { replace: true }),
+      retry: 1,
+    }
   );
 
   const addTask = useMutation((task: TaskFormInputs) =>

@@ -8,15 +8,19 @@ import Layout from "./components/Layout";
 import NavigationButton from "./components/NavigationButton";
 import Task from "./components/Task";
 import axios from "axios";
+import { routeHelpers } from "../routes";
 import { useQuery } from "react-query";
 
 export default function TaskDetailsPage() {
   const navigate = useNavigate();
-  const { id } = useParams();
+  const { id } = useParams() as { id: string };
   const { data, isLoading } = useQuery(
     ["task", id],
     () => axios.get<ITask>(`/tasks/${id}`),
-    { onError: () => navigate("/not-found", { replace: true }), retry: 1 }
+    {
+      onError: () => navigate(routeHelpers.notFound, { replace: true }),
+      retry: 1,
+    }
   );
 
   if (isLoading || !data) return <Layout>Loading</Layout>;
@@ -33,7 +37,7 @@ export default function TaskDetailsPage() {
           >
             <ArrowLeftIcon height={20} width={20} /> Go Back
           </NavigationButton>
-          <Link to={`/task/${id}/edit`}>
+          <Link to={routeHelpers.task.edit(id)}>
             <NavigationButton
               tw="text-warmGray-50 bg-lime-700"
               onClick={() => navigate(-1)}
