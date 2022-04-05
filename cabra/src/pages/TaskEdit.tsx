@@ -1,41 +1,35 @@
 import "twin.macro";
 
 import TaskForm, { TaskFormInputs } from "./components/TaskForm";
+import { getTask, getTasks, updateTask } from "../api/tasks";
 import { useMutation, useQuery, useQueryClient } from "react-query";
-import { useNavigate, useParams } from "react-router";
+import { useNavigate, useParams } from "react-router-dom";
 
 import { ArrowLeftIcon } from "@heroicons/react/solid";
-import { ITask } from "../types/task";
 import Layout from "./components/Layout";
 import NavigationButton from "./components/NavigationButton";
-import axios from "axios";
 import { routeHelpers } from "../routes";
 
 export default function TaskEditPage() {
   const navigate = useNavigate();
-  const { id } = useParams();
+  const { id } = useParams() as { id: string };
   const client = useQueryClient();
   const { data, isLoading } = useQuery(
-    ["task", id],
-    () => axios.get<ITask>(`/tasks/${id}`),
+    getTask.cacheKey(id),
+    () => getTask.run(id),
     {
       onError: () => navigate(routeHelpers.notFound, { replace: true }),
       retry: 1,
     }
   );
 
-  const addTask = useMutation((task: TaskFormInputs) =>
-    axios.put<ITask>(`/tasks/${id}`, task)
-  );
-
-  const onSubmit = (variables: TaskFormInputs) =>
-    addTask.mutateAsync(variables, {
-      onSuccess: () => {
-        client.invalidateQueries("tasks");
-        client.invalidateQueries(["tasks", id]);
-        navigate(-1);
-      },
-    });
+  const addTask = useMutation((task: TaskFormInputs) => updateTask(id, task), {
+    onSuccess: () => {
+      client.invalidateQueries(getTasks.cacheKey);
+      client.invalidateQueries(getTask.cacheKey(id));
+      navigate(-1);
+    },
+  });
 
   if (isLoading || !data) return <Layout>Loading</Layout>;
   return (
@@ -52,7 +46,7 @@ export default function TaskEditPage() {
           </NavigationButton>
         </div>
 
-        <TaskForm task={data.data} onSubmit={onSubmit} />
+        <TaskForm task={data.data} onSubmit={addTask.mutateAsync} />
       </div>
     </Layout>
   );

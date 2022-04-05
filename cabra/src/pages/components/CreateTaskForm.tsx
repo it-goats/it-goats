@@ -1,8 +1,8 @@
-import TaskForm, { TaskFormInputs } from "./TaskForm";
+import { createTask, getTasks } from "../../api/tasks";
 import { useMutation, useQueryClient } from "react-query";
 
 import { ITask } from "../../types/task";
-import axios from "axios";
+import TaskForm from "./TaskForm";
 
 const emptyTask: Omit<ITask, "id"> = {
   description: "",
@@ -11,17 +11,10 @@ const emptyTask: Omit<ITask, "id"> = {
 };
 
 export default function CreateTaskForm() {
-  const addTask = useMutation((task: TaskFormInputs) =>
-    axios.post<ITask>("/tasks", task)
-  );
   const client = useQueryClient();
+  const addTask = useMutation(createTask, {
+    onSuccess: () => client.invalidateQueries(getTasks.cacheKey),
+  });
 
-  const onSubmit = (variables: TaskFormInputs) =>
-    addTask.mutateAsync(variables, {
-      onSuccess: () => {
-        client.invalidateQueries("tasks");
-      },
-    });
-
-  return <TaskForm onSubmit={onSubmit} task={emptyTask} />;
+  return <TaskForm onSubmit={addTask.mutateAsync} task={emptyTask} />;
 }

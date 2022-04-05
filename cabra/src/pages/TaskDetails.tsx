@@ -3,11 +3,10 @@ import "twin.macro";
 import { ArrowLeftIcon, PencilAltIcon } from "@heroicons/react/solid";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
-import { ITask } from "../types/task";
 import Layout from "./components/Layout";
 import NavigationButton from "./components/NavigationButton";
 import Task from "./components/Task";
-import axios from "axios";
+import { getTask } from "../api/tasks";
 import { routeHelpers } from "../routes";
 import { useQuery } from "react-query";
 
@@ -15,8 +14,8 @@ export default function TaskDetailsPage() {
   const navigate = useNavigate();
   const { id } = useParams() as { id: string };
   const { data, isLoading } = useQuery(
-    ["task", id],
-    () => axios.get<ITask>(`/tasks/${id}`),
+    getTask.cacheKey(id),
+    () => getTask.run(id),
     {
       onError: () => navigate(routeHelpers.notFound, { replace: true }),
       retry: 1,
