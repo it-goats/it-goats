@@ -3,4 +3,5 @@ export interface ITask {
   title: string;
   description: string;
   dueDate: string | null;
+  done: boolean;
 }
