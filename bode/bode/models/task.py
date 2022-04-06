@@ -14,6 +14,7 @@ class Task(db.Model):
     title = db.Column(db.String(80), nullable=False)
     description = db.Column(db.String(1024), nullable=False, server_default="")
     due_date = db.Column(UTCDateTime(), nullable=True)
+    done = db.Column(db.Boolean, nullable=False)
 
     def create(**task_data):
         task = Task(**task_data)
@@ -32,6 +33,7 @@ class Task(db.Model):
         task.title = task_data["title"]
         task.description = task_data["description"]
         task.due_date = task_data["due_date"]
+        task.done = task_data["done"]
 
         db.session.commit()
 
