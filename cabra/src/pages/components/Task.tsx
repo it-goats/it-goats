@@ -2,7 +2,9 @@ import "twin.macro";
 
 import { ITask } from "../../types/task";
 import { Link } from "react-router-dom";
+import NavigationButton from "./NavigationButton";
 import { formatDateTime } from "../../utils/dates";
+import { routeHelpers } from "../../routes";
 
 interface Props {
   task: ITask;
@@ -17,11 +19,11 @@ export default function Task({ task, detailsLink }: Props) {
         {formatDateTime(task.dueDate)}
         {detailsLink && (
           <Link
-            tw="ml-auto underline text-blue-600 text-lg hover:text-purple-800"
-            to={`/task/${task.id}`}
+            tw="ml-auto"
+            to={routeHelpers.task.details(task.id)}
             state={{ task }}
           >
-            Details
+            <NavigationButton>Details</NavigationButton>
           </Link>
         )}
       </p>
