@@ -1,5 +1,6 @@
 import "twin.macro";
 
+import CheckBox from "./CheckBox";
 import { ITask } from "../../types/task";
 import { Link } from "react-router-dom";
 import NavigationButton from "./NavigationButton";
@@ -14,7 +15,10 @@ interface Props {
 export default function Task({ task, detailsLink }: Props) {
   return (
     <div tw="rounded-xl w-full bg-white shadow-2xl text-blue-800  p-4">
-      <p tw="text-xl md:text-2xl">{task.title}</p>
+      <p tw="flex items-center text-xl md:text-2xl">
+        {task.title}
+        {<CheckBox />}
+      </p>
       <p tw="flex items-center">
         {formatDateTime(task.dueDate)}
         {detailsLink && (
