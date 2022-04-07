@@ -17,7 +17,7 @@ export default function Task({ task, detailsLink }: Props) {
     <div tw="rounded-xl w-full bg-white shadow-2xl text-blue-800  p-4">
       <p tw="flex items-center text-xl md:text-2xl">
         {task.title}
-        {CheckBox(task.done)}
+        {CheckBox(task)}
       </p>
       <p tw="flex items-center">
         {formatDateTime(task.dueDate)}

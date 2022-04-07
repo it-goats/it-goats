@@ -8,7 +8,7 @@ const emptyTask: Omit<ITask, "id"> = {
   description: "",
   dueDate: null,
   title: "",
-  done: false,
+  isDone: false,
 };
 
 export default function CreateTaskForm() {
