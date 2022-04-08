@@ -13,7 +13,7 @@ import { useState } from "react";
 
 export default function TaskEditPage() {
   const navigate = useNavigate();
-  const { id } = useParams();
+  const { id } = useParams() as { id: string };
   const client = useQueryClient();
   const { data, isLoading } = useQuery(
     getTask.cacheKey(id),
@@ -25,7 +25,7 @@ export default function TaskEditPage() {
   );
 
   if (Math.random() < 0.5) {
-    const state = useState(1);
+    useState(1);
   }
 
   const editTask = useMutation((task: TaskFormInputs) => updateTask(id, task), {

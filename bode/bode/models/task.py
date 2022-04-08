@@ -4,7 +4,6 @@ from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.exc import NoResultFound
 
 from bode.models.utc_datetime import UTCDateTime
-
 from bode.app import db
 
 
@@ -27,7 +26,7 @@ class Task(db.Model):
     def edit(task_id, **task_data):
         task = Task.query.get(task_id)
 
-        if task == None:
+        if task is None:
             raise NoResultFound
 
         task.title = task_data["title"]
