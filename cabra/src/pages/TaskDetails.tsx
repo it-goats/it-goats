@@ -1,6 +1,10 @@
 import "twin.macro";
 
-import { ArrowLeftIcon, PencilAltIcon } from "@heroicons/react/solid";
+import {
+  ArrowLeftIcon,
+  PencilAltIcon,
+  TrashIcon,
+} from "@heroicons/react/solid";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
 import Layout from "./components/Layout";
@@ -41,6 +45,12 @@ export default function TaskDetailsPage() {
               <PencilAltIcon height={20} width={20} /> Edit
             </NavigationButton>
           </Link>
+          <NavigationButton
+            tw="text-stone-50 bg-red-500"
+            onClick={() => navigate(-1)}
+          >
+            <TrashIcon height={20} width={20} /> Delete
+          </NavigationButton>
         </div>
       </div>
     </Layout>
