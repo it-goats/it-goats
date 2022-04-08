@@ -1,14 +1,18 @@
 import "twin.macro";
 
-import { ArrowLeftIcon, PencilAltIcon } from "@heroicons/react/solid";
+import {
+  ArrowLeftIcon,
+  PencilAltIcon,
+  TrashIcon,
+} from "@heroicons/react/solid";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import { deleteTask, getTask } from "../api/tasks";
+import { useMutation, useQuery } from "react-query";
 
 import Layout from "./components/Layout";
 import NavigationButton from "./components/NavigationButton";
 import Task from "./components/Task";
-import { getTask } from "../api/tasks";
 import { routeHelpers } from "../routes";
-import { useQuery } from "react-query";
 
 export default function TaskDetailsPage() {
   const navigate = useNavigate();
@@ -21,6 +25,10 @@ export default function TaskDetailsPage() {
       retry: 1,
     }
   );
+
+  const removeTask = useMutation(() => deleteTask(id), {
+    onSuccess: () => navigate(-1),
+  });
 
   if (isLoading || !data) return <Layout>Loading</Layout>;
 
@@ -41,6 +49,12 @@ export default function TaskDetailsPage() {
               <PencilAltIcon height={20} width={20} /> Edit
             </NavigationButton>
           </Link>
+          <NavigationButton
+            tw="text-stone-50 bg-red-500"
+            onClick={() => removeTask.mutateAsync()}
+          >
+            <TrashIcon height={20} width={20} /> Delete
+          </NavigationButton>
         </div>
       </div>
     </Layout>
