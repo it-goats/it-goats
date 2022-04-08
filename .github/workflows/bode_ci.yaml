@@ -9,6 +9,9 @@ on:
 jobs:
   ci:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./bode
 
     steps:
       - uses: actions/checkout@v2
@@ -19,7 +22,7 @@ jobs:
         with:
           poetry-version: "1.1.13"
 
-      - run: poetry config settings.virtualenvs.in-project true
+      - run: poetry config virtualenvs.in-project true
 
       - name: Install dependencies
         run: poetry install
