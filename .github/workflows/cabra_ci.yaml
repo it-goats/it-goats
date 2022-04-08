@@ -1,0 +1,28 @@
+name: "Cabra CI"
+
+pull_request:
+  path:
+    - "cabra/**"
+  branches: [develop, master]
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "16.14.2"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check formatting
+        run: npm run format:check
+
+      - name: Check types
+        run: npm run types:check
+
+      - name: Lint
+        run: npm run lint:check
