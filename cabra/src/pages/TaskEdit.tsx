@@ -23,7 +23,7 @@ export default function TaskEditPage() {
     }
   );
 
-  const addTask = useMutation((task: TaskFormInputs) => updateTask(id, task), {
+  const editTask = useMutation((task: TaskFormInputs) => updateTask(id, task), {
     onSuccess: () => {
       client.invalidateQueries(getTasks.cacheKey);
       client.invalidateQueries(getTask.cacheKey(id));
@@ -46,7 +46,7 @@ export default function TaskEditPage() {
           </NavigationButton>
         </div>
 
-        <TaskForm task={data.data} onSubmit={addTask.mutateAsync} />
+        <TaskForm task={data.data} onSubmit={editTask.mutateAsync} />
       </div>
     </Layout>
   );
