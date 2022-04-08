@@ -15,6 +15,8 @@ export const getTasks = {
   run: () => axios.get<ITask[]>("/tasks"),
 };
 
+export const deleteTask = (id: string) => axios.delete<ITask>(`/tasks/${id}`);
+
 export const updateTask = (id: string, data: TaskApiInput) =>
   axios.put<ITask>(`/tasks/${id}`, data);
 
