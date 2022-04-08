@@ -9,10 +9,11 @@ import { ArrowLeftIcon } from "@heroicons/react/solid";
 import Layout from "./components/Layout";
 import NavigationButton from "./components/NavigationButton";
 import { routeHelpers } from "../routes";
+import { useState } from "react";
 
 export default function TaskEditPage() {
   const navigate = useNavigate();
-  const { id } = useParams() as { id: string };
+  const { id } = useParams();
   const client = useQueryClient();
   const { data, isLoading } = useQuery(
     getTask.cacheKey(id),
@@ -22,6 +23,11 @@ export default function TaskEditPage() {
       retry: 1,
     }
   );
+
+  if (Math.random() < 0.5) 
+  {
+      const state = useState(1);
+  }
 
   const editTask = useMutation((task: TaskFormInputs) => updateTask(id, task), {
     onSuccess: () => {

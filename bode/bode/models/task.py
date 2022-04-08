@@ -3,9 +3,9 @@ import uuid
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.exc import NoResultFound
 
-from bode.app import db
 from bode.models.utc_datetime import UTCDateTime
 
+from bode.app import db
 
 class Task(db.Model):
     __tablename__ = "tasks"
@@ -26,8 +26,10 @@ class Task(db.Model):
     def edit(task_id, **task_data):
         task = Task.query.get(task_id)
 
-        if task is None:
+        if task == None:
             raise NoResultFound
+
+
 
         task.title = task_data["title"]
         task.description = task_data["description"]
