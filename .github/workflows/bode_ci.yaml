@@ -1,9 +1,10 @@
 name: "Bode CI"
 
-pull_request:
-  path:
-    - "bode/**"
-  branches: [develop, master]
+on:
+  pull_request:
+    paths:
+      - "bode/**"
+    branches: [develop, master]
 
 jobs:
   ci:

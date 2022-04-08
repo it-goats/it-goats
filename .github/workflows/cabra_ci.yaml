@@ -1,9 +1,10 @@
 name: "Cabra CI"
 
-pull_request:
-  path:
-    - "cabra/**"
-  branches: [develop, master]
+on:
+  pull_request:
+    paths:
+      - "cabra/**"
+    branches: [develop, master]
 
 jobs:
   ci:
