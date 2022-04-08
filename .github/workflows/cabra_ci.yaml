@@ -4,7 +4,9 @@ on:
   pull_request:
     paths:
       - "cabra/**"
-    branches: [develop, master]
+  push:
+    paths:
+      - "cabra/**"
 
 jobs:
   ci:

@@ -4,7 +4,9 @@ on:
   pull_request:
     paths:
       - "bode/**"
-    branches: [develop, master]
+  push:
+    paths:
+      - "bode/**"
 
 jobs:
   ci:
