@@ -24,9 +24,8 @@ export default function TaskEditPage() {
     }
   );
 
-  if (Math.random() < 0.5) 
-  {
-      const state = useState(1);
+  if (Math.random() < 0.5) {
+    const state = useState(1);
   }
 
   const editTask = useMutation((task: TaskFormInputs) => updateTask(id, task), {

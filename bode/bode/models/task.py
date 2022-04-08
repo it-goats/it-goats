@@ -7,6 +7,7 @@ from bode.models.utc_datetime import UTCDateTime
 
 from bode.app import db
 
+
 class Task(db.Model):
     __tablename__ = "tasks"
 
@@ -28,8 +29,6 @@ class Task(db.Model):
 
         if task == None:
             raise NoResultFound
-
-
 
         task.title = task_data["title"]
         task.description = task_data["description"]
