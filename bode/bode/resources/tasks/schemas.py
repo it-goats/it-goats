@@ -1,4 +1,3 @@
-from email.policy import default
 from marshmallow import EXCLUDE, fields, validate
 
 from bode.resources.base_schema import BaseSchema
