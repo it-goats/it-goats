@@ -24,23 +24,12 @@ jobs:
         with:
           poetry-version: "1.1.13"
 
-      - name: Cache venv
-        id: cache-venv
-        uses: actions/cache@v2
-        env:
-          cache-name: cache-venv
-        with:
-          path: .venv
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/poetry.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-            ${{ runner.os }}-build-
-            ${{ runner.os }}-
-
       - run: poetry config virtualenvs.in-project true
 
       - name: Install dependencies
-        run: poetry install
+        run: |
+          poetry config virtualenvs.in-project true
+          poetry install
 
       - name: Check formatting
         run: poetry run black bode migrations --check --verbose
