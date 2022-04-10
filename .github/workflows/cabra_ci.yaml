@@ -10,6 +10,7 @@ on:
 
 jobs:
   ci:
+    name: "Cabra CI - linting, formatting & type checking"
     runs-on: ubuntu-latest
     defaults:
       run:

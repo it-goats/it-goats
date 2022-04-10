@@ -10,6 +10,7 @@ on:
 
 jobs:
   ci:
+    name: "Bode CI - linting & formatting"
     runs-on: ubuntu-latest
     defaults:
       run:
