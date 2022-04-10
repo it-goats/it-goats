@@ -42,7 +42,7 @@ class Task(db.Model):
     def delete(task_id):
         task = Task.query.get(task_id)
 
-        if not task:
+        if task is None:
             raise NoResultFound
 
         db.session.delete(task)
