@@ -9,6 +9,7 @@ import { Link } from "react-router-dom";
 import NavigationButton from "./NavigationButton";
 import { formatDateTime } from "../../utils/dates";
 import { routeHelpers } from "../../routes";
+import { useState } from "react";
 
 interface Props {
   task: ITask;
@@ -16,6 +17,7 @@ interface Props {
 }
 
 export default function Task({ task, detailsLink }: Props) {
+  const [errorMessage, setErrorMessage] = useState("");
   const client = useQueryClient();
   const addTask = useMutation((task: ITask) => updateTask(task.id, task), {
     onSuccess: () => {
@@ -23,21 +25,30 @@ export default function Task({ task, detailsLink }: Props) {
       client.invalidateQueries(getTask.cacheKey(task.id));
     },
   });
+
   return (
     <div tw="rounded-xl w-full bg-white shadow-2xl text-blue-800  p-4">
       <p tw="flex items-center text-xl md:text-2xl">
         {task.title}
-        <CheckBox
-          checked={task.isDone}
-          onChange={(event) => {
-            const updatedTask = {
-              ...task,
-              isDone: !task.isDone,
-            };
-            addTask.mutateAsync(updatedTask);
-            event.target.checked;
-          }}
-        />
+        {
+          <CheckBox
+            checked={task.isDone}
+            onChange={async (event) => {
+              try {
+                const updatedTask = {
+                  ...task,
+                  isDone: !task.isDone,
+                };
+                await addTask.mutateAsync(updatedTask);
+                event.target.checked;
+              } catch (error) {
+                setErrorMessage(
+                  "Something went wrong :C, It's not possible to uncheck the task."
+                );
+              }
+            }}
+          />
+        }
       </p>
       <p tw="flex items-center">
         {formatDateTime(task.dueDate)}
@@ -51,6 +62,9 @@ export default function Task({ task, detailsLink }: Props) {
           </Link>
         )}
       </p>
+      {errorMessage && (
+        <p tw="flex items-center text-orange-500 pt-1">&nbsp;{errorMessage}</p>
+      )}
     </div>
   );
 }
