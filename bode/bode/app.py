@@ -7,7 +7,7 @@ from flask_smorest import Blueprint
 
 from .config import Config
 from .extensions import api, db, migrate
-from .resources import tasks
+from .resources import task_relations, tasks
 
 CONFIG = Config()
 
@@ -19,6 +19,7 @@ def create_app():
     app.config["OPENAPI_VERSION"] = "3.0.2"
 
     app.config["SQLALCHEMY_DATABASE_URI"] = CONFIG.DATABASE_URI
+    app.config["SQLALCHEMY_ECHO"] = True
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
     register_extensions(app)
@@ -42,6 +43,7 @@ def register_extensions(app):
 def register_blueprints(app):
     api_blueprint = Blueprint("api", "api", url_prefix="/api/v1")
     api_blueprint.register_blueprint(tasks.api.blueprint)
+    api_blueprint.register_blueprint(task_relations.api.blueprint)
 
     app.register_blueprint(api_blueprint)
     return None

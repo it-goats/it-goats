@@ -5,7 +5,7 @@ description = ""
 authors = ["Jan Zborowski <janzborowski99@gmail.com>"]
 
 [tool.black]
-line-length = 79
+line-length = 120
 
 [tool.isort]
 profile = 'black'
