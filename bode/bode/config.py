@@ -8,8 +8,6 @@ def get_db_uri():
     port = os.getenv("POSTGRES_PORT", "5432")
     db = os.getenv("POSTGRES_DB", "tasks")
 
-    print()
-
     return f"postgresql://{user}:{password}@{host}:{port}/{db}"
 
 
