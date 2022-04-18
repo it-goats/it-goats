@@ -14,7 +14,7 @@ class RelationType(Enum):
 
     @classmethod
     def list(cls):
-        return list(map(lambda c: c.value, cls))
+        return [c.value for c in cls]
 
 
 SYMMETRIC_RELATIONS = [RelationType.Interchangable.value]
@@ -46,8 +46,6 @@ class TaskRelation(db.Model):
             symmetric_data = relation_data.copy()
             symmetric_data["first_task_id"] = relation_data["second_task_id"]
             symmetric_data["second_task_id"] = relation_data["first_task_id"]
-
-            print(symmetric_data)
 
             symmetric_relation = TaskRelation(**symmetric_data)
             db.session.add(symmetric_relation)
