@@ -15,6 +15,8 @@ class Task(db.Model):
     description = db.Column(db.String(1024), nullable=False, server_default="")
     due_date = db.Column(UTCDateTime(), nullable=True)
 
+    tags = db.relationship("Tag", back_populates="task")
+
     def create(**task_data):
         task = Task(**task_data)
 

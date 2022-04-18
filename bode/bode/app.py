@@ -7,7 +7,7 @@ from flask_smorest import Blueprint
 
 from .config import Config
 from .extensions import api, db, migrate
-from .resources import tasks
+from .resources import tags, tasks
 
 CONFIG = Config()
 
@@ -42,6 +42,7 @@ def register_extensions(app):
 def register_blueprints(app):
     api_blueprint = Blueprint("api", "api", url_prefix="/api/v1")
     api_blueprint.register_blueprint(tasks.api.blueprint)
+    api_blueprint.register_blueprint(tags.api.blueprint)
 
     app.register_blueprint(api_blueprint)
     return None

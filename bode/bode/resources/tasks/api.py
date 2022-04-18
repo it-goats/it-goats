@@ -44,6 +44,3 @@ class TasksById(MethodView):
             return Task.delete(task_id)
         except NoResultFound:
             abort(404, message="Item not found.")
-
-    @blueprint.arguments()
-    @blueprint.response(200, TaskSchema)
