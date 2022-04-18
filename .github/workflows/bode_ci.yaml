@@ -7,6 +7,9 @@ on:
   push:
     paths:
       - "bode/**"
+    branches:
+      - develop
+      - master
 
 jobs:
   ci:
