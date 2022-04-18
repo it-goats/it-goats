@@ -1,7 +1,7 @@
 from flask import abort
 from flask.views import MethodView
 from flask_smorest import Blueprint
-from sqlalchemy.exc import NoResultFound
+from sqlalchemy.exc import IntegrityError, NoResultFound
 
 from bode.models.tag import Tag
 from bode.resources.tags.schemas import TagInputSchema, TagSchema
@@ -18,7 +18,10 @@ class Tags(MethodView):
     @blueprint.arguments(TagInputSchema)
     @blueprint.response(201, TagSchema)
     def post(self, tag_data):
-        return Tag.create(**tag_data)
+        try:
+            return Tag.create(**tag_data)
+        except IntegrityError:
+            abort(400)
 
 
 @blueprint.route("/<tag_id>")
