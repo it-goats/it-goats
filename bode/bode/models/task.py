@@ -14,6 +14,7 @@ class Task(db.Model):
     title = db.Column(db.String(80), nullable=False)
     description = db.Column(db.String(1024), nullable=False, server_default="")
     due_date = db.Column(UTCDateTime(), nullable=True)
+    is_done = db.Column(db.Boolean, nullable=False, server_default="false")
 
     tags = db.relationship("Tag", back_populates="task")
 
@@ -34,6 +35,7 @@ class Task(db.Model):
         task.title = task_data["title"]
         task.description = task_data["description"]
         task.due_date = task_data["due_date"]
+        task.is_done = task_data["is_done"]
 
         db.session.commit()
 
