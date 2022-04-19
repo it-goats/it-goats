@@ -7,7 +7,7 @@ from flask_smorest import Blueprint
 
 from .config import Config
 from .extensions import api, db, migrate
-from .resources import tags, tasks, task_relations
+from .resources import tags, task_relations, tasks
 
 CONFIG = Config()
 
