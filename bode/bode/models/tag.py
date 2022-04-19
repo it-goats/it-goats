@@ -31,10 +31,7 @@ class Tag(db.Model):
         return tag
 
     def delete(tag_id):
-        tag = Tag.query.get(tag_id)
-
-        if tag is None:
-            raise NoResultFound
+        tag = Tag.query.get_or_404(tag_id)
 
         db.session.delete(tag)
         db.session.commit()
