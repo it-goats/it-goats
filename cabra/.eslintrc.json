@@ -17,6 +17,7 @@
   },
   "plugins": ["@typescript-eslint", "prettier"],
   "rules": {
+    "no-console": "error",
     "react/react-in-jsx-scope": "off",
     "sort-imports": "error",
     "@typescript-eslint/no-inferrable-types": "off",

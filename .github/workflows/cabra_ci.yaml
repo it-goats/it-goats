@@ -7,6 +7,9 @@ on:
   push:
     paths:
       - "cabra/**"
+    branches:
+      - develop
+      - master
 
 jobs:
   ci:

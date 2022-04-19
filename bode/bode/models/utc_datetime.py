@@ -11,9 +11,7 @@ class UTCDateTime(TypeDecorator):
         if value is not None:
             if not value.tzinfo:
                 raise TypeError("tzinfo is required")
-            value = value.astimezone(datetime.timezone.utc).replace(
-                tzinfo=None
-            )
+            value = value.astimezone(datetime.timezone.utc).replace(tzinfo=None)
         return value
 
     def process_result_value(self, value, _):
