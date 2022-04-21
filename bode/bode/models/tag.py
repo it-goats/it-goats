@@ -1,24 +1,22 @@
 import uuid
 
-from sqlalchemy import ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.exc import NoResultFound
 
 from bode.app import db
+from bode.models.task_tag import task_tag
 
 
 class Tag(db.Model):
     __tablename__ = "tags"
 
     id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    task_id = db.Column(UUID(as_uuid=True), ForeignKey("tasks.id"), nullable=False)
     name = db.Column(db.String(80), unique=True, nullable=False)
 
-    task = db.relationship("Task", back_populates="tags")
+    task = db.relationship("Task", secondary=task_tag, back_populates="tags")
 
-    __table_args__ = (db.UniqueConstraint("task_id", "name", name="_task_id_name_uc"),)
-
-    def create(**tag_data):
-        tag = Tag(**tag_data)
+    def create(tag_name):
+        tag = Tag(name=tag_name)
 
         db.session.add(tag)
         db.session.commit()
@@ -31,6 +29,12 @@ class Tag(db.Model):
         db.session.delete(tag)
         db.session.commit()
 
+        return tag
+
+    def getByName(tag_name):
+        tag = Tag.query.filter(Tag.name == tag_name).first()
+        if tag is None:
+            raise NoResultFound
         return tag
 
     def __repr__(self):

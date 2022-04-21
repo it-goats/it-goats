@@ -1,7 +1,6 @@
-from flask import abort
 from flask.views import MethodView
-from flask_smorest import Blueprint
-from sqlalchemy.exc import IntegrityError, NoResultFound
+from flask_smorest import Blueprint, abort
+from sqlalchemy.exc import IntegrityError
 
 from bode.models.tag import Tag
 from bode.resources.tags.schemas import TagInputSchema, TagSchema
@@ -19,16 +18,13 @@ class Tags(MethodView):
     @blueprint.response(201, TagSchema)
     def post(self, tag_data):
         try:
-            return Tag.create(**tag_data)
+            return Tag.create(tag_data["name"])
         except IntegrityError:
-            abort(400)
+            abort(409, message="Item already exists")
 
 
 @blueprint.route("/<tag_id>")
 class TagsById(MethodView):
     @blueprint.response(200, TagSchema)
     def delete(self, tag_id):
-        try:
-            return Tag.delete(tag_id)
-        except NoResultFound:
-            abort(404)
+        return Tag.delete(tag_id)

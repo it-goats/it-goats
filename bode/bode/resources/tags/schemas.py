@@ -8,10 +8,8 @@ class TagInputSchema(BaseSchema):
         unknown = EXCLUDE
 
     name = fields.String(validate=validate.Length(1, 80), required=True)
-    task_id = fields.UUID()
 
 
 class TagSchema(BaseSchema):
     id = fields.UUID(dump_only=True)
     name = fields.String()
-    task_id = fields.String()
