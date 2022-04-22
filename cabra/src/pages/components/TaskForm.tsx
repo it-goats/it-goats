@@ -9,7 +9,6 @@ import {
 } from "../../utils/dates";
 import tw, { styled } from "twin.macro";
 
-import AddDependenceButton from "./AddDependenceButton";
 import DatePicker from "react-datepicker";
 import { ITask } from "../../types/task";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -130,25 +129,6 @@ export default function TaskForm({ task, onSubmit }: Props) {
           rows={6}
           {...register("description")}
         ></textarea>
-      </div>
-      <div tw="grid gap-4 grid-cols-4">
-        <div tw="w-full">
-          <Label>subtasks:</Label>
-          {/* lista subtasków i +add to dodanie pustego subtasku, gdzieś trzeba usuwać puste subtaski */}
-          <AddDependenceButton onClick={() => NaN}>+add</AddDependenceButton>
-        </div>
-        <div tw="w-full">
-          <Label>depends on:</Label>
-          <AddDependenceButton onClick={() => NaN}>+add</AddDependenceButton>
-        </div>
-        <div tw="w-full">
-          <Label>is dependant on:</Label>
-          <AddDependenceButton onClick={() => NaN}>+add</AddDependenceButton>
-        </div>
-        <div tw="w-full">
-          <Label>interchangable:</Label>
-          <AddDependenceButton onClick={() => NaN}>+add</AddDependenceButton>
-        </div>
       </div>
       <SubmitButton type="submit" disabled={isSubmitting}>
         Submit!

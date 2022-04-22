@@ -2,15 +2,18 @@ import "twin.macro";
 
 import TaskForm, { TaskFormInputs } from "./components/TaskForm";
 import { getTask, getTasks, updateTask } from "../api/tasks";
+import tw, { styled } from "twin.macro";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useNavigate, useParams } from "react-router-dom";
 
+import AddDependenceButton from "./components/AddDependenceButton";
 import { ArrowLeftIcon } from "@heroicons/react/solid";
 import Layout from "./components/Layout";
 import NavigationButton from "./components/NavigationButton";
 import { routeHelpers } from "../routes";
 
 export default function TaskEditPage() {
+  const Label = styled.label(tw`text-gray-50`);
   const navigate = useNavigate();
   const { id } = useParams() as { id: string };
   const client = useQueryClient();
@@ -45,8 +48,26 @@ export default function TaskEditPage() {
             Go Back
           </NavigationButton>
         </div>
-
         <TaskForm task={data.data} onSubmit={editTask.mutateAsync} />
+        <div tw="grid gap-4 grid-cols-4">
+          <div tw="w-full">
+            <Label>subtasks:</Label>
+            {/* lista subtasków i +add to dodanie pustego subtasku, gdzieś trzeba usuwać puste subtaski */}
+            <AddDependenceButton onClick={() => NaN}>+add</AddDependenceButton>
+          </div>
+          <div tw="w-full">
+            <Label>depends on:</Label>
+            <AddDependenceButton onClick={() => NaN}>+add</AddDependenceButton>
+          </div>
+          <div tw="w-full">
+            <Label>is dependant on:</Label>
+            <AddDependenceButton onClick={() => NaN}>+add</AddDependenceButton>
+          </div>
+          <div tw="w-full">
+            <Label>interchangable:</Label>
+            <AddDependenceButton onClick={() => NaN}>+add</AddDependenceButton>
+          </div>
+        </div>
       </div>
     </Layout>
   );
