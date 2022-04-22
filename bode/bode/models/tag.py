@@ -1,7 +1,6 @@
 import uuid
 
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.exc import NoResultFound
 
 from bode.app import db
 from bode.models.task_tag import task_tag
@@ -31,11 +30,8 @@ class Tag(db.Model):
 
         return tag
 
-    def getByName(tag_name):
-        tag = Tag.query.filter(Tag.name == tag_name).first()
-        if tag is None:
-            raise NoResultFound
-        return tag
+    def get_by_name(tag_name):
+        return Tag.query.filter(Tag.name == tag_name).first()
 
     def __repr__(self):
         return f'<Tag {self.id} \n  name="{self.name}">'

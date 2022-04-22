@@ -54,7 +54,7 @@ class Task(db.Model):
     def add_tag(task_id, **tag_data):
         task = Task.get(task_id)
         tag_name = tag_data["name"]
-        tag = Tag.getByName(tag_name)
+        tag = Tag.get_by_name(tag_name)
         if tag is None:
             tag = Tag.create(tag_name)
 
@@ -69,7 +69,7 @@ class Task(db.Model):
     def remove_tag(task_id, **tag_data):
         task = Task.get(task_id)
         tag_name = tag_data["name"]
-        tag = Tag.getByName(tag_name)
+        tag = Tag.get_by_name(tag_name)
 
         if tag not in task.tags:
             raise NoResultFound
