@@ -19,3 +19,10 @@ class TaskSchema(BaseSchema):
     description = fields.String()
     due_date = fields.DateTime()
     is_done = fields.Boolean()
+
+
+class TasksRelationSchema(BaseSchema):
+    id = fields.UUID(dump_only=True)
+    first_task_id = fields.String()
+    second_task_id = fields.String()
+    type = fields.String()

@@ -73,5 +73,5 @@ class TaskRelation(db.Model):
 
     def __repr__(self):
         return f"""<TaskRelation
-        {self.first_task_id} <{self.relationship}> {self.second_task_id}
+        {self.first_task_id} <{self.type}> {self.second_task_id}
         >"""
