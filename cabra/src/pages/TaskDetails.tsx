@@ -7,12 +7,16 @@ import {
 } from "@heroicons/react/solid";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { deleteTask, getTask } from "../api/tasks";
+import tw, { styled } from "twin.macro";
 import { useMutation, useQuery } from "react-query";
 
 import Layout from "./components/Layout";
 import NavigationButton from "./components/NavigationButton";
+import SubtasksList from "./components/SubtasksList";
 import Task from "./components/Task";
 import { routeHelpers } from "../routes";
+
+const Label = styled.label(tw`text-gray-50 font-bold`);
 
 export default function TaskDetailsPage() {
   const navigate = useNavigate();
@@ -36,6 +40,22 @@ export default function TaskDetailsPage() {
     <Layout>
       <div tw="w-[90%] max-w-xl space-y-6 relative z-10">
         <Task task={data.data} detailsLink={false}></Task>
+
+        <div tw="grid gap-4 grid-cols-4">
+          <div tw="w-full">
+            <Label>subtasks:</Label>
+            <SubtasksList parentId={id} />
+          </div>
+          <div tw="w-full">
+            <Label>depends on:</Label>
+          </div>
+          <div tw="w-full">
+            <Label>is dependant on:</Label>
+          </div>
+          <div tw="w-full">
+            <Label>interchangable:</Label>
+          </div>
+        </div>
 
         <div tw="flex justify-end w-full gap-4">
           <NavigationButton
