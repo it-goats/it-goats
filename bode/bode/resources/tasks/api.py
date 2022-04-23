@@ -52,8 +52,11 @@ class TasksRelatedByIdAndRelationType(MethodView):
     @blueprint.response(200, TaskSchema(many=True))
     def get(self, task_id, relation_type):
         try:
-            return Task.query.join(TaskRelation.second_task_id).where(TaskRelation.first_task_id == task_id).where(
-                TaskRelation.type == relation_type
-            ).all() or abort(404)
+            return (
+                Task.query.join(TaskRelation, Task.id == TaskRelation.second_task_id)
+                .filter(TaskRelation.first_task_id == task_id)
+                .filter(TaskRelation.type == relation_type)
+                .all()
+            )
         except DataError:
             abort(404)

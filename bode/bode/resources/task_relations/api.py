@@ -21,6 +21,10 @@ class TasksRelations(MethodView):
         except IntegrityError:
             abort(422, message="Relation already exists")
 
+    @blueprint.response(200, SimpleTaskRelationSchema(many=True))
+    def get(self):
+        return TaskRelation.query.all()
+
 
 @blueprint.route("/<relation_id>")
 class TasksRelationsById(MethodView):
