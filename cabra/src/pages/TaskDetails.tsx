@@ -17,7 +17,7 @@ export default function TaskDetailsPage() {
       >
         <ArrowLeftIcon height={20} width={20} /> Go Back
       </NavigationButton>
-      <div tw="w-[100%] max-w-xl space-y-6 relative z-10 h-[100%]">
+      <div tw="w-full h-full max-w-3xl space-y-6 relative z-10">
         <TaskDetails id={id} />
       </div>
     </Layout>
