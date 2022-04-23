@@ -1,6 +1,8 @@
 import {
   createRelation,
   createTask,
+  deleteRelation,
+  deleteTask,
   getSubtasks,
   getTask,
   getTasks,
@@ -58,6 +60,16 @@ export default function SubtasksListEdit({ parentId }: Props) {
     addSubtask.mutateAsync(inputs);
   };
 
+  const removeRelation = useMutation((relationId: string) =>
+    deleteRelation(relationId)
+  );
+  const removeTask = useMutation((subtaskId: string) => deleteTask(subtaskId));
+
+  const removeSubtask = (relationId: string, subtaskId: string) => {
+    removeRelation.mutateAsync(relationId);
+    removeTask.mutateAsync(subtaskId);
+  };
+
   const { data, isLoading, error } = useQuery(
     getSubtasks.cacheKey(parentId),
     () => getSubtasks.run(parentId)
@@ -69,11 +81,19 @@ export default function SubtasksListEdit({ parentId }: Props) {
 
   const subtasks = data.data.slice().reverse();
 
+  const relationId = "";
+
   return (
     <div>
       <Container>
         {subtasks.map((task) => (
-          <MiniTaskDelete key={task.id} title={task.title} />
+          <MiniTaskDelete
+            key={task.id}
+            title={task.title}
+            onClickDelete={removeSubtask}
+            taskId={task.id}
+            relationId={relationId}
+          />
         ))}
       </Container>
       <form onSubmit={handleSubmitSubtask}>

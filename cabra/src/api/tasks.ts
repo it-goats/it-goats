@@ -31,3 +31,6 @@ export const createTask = (data: TaskApiInput) =>
 
 export const createRelation = (data: Omit<ITaskRelation, "id">) =>
   axios.post<ITaskRelation>("/task-relations", data);
+
+export const deleteRelation = (id: string) =>
+  axios.delete<ITaskRelation>(`/task-relations/${id}`);
