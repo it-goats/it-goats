@@ -10,10 +10,12 @@ import AddDependenceButton from "./components/AddDependenceButton";
 import { ArrowLeftIcon } from "@heroicons/react/solid";
 import Layout from "./components/Layout";
 import NavigationButton from "./components/NavigationButton";
+import SubtasksListEdit from "./components/SubtasksListEdit";
 import { routeHelpers } from "../routes";
 
+const Label = styled.label(tw`text-gray-50 font-bold`);
+
 export default function TaskEditPage() {
-  const Label = styled.label(tw`text-gray-50`);
   const navigate = useNavigate();
   const { id } = useParams() as { id: string };
   const client = useQueryClient();
@@ -52,8 +54,7 @@ export default function TaskEditPage() {
         <div tw="grid gap-4 grid-cols-4">
           <div tw="w-full">
             <Label>subtasks:</Label>
-            {/* lista subtasków i +add to dodanie pustego subtasku, gdzieś trzeba usuwać puste subtaski */}
-            <AddDependenceButton onClick={() => NaN}>+add</AddDependenceButton>
+            <SubtasksListEdit parentId={id} />
           </div>
           <div tw="w-full">
             <Label>depends on:</Label>
