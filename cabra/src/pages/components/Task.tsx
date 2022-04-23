@@ -40,8 +40,8 @@ export default function Task({ task, detailsLink }: Props) {
   };
 
   return (
-    <div tw="rounded-xl w-full bg-white shadow-2xl text-blue-800  p-4">
-      <p tw="flex items-center text-xl md:text-2xl">
+    <div tw="rounded-xl w-full bg-white shadow-2xl text-blue-800 p-4">
+      <p tw="flex items-center text-xl md:text-2xl place-content-between">
         {task.title}
         {<CheckBox checked={task.isDone} onChange={handleIsDoneChange} />}
       </p>
