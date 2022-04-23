@@ -7,7 +7,7 @@ import { formatDateTime } from "../../utils/dates";
 import { routeHelpers } from "../../routes";
 import styled from "@emotion/styled";
 import tw from "twin.macro";
-import useTaskDetails from "../hooks/useTaskDetails.hook";
+import useTaskDetails from "../hooks/useTaskDetails";
 
 const Content = styled.div`
   ${tw`grid grid-cols-3 gap-4 min-h-full`}
@@ -38,7 +38,7 @@ export default function TaskDetails({ id }: Props) {
   if (isLoading) return <>Loading</>;
 
   return (
-    <div tw="rounded-xl w-full bg-primary shadow-2xl text-blue-800 p-4 h-[100%]">
+    <div tw="rounded-xl w-full bg-primary shadow-2xl text-blue-800 p-4 h-full">
       <Content>
         <CardField span={2} title="Title">
           {task.title}

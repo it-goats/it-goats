@@ -9,10 +9,10 @@ const Title = styled.div`
   ${tw`text-xs font-extrabold text-left`}
 `;
 
-const Field = styled.div<{ $span: Span; $align: Align }>`
+const Field = styled.div<{ $span?: Span; $align?: Align }>`
   ${tw`bg-secondary rounded-lg p-2`}
-  ${({ $span, $align }) => `
-    grid-column: span ${$span || 1} / span ${$span || 1};
+  ${({ $span = 1, $align = "left" }) => `
+    grid-column: span ${$span} / span ${$span};
     text-align: ${$align};
     `}
 `;
@@ -25,8 +25,8 @@ interface Props {
   align?: Align;
 }
 
-const CardField = ({ span, title, children, align, className }: Props) => (
-  <Field className={className} $span={span || 1} $align={align || "left"}>
+const CardField = ({ className, children, title, span, align }: Props) => (
+  <Field className={className} $span={span} $align={align}>
     {title && <Title>{title}</Title>}
     {children}
   </Field>
