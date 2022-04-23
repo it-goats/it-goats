@@ -45,7 +45,7 @@ export default function TaskDetails({ id }: Props) {
         </CardField>
         <ColumnFields>
           <CardField title="Deadline" align="center">
-            {formatDateTime(task.dueDate)}
+            {task?.dueDate ? formatDateTime(task.dueDate) : "<No deadline>"}
           </CardField>
           <Ctas align="center">
             <StatusCheckbox
