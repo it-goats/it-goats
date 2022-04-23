@@ -5,6 +5,13 @@ const colors = require("tailwindcss/colors");
 
 module.exports = {
   content: [],
-  theme: { colors },
+  theme: {
+    colors: {
+      ...colors,
+      primary: "#071275",
+      secondary: "#153587",
+      tertiary: "#beccef",
+    },
+  },
   plugins: [require("@tailwindcss/forms")],
 };
