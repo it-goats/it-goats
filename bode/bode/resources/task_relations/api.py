@@ -10,7 +10,6 @@ from bode.resources.task_relations.schemas import (
     SimpleTaskRelationSchema,
     TaskRelationInputSchema,
 )
-from bode.resources.tasks.schemas import TasksRelationSchema
 
 blueprint = Blueprint("task-relations", "task-relations", url_prefix="/task-relations")
 
@@ -35,7 +34,7 @@ class TasksRelationsById(MethodView):
 
 @blueprint.route("/<task_id>")
 class TasksInRelationWith(MethodView):
-    @blueprint.response(200, TasksRelationSchema(many=True))
+    @blueprint.response(200, SimpleTaskRelationSchema(many=True))
     def get(self, task_id):
         try:
             return TaskRelation.query.filter(TaskRelation.first_task_id == task_id).all() or abort(404)
