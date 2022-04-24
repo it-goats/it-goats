@@ -1,9 +1,10 @@
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
-from sqlalchemy.exc import DataError
-from sqlalchemy.orm.exc import NoResultFound
+from psycopg2 import IntegrityError
+from sqlalchemy.exc import DataError, NoResultFound
 
 from bode.models.task import Task
+from bode.resources.tags.schemas import TagInputSchema
 from bode.resources.tasks.schemas import TaskInputSchema, TaskSchema
 
 blueprint = Blueprint("tasks", "tasks", url_prefix="/tasks")
@@ -44,3 +45,22 @@ class TasksById(MethodView):
             return Task.delete(task_id)
         except NoResultFound:
             abort(404, message="Item not found.")
+
+
+@blueprint.route("/<task_id>/tags")
+class TaskTags(MethodView):
+    @blueprint.arguments(TagInputSchema)
+    @blueprint.response(200, TaskSchema)
+    def post(self, tags_data, task_id):
+        try:
+            return Task.add_tag(task_id, **tags_data)
+        except IntegrityError:
+            abort(409, message="Tag already assigned to the task.")
+
+    @blueprint.arguments(TagInputSchema)
+    @blueprint.response(200, TaskSchema)
+    def delete(self, tags_data, task_id):
+        try:
+            return Task.remove_tag(task_id, **tags_data)
+        except NoResultFound:
+            abort(404, message="The task is not assigned to the task.")
