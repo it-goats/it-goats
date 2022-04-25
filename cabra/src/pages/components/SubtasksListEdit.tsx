@@ -24,6 +24,7 @@ const emptyTask: Omit<ITask, "id"> = {
   dueDate: null,
   title: "",
   isDone: false,
+  tags: [],
 };
 
 interface Props {
