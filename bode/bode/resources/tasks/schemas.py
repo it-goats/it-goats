@@ -1,6 +1,7 @@
 from marshmallow import EXCLUDE, fields, validate
 
 from bode.resources.base_schema import BaseSchema
+from bode.resources.tags.schemas import TagInputSchema, TagSchema
 
 
 class TaskInputSchema(BaseSchema):
@@ -11,6 +12,7 @@ class TaskInputSchema(BaseSchema):
     description = fields.String(validate=validate.Length(0, 1024), default="")
     due_date = fields.DateTime(allow_none=True)
     is_done = fields.Boolean(default=False)
+    tags = fields.List(fields.Nested(TagInputSchema), default=[])
 
 
 class TaskSchema(BaseSchema):
@@ -19,3 +21,4 @@ class TaskSchema(BaseSchema):
     description = fields.String()
     due_date = fields.DateTime()
     is_done = fields.Boolean()
+    tags = fields.List(fields.Nested(TagSchema))
