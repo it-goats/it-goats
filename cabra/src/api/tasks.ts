@@ -1,5 +1,4 @@
 import { ITask } from "../types/task";
-import { ITaskRelation } from "../types/taskRelation";
 import axios from "axios";
 
 interface TaskApiInput extends Omit<ITask, "id" | "dueDate"> {
@@ -16,11 +15,6 @@ export const getTasks = {
   run: () => axios.get<ITask[]>("/tasks"),
 };
 
-export const getSubtasks = {
-  cacheKey: (id: string) => ["tasks", id, "SUBTASK"],
-  run: (id: string) => axios.get<ITask[]>(`/tasks/${id}/SUBTASK`),
-};
-
 export const deleteTask = (id: string) => axios.delete<ITask>(`/tasks/${id}`);
 
 export const updateTask = (id: string, data: TaskApiInput) =>
@@ -28,9 +22,3 @@ export const updateTask = (id: string, data: TaskApiInput) =>
 
 export const createTask = (data: TaskApiInput) =>
   axios.post<ITask>("/tasks", data);
-
-export const createRelation = (data: Omit<ITaskRelation, "id">) =>
-  axios.post<ITaskRelation>("/task-relations", data);
-
-export const deleteRelation = (id: string) =>
-  axios.delete<ITaskRelation>(`/task-relations/${id}`);

@@ -1,17 +1,14 @@
+import { FormEvent, useState } from "react";
 import {
   createRelation,
-  createTask,
   deleteRelation,
-  deleteTask,
   getSubtasks,
-  getTask,
-  getTasks,
-} from "../../api/tasks";
+} from "../../api/taskRelations";
+import { createTask, deleteTask, getTask, getTasks } from "../../api/tasks";
 import tw, { styled } from "twin.macro";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 
 import AddDependenceButton from "./AddDependenceButton";
-import { FormEvent } from "react";
 import { ITask } from "../../types/task";
 import { ITaskRelation } from "../../types/taskRelation";
 import MiniTaskDelete from "./MiniTaskDelete";
@@ -32,13 +29,14 @@ interface Props {
 }
 
 export default function SubtasksListEdit({ parentId }: Props) {
-  let subtask = "";
+  const [val, setVal] = useState("");
   const client = useQueryClient();
 
   const addRelation = useMutation(createRelation, {
     onSuccess: () => {
       client.invalidateQueries(getTasks.cacheKey);
       client.invalidateQueries(getTask.cacheKey(parentId));
+      client.invalidateQueries(getSubtasks.cacheKey(parentId));
     },
   });
   const addSubtask = useMutation(createTask, {
@@ -54,9 +52,10 @@ export default function SubtasksListEdit({ parentId }: Props) {
 
   const handleSubmitSubtask = (event: FormEvent) => {
     event.preventDefault();
+    setVal("");
     const inputs = {
       ...emptyTask,
-      title: subtask,
+      title: val,
     };
     addSubtask.mutateAsync(inputs);
   };
@@ -64,7 +63,13 @@ export default function SubtasksListEdit({ parentId }: Props) {
   const removeRelation = useMutation((relationId: string) =>
     deleteRelation(relationId)
   );
-  const removeTask = useMutation((subtaskId: string) => deleteTask(subtaskId));
+  const removeTask = useMutation((subtaskId: string) => deleteTask(subtaskId), {
+    onSuccess: () => {
+      client.invalidateQueries(getTasks.cacheKey);
+      client.invalidateQueries(getTask.cacheKey(parentId));
+      client.invalidateQueries(getSubtasks.cacheKey(parentId));
+    },
+  });
 
   const removeSubtask = (relationId: string, subtaskId: string) => {
     removeRelation.mutateAsync(relationId);
@@ -82,18 +87,16 @@ export default function SubtasksListEdit({ parentId }: Props) {
 
   const subtasks = data.data.slice().reverse();
 
-  const relationId = "";
-
   return (
     <div>
       <Container>
-        {subtasks.map((task) => (
+        {subtasks.map((relation) => (
           <MiniTaskDelete
-            key={task.id}
-            title={task.title}
+            key={relation.id}
+            title={relation.task.title}
             onClickDelete={removeSubtask}
-            taskId={task.id}
-            relationId={relationId}
+            taskId={relation.task.id}
+            relationId={relation.id}
           />
         ))}
       </Container>
@@ -104,9 +107,10 @@ export default function SubtasksListEdit({ parentId }: Props) {
               css={[tw`form-input`, fieldStyles]}
               id="subtask"
               type="text"
+              value={val}
               maxLength={80}
               required
-              onChange={(event) => (subtask = event.target.value)}
+              onChange={(event) => setVal(event.target.value)}
             />
           </p>
           <p tw="flex items-center">
