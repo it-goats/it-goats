@@ -1,4 +1,5 @@
 import { PencilIcon, TrashIcon } from "@heroicons/react/solid";
+
 import CardField from "./CardField";
 import CheckBox from "./CheckBox";
 import { Link } from "react-router-dom";
@@ -23,10 +24,6 @@ const Ctas = styled(CardField)`
   ${tw`flex place-content-around`}
 `;
 
-const StatusCheckbox = styled(CheckBox)`
-  ${tw`h-8 w-8`}
-`;
-
 interface Props {
   id: string;
 }
@@ -48,20 +45,21 @@ export default function TaskDetails({ id }: Props) {
             {task?.dueDate ? formatDateTime(task.dueDate) : "<No deadline>"}
           </CardField>
           <Ctas align="center">
-            <StatusCheckbox
+            <CheckBox
               checked={task.isDone}
+              id={`task-${task.id}`}
               onChange={handleStatusChange}
             />
             <Link to={routeHelpers.task.edit(task.id)}>
               <NavigationButton tw="text-amber-600 bg-amber-100">
-                <PencilIcon height={16} width={16} />
+                <PencilIcon height={20} width={20} />
               </NavigationButton>
             </Link>
             <NavigationButton
               tw="text-red-800 bg-red-500"
               onClick={() => removeTask()}
             >
-              <TrashIcon height={16} width={16} />
+              <TrashIcon height={20} width={20} />
             </NavigationButton>
           </Ctas>
         </ColumnFields>

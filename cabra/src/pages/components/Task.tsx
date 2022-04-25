@@ -43,7 +43,14 @@ export default function Task({ task, detailsLink }: Props) {
     <div tw="rounded-xl w-full bg-white shadow-2xl text-blue-800 p-4">
       <p tw="flex text-xl md:text-2xl place-content-between">
         {task.title}
-        {<CheckBox checked={task.isDone} onChange={handleIsDoneChange} />}
+        {
+          <CheckBox
+            checked={task.isDone}
+            id={`task-${task.id}`}
+            onChange={handleIsDoneChange}
+            size="sm"
+          />
+        }
       </p>
       <p tw="flex items-center">
         {formatDateTime(task.dueDate)}
