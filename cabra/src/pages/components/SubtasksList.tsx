@@ -1,28 +1,31 @@
-import { getSubtasks, getTask, getTasks, updateTask } from "../../api/tasks";
+import { getTask, getTasks, updateTask } from "../../api/tasks";
 import tw, { styled } from "twin.macro";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 
 import Checkbox from "./CheckBox";
 import { ITask } from "../../types/task";
+import { getSubtasks } from "../../api/taskRelations";
 import { useState } from "react";
 
 interface Props {
   subtask: ITask;
+  parentId: string;
 }
 
 interface PropsList {
   parentId: string;
 }
 
-const Container = styled.div(tw`text-gray-50 w-full space-y-4`);
+const Container = styled.div(tw`space-x-2 space-y-3 grid grid-cols-4`);
 
-const Subtask = ({ subtask }: Props) => {
+const Subtask = ({ subtask, parentId }: Props) => {
   const [errorMessage, setErrorMessage] = useState("");
   const client = useQueryClient();
   const editTask = useMutation((task: ITask) => updateTask(task.id, task), {
     onSuccess: () => {
       client.invalidateQueries(getTasks.cacheKey);
-      client.invalidateQueries(getTask.cacheKey(subtask.id));
+      client.invalidateQueries(getTask.cacheKey(parentId));
+      client.invalidateQueries(getSubtasks.cacheKey(parentId));
     },
   });
   const handleIsDoneChange = async () => {
@@ -40,10 +43,10 @@ const Subtask = ({ subtask }: Props) => {
   };
 
   return (
-    <div tw="rounded-xl w-full bg-white shadow-2xl text-blue-800  p-1.5">
-      <p tw="flex items-center font-size[small]">
-        {subtask.title}
-        {<Checkbox checked={subtask.isDone} onChange={handleIsDoneChange} />}
+    <div tw="rounded-xl bg-tertiary text-secondary p-1.5 grid">
+      <p tw="font-medium text-xs">{subtask.title}</p>
+      <p tw="place-self-end">
+        <Checkbox checked={subtask.isDone} onChange={handleIsDoneChange} />
       </p>
       {errorMessage && (
         <p tw="flex items-center text-orange-500 pt-1">&nbsp;{errorMessage}</p>
@@ -64,10 +67,18 @@ export default function SubtasksList({ parentId }: PropsList) {
 
   const subtasks = data.data.slice().reverse();
 
+  if (subtasks.length == 0) {
+    return <Container>{"<No tasks>"}</Container>;
+  }
+
   return (
     <Container>
-      {subtasks.map((task) => (
-        <Subtask key={task.id} subtask={task} />
+      {subtasks.map((relation) => (
+        <Subtask
+          key={relation.id}
+          subtask={relation.task}
+          parentId={parentId}
+        /> //key=relation.id //subtask=relation.task
       ))}
     </Container>
   );
