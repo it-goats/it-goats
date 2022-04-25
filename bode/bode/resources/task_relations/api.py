@@ -19,7 +19,6 @@ blueprint = Blueprint("task-relations", "task-relations", url_prefix="/task-rela
 
 def map_to_related_task_schema(relation_task_pair):
     relation, task = relation_task_pair
-
     return {"task": task, "relation_type": relation.type, "relation_id": relation.id}
 
 
@@ -47,9 +46,7 @@ class TasksInRelationWith(MethodView):
     @blueprint.response(200, RelatedTaskSchema(many=True))
     def get(self, relation_type_request: RelationTypeRequestSchema, task_id: UUID):
         result = []
-
         match relation_type_request.relation_type:
-
             case RelationTypeRequest.Subtask:
                 result += (
                     db.session.query(TaskRelation, Task)
@@ -58,7 +55,6 @@ class TasksInRelationWith(MethodView):
                     .join(Task, TaskRelation.second_task_id == Task.id)
                     .all()
                 )
-
             case RelationTypeRequest.Supertask:
                 result += (
                     db.session.query(TaskRelation, Task)
@@ -67,7 +63,6 @@ class TasksInRelationWith(MethodView):
                     .join(Task, TaskRelation.first_task_id == Task.id)
                     .all()
                 )
-
             case RelationTypeRequest.IsDependentOn:
                 result += (
                     db.session.query(TaskRelation, Task)
@@ -76,7 +71,6 @@ class TasksInRelationWith(MethodView):
                     .join(Task, TaskRelation.first_task_id == Task.id)
                     .all()
                 )
-
             case RelationTypeRequest.DependsOn:
                 result += (
                     db.session.query(TaskRelation, Task)
@@ -85,7 +79,6 @@ class TasksInRelationWith(MethodView):
                     .join(Task, TaskRelation.second_task_id == Task.id)
                     .all()
                 )
-
             case RelationTypeRequest.Interchangable:
                 result += (
                     db.session.query(TaskRelation, Task)
@@ -101,7 +94,6 @@ class TasksInRelationWith(MethodView):
                     .join(Task, TaskRelation.first_task_id == Task.id)
                     .all()
                 )
-
             case _:
                 result += (
                     db.session.query(TaskRelation, Task)
@@ -115,6 +107,5 @@ class TasksInRelationWith(MethodView):
                     .join(Task, TaskRelation.first_task_id == Task.id)
                     .all()
                 )
-
         # Joined query result is a pair (relation, task) list. Need to be mapped to RelatedTaskSchema list.
         return map(map_to_related_task_schema, result)
