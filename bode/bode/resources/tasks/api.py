@@ -4,7 +4,6 @@ from psycopg2 import IntegrityError
 from sqlalchemy.exc import DataError, NoResultFound
 
 from bode.models.task import Task
-from bode.models.task_relation import TaskRelation
 from bode.resources.tags.schemas import TagInputSchema
 from bode.resources.tasks.schemas import TaskInputSchema, TaskSchema
 
@@ -46,21 +45,6 @@ class TasksById(MethodView):
             return Task.delete(task_id)
         except NoResultFound:
             abort(404, message="Item not found.")
-
-
-@blueprint.route("/<task_id>/<relation_type>")
-class TasksRelatedByIdAndRelationType(MethodView):
-    @blueprint.response(200, TaskSchema(many=True))
-    def get(self, task_id, relation_type):
-        try:
-            return (
-                Task.query.join(TaskRelation, Task.id == TaskRelation.second_task_id)
-                .filter(TaskRelation.first_task_id == task_id)
-                .filter(TaskRelation.type == relation_type)
-                .all()
-            )
-        except DataError:
-            abort(404)
 
 
 @blueprint.route("/<task_id>/tags")
