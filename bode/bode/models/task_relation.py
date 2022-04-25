@@ -20,6 +20,20 @@ class RelationType(Enum):
 SYMMETRIC_RELATIONS = [RelationType.Interchangable.value]
 
 
+class RelationTypeRequest(Enum):
+    """Enum containing strings used for requesting relation types. It is used to handle unsymmetric relations."""
+
+    IsDependentOn = "is_dependent_on"
+    DependsOn = "depends_on"
+    Subtask = "subtask"
+    Supertask = "supertask"
+    Interchangable = "interchangable"
+
+    @classmethod
+    def list(cls):
+        return [c.value for c in cls]
+
+
 class TaskRelation(db.Model):
     __tablename__ = "tasks_relations"
 
