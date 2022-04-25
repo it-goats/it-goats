@@ -1,6 +1,7 @@
 import tw, { styled } from "twin.macro";
 
 import TasksListPaginator from "./TasksListsPaginator";
+import { compareAsc } from "date-fns";
 import { getTasks } from "../../api/tasks";
 import { useQuery } from "react-query";
 
@@ -16,8 +17,7 @@ export default function TasksList() {
 
   const tasksSortedByDueDate = tasks.sort((a, b) =>
     a.dueDate && b.dueDate
-      ? Number(new Date(a.dueDate).getTime()) -
-        Number(new Date(b.dueDate).getTime())
+      ? compareAsc(new Date(a.dueDate), new Date(b.dueDate))
       : -1
   );
 

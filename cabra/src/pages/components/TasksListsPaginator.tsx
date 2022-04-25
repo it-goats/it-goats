@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 
 import { ITask } from "../../types/task";
 import ReactPaginate from "react-paginate";
-import SelectBox from "./SelectBox";
+import Select from "react-select";
 import Task from "./Task";
 
 const Container = styled.div(tw`text-gray-50 w-full space-y-4`);
@@ -11,12 +11,27 @@ const Container = styled.div(tw`text-gray-50 w-full space-y-4`);
 interface Props {
   items: ITask[];
 }
+interface PaginationOption {
+  readonly value: number;
+  readonly label: string;
+}
+
+const paginationOptions: PaginationOption[] = [
+  { value: 1, label: "1" },
+  { value: 2, label: "2" },
+  { value: 5, label: "5" },
+  { value: 10, label: "10" },
+  { value: 20, label: "20" },
+  { value: 100, label: "100" },
+];
 
 export default function TasksListsPaginator({ items }: Props) {
   const [paginatedItems, setPaginatedItems] = useState<ITask[]>([]);
-  const [pageCount, setPageCount] = useState<number>(0);
-  const [itemOffset, setItemOffset] = useState<number>(0);
-  const [itemsPerPage, setItemsPerPage] = useState<number>(5);
+  const [pageCount, setPageCount] = useState(0);
+  const [itemOffset, setItemOffset] = useState(0);
+  const [itemsPerPage, setItemsPerPage] = useState(5);
+
+  const DEFAULT_ITEMS_PER_PAGE = 5;
 
   useEffect(() => {
     const endOffset = itemOffset + itemsPerPage;
@@ -27,10 +42,6 @@ export default function TasksListsPaginator({ items }: Props) {
   const handlePageClick = (event: { selected: number }) => {
     const newOffset = (event.selected * itemsPerPage) % items.length;
     setItemOffset(newOffset);
-  };
-
-  const paginationSelectBoxCallback = (selectedValue: number) => {
-    setItemsPerPage(selectedValue);
   };
 
   return (
@@ -46,7 +57,13 @@ export default function TasksListsPaginator({ items }: Props) {
 
       <div>
         Items per page: {itemsPerPage}
-        <SelectBox parentCallback={paginationSelectBoxCallback} />
+        <Select
+          onChange={(selected) =>
+            setItemsPerPage(selected?.value ?? DEFAULT_ITEMS_PER_PAGE)
+          }
+          options={paginationOptions}
+          value={paginationOptions.find(({ value }) => value === itemsPerPage)}
+        />
       </div>
 
       <div>
@@ -57,17 +74,6 @@ export default function TasksListsPaginator({ items }: Props) {
           marginPagesDisplayed={2}
           pageCount={pageCount}
           previousLabel="< previous"
-          pageClassName="page-item"
-          pageLinkClassName="page-link"
-          previousClassName="page-item"
-          previousLinkClassName="page-link"
-          nextClassName="page-item"
-          nextLinkClassName="page-link"
-          breakLabel="..."
-          breakClassName="page-item"
-          breakLinkClassName="page-link"
-          containerClassName="pagination"
-          activeClassName="active"
           tw="flex justify-evenly self-stretch object-fill"
         />
       </div>
