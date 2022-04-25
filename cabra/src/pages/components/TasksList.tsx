@@ -1,6 +1,6 @@
 import tw, { styled } from "twin.macro";
 
-import Task from "./Task";
+import TaskListItem from "./TaskListItem";
 import { getTasks } from "../../api/tasks";
 import { useQuery } from "react-query";
 
@@ -17,7 +17,7 @@ export default function TasksList() {
   return (
     <Container>
       {tasks.map((task) => (
-        <Task key={task.id} task={task} detailsLink />
+        <TaskListItem key={task.id} task={task} />
       ))}
     </Container>
   );

@@ -10,7 +10,7 @@ import { routeHelpers } from "../routes";
 export default function HomePage() {
   return (
     <Layout>
-      <div tw="w-[90%] max-w-xl space-y-6 relative z-10">
+      <div tw="w-[90%] max-w-2xl space-y-6 relative z-10">
         <div tw="w-full flex justify-end">
           <Link to={routeHelpers.task.new}>
             <NavigationButton tw="bg-secondary text-stone-50">

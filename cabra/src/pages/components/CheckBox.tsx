@@ -32,7 +32,7 @@ const Label = styled.label<{ size: Size }>`
 
   .checkmark {
     ${tw`place-items-center rounded grid cursor-pointer`}
-    ${tw`bg-slate-300 text-slate-400 transition-colors`}
+    ${tw`bg-slate-300 text-slate-400 transition-all shadow-xl hover:opacity-60`}
     ${({ size }) => labelSizes[size]}
   }
 
