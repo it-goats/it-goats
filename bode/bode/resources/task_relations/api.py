@@ -5,6 +5,7 @@ from flask_smorest import Blueprint, abort
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound
 
+from bode.bode.models.task import Task
 from bode.models.task_relation import TaskRelation
 from bode.resources.task_relations.schemas import (
     SimpleTaskRelationSchema,
@@ -36,9 +37,4 @@ class TasksRelationsById(MethodView):
 class TasksInRelationWith(MethodView):
     @blueprint.response(200, SimpleTaskRelationSchema(many=True))
     def get(self, task_id):
-        try:
-            return TaskRelation.query.filter(TaskRelation.first_task_id == task_id).all() or abort(404)
-        except DataError:
-            abort(404)
-        except NoResultFound:
-            abort(404, message="Item not found.")
+        return TaskRelation.query.join(Task).all()

@@ -1,5 +1,6 @@
 from marshmallow import ValidationError, fields, validate, validates_schema
 
+from bode.bode.resources.tasks.schemas import TaskSchema
 from bode.models.task_relation import RelationType
 from bode.resources.base_schema import BaseSchema
 
@@ -20,3 +21,10 @@ class SimpleTaskRelationSchema(BaseSchema):
     first_task_id = fields.UUID()
     second_task_id = fields.UUID()
     type = fields.String()
+
+
+class CompleteTaskRelationSchema(BaseSchema):
+    relation_id = fields.UUID(dump_only=True)
+    relation_type = fields.String()
+    first_task = fields.Nested(TaskSchema)
+    second_task = fields.Nested(TaskSchema)
