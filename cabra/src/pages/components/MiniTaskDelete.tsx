@@ -7,7 +7,7 @@ interface Props {
   title: string;
   relationId: string;
   taskId: string;
-  onClickDelete: CallableFunction;
+  onClickDelete: (relationId: string, taskId: string) => void;
 }
 
 export default function MiniTaskDelete({
@@ -18,7 +18,7 @@ export default function MiniTaskDelete({
 }: Props) {
   return (
     <div tw="rounded-xl w-full bg-white shadow-2xl text-blue-800  p-1.5">
-      <p tw="flex items-center font-size[small]">
+      <p tw="flex items-center text-sm">
         {title}
         <NavigationButton
           tw="text-stone-50 bg-red-500 flex ml-auto"

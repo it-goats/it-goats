@@ -21,6 +21,16 @@ SYMMETRIC_RELATIONS = [RelationType.Interchangable.value]
 
 
 class TaskRelation(db.Model):
+    """
+    Type meaning:
+    T1 := first_task_id
+    T2 := second_task_id
+
+    type = SUBTASKS -> T2 is subtask of T1
+    type = DEPENDET -> T2 is dependent on T1
+    type = INTERCHANGABLE -> T1 is interchangable with T2 and (T2, T1, INTERCHANGABLE) record is in the database
+    """
+
     __tablename__ = "tasks_relations"
 
     id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)

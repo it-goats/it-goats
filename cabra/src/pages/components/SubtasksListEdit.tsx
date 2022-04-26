@@ -60,9 +60,7 @@ export default function SubtasksListEdit({ parentId }: Props) {
     addSubtask.mutateAsync(inputs);
   };
 
-  const removeRelation = useMutation((relationId: string) =>
-    deleteRelation(relationId)
-  );
+  const removeRelation = useMutation(deleteRelation);
   const removeTask = useMutation((subtaskId: string) => deleteTask(subtaskId), {
     onSuccess: () => {
       client.invalidateQueries(getTasks.cacheKey);
