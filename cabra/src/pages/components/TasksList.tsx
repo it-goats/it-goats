@@ -1,6 +1,6 @@
 import tw, { styled } from "twin.macro";
 
-import TaskListItem from "./TaskListItem";
+import TasksListPaginator from "./TasksListsPaginator";
 import { getTasks } from "../../api/tasks";
 import { useQuery } from "react-query";
 
@@ -12,13 +12,16 @@ export default function TasksList() {
   if (isLoading) return <Container>Loading</Container>;
   if (error || !data?.data) return <Container>Oops</Container>;
 
-  const tasks = data.data.slice().reverse();
+  const tasks = data.data;
 
+  const hasNoTasks = !tasks || tasks.length == 0;
   return (
     <Container>
-      {tasks.map((task) => (
-        <TaskListItem key={task.id} task={task} />
-      ))}
+      {hasNoTasks ? (
+        <h1>No tasks in your agenda. Go ahead, add one!</h1>
+      ) : (
+        <TasksListPaginator items={tasks} />
+      )}
     </Container>
   );
 }
