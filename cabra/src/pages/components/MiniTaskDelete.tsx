@@ -5,15 +5,13 @@ import { TrashIcon } from "@heroicons/react/solid";
 
 interface Props {
   title: string;
-  relationId: string;
   taskId: string;
-  onClickDelete: (relationId: string, taskId: string) => void;
+  onClickDelete: (taskId: string) => void;
 }
 
 export default function MiniTaskDelete({
   title,
   onClickDelete,
-  relationId,
   taskId,
 }: Props) {
   return (
@@ -22,7 +20,7 @@ export default function MiniTaskDelete({
         {title}
         <NavigationButton
           tw="text-stone-50 bg-red-500 flex ml-auto"
-          onClick={() => onClickDelete(relationId, taskId)}
+          onClick={() => onClickDelete(taskId)}
         >
           <TrashIcon height={10} width={10} />
         </NavigationButton>

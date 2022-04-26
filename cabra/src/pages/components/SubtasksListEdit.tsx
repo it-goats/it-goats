@@ -1,9 +1,5 @@
 import { FormEvent, useState } from "react";
-import {
-  createRelation,
-  deleteRelation,
-  getSubtasks,
-} from "../../api/taskRelations";
+import { createRelation, getSubtasks } from "../../api/taskRelations";
 import { createTask, deleteTask, getTask, getTasks } from "../../api/tasks";
 import tw, { styled } from "twin.macro";
 import { useMutation, useQuery, useQueryClient } from "react-query";
@@ -60,7 +56,6 @@ export default function SubtasksListEdit({ parentId }: Props) {
     addSubtask.mutateAsync(inputs);
   };
 
-  const removeRelation = useMutation(deleteRelation);
   const removeTask = useMutation((subtaskId: string) => deleteTask(subtaskId), {
     onSuccess: () => {
       client.invalidateQueries(getTasks.cacheKey);
@@ -68,11 +63,6 @@ export default function SubtasksListEdit({ parentId }: Props) {
       client.invalidateQueries(getSubtasks.cacheKey(parentId));
     },
   });
-
-  const removeSubtask = (relationId: string, subtaskId: string) => {
-    removeRelation.mutateAsync(relationId);
-    removeTask.mutateAsync(subtaskId);
-  };
 
   const { data, isLoading, error } = useQuery(
     getSubtasks.cacheKey(parentId),
@@ -92,9 +82,8 @@ export default function SubtasksListEdit({ parentId }: Props) {
           <MiniTaskDelete
             key={relation.id}
             title={relation.task.title}
-            onClickDelete={removeSubtask}
+            onClickDelete={removeTask.mutateAsync}
             taskId={relation.task.id}
-            relationId={relation.id}
           />
         ))}
       </Container>
