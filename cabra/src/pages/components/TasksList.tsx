@@ -1,6 +1,7 @@
 import tw, { styled } from "twin.macro";
 
-import Task from "./Task";
+import TasksListPaginator from "./TasksListsPaginator";
+import { compareAsc } from "date-fns";
 import { getTasks } from "../../api/tasks";
 import { useQuery } from "react-query";
 
@@ -14,11 +15,21 @@ export default function TasksList() {
 
   const tasks = data.data.slice().reverse();
 
+  const tasksSortedByDueDate = tasks.sort((a, b) =>
+    a.dueDate && b.dueDate
+      ? compareAsc(new Date(a.dueDate), new Date(b.dueDate))
+      : -1
+  );
+
   return (
-    <Container>
-      {tasks.map((task) => (
-        <Task key={task.id} task={task} detailsLink />
-      ))}
-    </Container>
+    <>
+      {!tasks ||
+        (tasks.length == 0 && (
+          <h1>No tasks in your agenda. Go ahead, add one!</h1>
+        ))}
+      {tasks && tasks.length > 0 && (
+        <TasksListPaginator items={tasksSortedByDueDate} />
+      )}
+    </>
   );
 }
