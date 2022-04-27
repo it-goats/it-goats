@@ -36,7 +36,7 @@ class TasksById(MethodView):
     @blueprint.response(200, TaskSchema)
     def put(self, task_data, task_id):
         try:
-            return Task.edit(task_id, **task_data)
+            return task_actions.edit_task(task_id, **task_data)
         except NoResultFound:
             abort(404, message="Item not found.")
 

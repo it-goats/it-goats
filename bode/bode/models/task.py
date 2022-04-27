@@ -31,18 +31,6 @@ class Task(db.Model):
 
         return task
 
-    def edit(task_id, **task_data):
-        task = Task.get(task_id)
-
-        task.title = task_data["title"]
-        task.description = task_data["description"]
-        task.due_date = task_data["due_date"]
-        task.is_done = task_data["is_done"]
-
-        db.session.commit()
-
-        return task
-
     def add_tag(task_id, **tag_data):
         task = Task.get(task_id)
         tag_name = tag_data["name"]
