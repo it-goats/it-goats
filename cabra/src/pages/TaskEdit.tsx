@@ -38,11 +38,11 @@ export default function TaskEditPage() {
   if (isLoading || !data) return <Layout>Loading</Layout>;
   return (
     <Layout>
-      <div tw="w-[90%] max-w-xl">
+      <div tw="w-[90%] max-w-2xl p-4 bg-primary rounded-xl">
         <div tw="flex justify-between items-end mb-4">
           <h1 tw="text-2xl text-stone-50 font-bold ">Edit task</h1>
           <NavigationButton
-            tw="text-stone-50 bg-blue-800"
+            tw="text-stone-50 bg-secondary"
             onClick={() => navigate(-1)}
           >
             <ArrowLeftIcon height={20} width={20} />
@@ -52,7 +52,7 @@ export default function TaskEditPage() {
         <TaskForm task={data.data} onSubmit={editTask.mutateAsync} />
         <div tw="grid gap-4">
           <div tw="w-full">
-            <Label>subtasks:</Label>
+            <Label>Subtasks:</Label>
             <SubtasksListEdit parentId={id} />
           </div>
         </div>
