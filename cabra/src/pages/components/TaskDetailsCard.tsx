@@ -1,8 +1,10 @@
 import { PencilIcon, TrashIcon } from "@heroicons/react/solid";
+
 import CardField from "./CardField";
 import CheckBox from "./CheckBox";
 import { Link } from "react-router-dom";
 import NavigationButton from "./NavigationButton";
+import SubtasksList from "./SubtasksList";
 import { formatDateTime } from "../../utils/dates";
 import { routeHelpers } from "../../routes";
 import styled from "@emotion/styled";
@@ -69,7 +71,7 @@ export default function TaskDetails({ id }: Props) {
           {task.description || "<No description>"}
         </CardField>
         <CardField title="Subtasks" span={3}>
-          {"<No subtasks>"}
+          <SubtasksList parentId={id} />
         </CardField>
         <CardField title="Is dependent on" span={1}>
           {"<No tasks>"}

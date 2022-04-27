@@ -5,7 +5,6 @@ from sqlalchemy.exc import IntegrityError, NoResultFound
 
 from bode.app import db
 from bode.models.tag import Tag
-from bode.models.task_relation import TaskRelation
 from bode.models.task_tag import task_tag
 from bode.models.utc_datetime import UTCDateTime
 
@@ -28,41 +27,6 @@ class Task(db.Model):
         task = Task(**task_data)
 
         db.session.add(task)
-        db.session.commit()
-
-        return task
-
-    def edit(task_id, **task_data):
-        task = Task.get(task_id)
-
-        old_value = task.is_done
-
-        task.title = task_data["title"]
-        task.description = task_data["description"]
-        task.due_date = task_data["due_date"]
-        task.is_done = task_data["is_done"]
-
-        db.session.commit()
-
-        if task_data["is_done"] and not old_value:
-            for interchangable in TaskRelation.get_interchangable_id_by_task_id(task_id):
-                inter_task = Task.get(interchangable[0])
-                if inter_task.is_done:
-                    continue
-                inter_task_data = {
-                    "title": inter_task.title,
-                    "description": inter_task.description,
-                    "due_date": inter_task.due_date,
-                    "is_done": True,
-                }
-                Task.edit(interchangable[0], **inter_task_data)
-
-        return task
-
-    def delete(task_id):
-        task = Task.get(task_id)
-
-        db.session.delete(task)
         db.session.commit()
 
         return task
