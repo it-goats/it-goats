@@ -21,6 +21,16 @@ SYMMETRIC_RELATIONS = [RelationType.Interchangable.value]
 
 
 class TaskRelation(db.Model):
+    """
+    Type meaning:
+    T1 := first_task_id
+    T2 := second_task_id
+
+    type = SUBTASKS -> T2 is subtask of T1
+    type = DEPENDET -> T2 is dependent on T1
+    type = INTERCHANGABLE -> T1 is interchangable with T2 and (T2, T1, INTERCHANGABLE) record is in the database
+    """
+
     __tablename__ = "tasks_relations"
 
     id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
@@ -71,7 +81,21 @@ class TaskRelation(db.Model):
 
         return relation
 
+    def get_all_relations_by_task_id(task_id):
+        return (
+            TaskRelation.query.filter(TaskRelation.first_task_id == task_id).all()
+            + TaskRelation.query.filter(TaskRelation.second_task_id == task_id).all()
+        )
+
+    def get_subtasks_id_by_task_id(task_id):
+        return (
+            TaskRelation.query.with_entities(TaskRelation.second_task_id)
+            .filter(TaskRelation.first_task_id == task_id)
+            .filter(TaskRelation.type == RelationType.Subtask.value)
+            .all()
+        )
+
     def __repr__(self):
         return f"""<TaskRelation
-        {self.first_task_id} <{self.relationship}> {self.second_task_id}
+        {self.first_task_id} <{self.type}> {self.second_task_id}
         >"""
