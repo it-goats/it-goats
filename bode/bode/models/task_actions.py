@@ -22,7 +22,7 @@ def delete_task(task_id):
     return task
 
 
-def edit(task_id, **task_data):
+def edit_task(task_id, **task_data):
     """Function edit task. If task is checked, all interchangable task will be checked."""
 
     def is_interchangable_relation(relation):
@@ -48,6 +48,6 @@ def edit(task_id, **task_data):
                     "due_date": related_task.due_date,
                     "is_done": True,
                 }
-                edit(str(related_task.id), **inter_task_data)
+                edit_task(str(related_task.id), **inter_task_data)
 
     return task
