@@ -71,6 +71,14 @@ class TaskRelation(db.Model):
 
         return relation
 
+    def get_interchangable_id_by_task_id(task_id):
+        return (
+            TaskRelation.query.with_entities(TaskRelation.second_task_id)
+            .filter(TaskRelation.first_task_id == task_id)
+            .filter(TaskRelation.type == RelationType.Interchangable.value)
+            .all()
+        )
+
     def __repr__(self):
         return f"""<TaskRelation
         {self.first_task_id} <{self.relationship}> {self.second_task_id}
