@@ -26,8 +26,6 @@ class SimpleTaskRelationSchema(BaseSchema):
 
 
 class DirectedRelationType(Enum):
-    """Enum containing strings used for requesting relation types. It is used to handle unsymmetric relations."""
-
     IsDependentOn = "is_dependent_on"
     DependsOn = "depends_on"
     Subtask = "subtask"
