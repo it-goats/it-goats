@@ -73,7 +73,7 @@ export default function TaskDetails({ id }: Props) {
           {task.description || "<No description>"}
         </CardField>
         <CardField title="Subtasks" span={3}>
-          <SubtasksList parentId={id} />
+          <SubtasksList parentTaskId={id} />
         </CardField>
         <CardField title="Is dependent on" span={1}>
           <RelatedTasksList
