@@ -1,38 +1,38 @@
-import tw, { styled } from "twin.macro";
+import "twin.macro";
 
 import { DirectedRelationType } from "../../types/taskRelation";
 import RelatedTask from "./RelatedTask";
 import { getRelatedTasks } from "../../api/taskRelations";
 import { useQuery } from "react-query";
 
-interface RelatedTasksListProps {
+interface Props {
   relationType: DirectedRelationType;
   parentTaskId: string;
+  className?: string;
 }
-
-const Container = styled.div(tw``);
 
 export default function RelatedTasksList({
   relationType,
   parentTaskId,
-}: RelatedTasksListProps) {
+  className,
+}: Props) {
   const { data, isLoading, error } = useQuery(
     getRelatedTasks.cacheKey(parentTaskId, relationType),
     () => getRelatedTasks.run(parentTaskId, relationType)
   );
 
-  if (isLoading) return <Container>Loading</Container>;
-  if (error) return <Container>Oops</Container>;
-  if (!data?.data) return <Container />;
+  if (isLoading) return <div>Loading</div>;
+  if (error) return <div>Oops</div>;
+  if (!data?.data) return <div />;
 
   const subtasks = data.data.slice().reverse();
 
   if (subtasks.length == 0) {
-    return <Container>{"<No tasks>"}</Container>;
+    return <div>{"<No tasks>"}</div>;
   }
 
   return (
-    <Container>
+    <div className={className}>
       {subtasks.map((relatedTask) => (
         <RelatedTask
           key={relatedTask.relationId}
@@ -41,6 +41,6 @@ export default function RelatedTasksList({
           parentTaskId={parentTaskId}
         />
       ))}
-    </Container>
+    </div>
   );
 }
