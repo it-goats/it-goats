@@ -3,6 +3,7 @@ import "twin.macro";
 import { DirectedRelationType } from "../../types/taskRelation";
 import RelatedTask from "./RelatedTask";
 import { getRelatedTasks } from "../../api/taskRelations";
+import { routeHelpers } from "../../routes";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "react-query";
 
@@ -35,14 +36,14 @@ export default function RelatedTasksList({
 
   return (
     <div className={className}>
-      {subtasks.map((relatedTask) => (
+      {subtasks.map(({ relationId, task }) => (
         <RelatedTask
-          key={relatedTask.relationId}
-          task={relatedTask.task}
+          key={relationId}
+          task={task}
           relationType={relationType}
           parentTaskId={parentTaskId}
           onClick={(taskId: string) => {
-            navigate("../task/" + taskId);
+            navigate(routeHelpers.task.details(taskId));
           }}
         />
       ))}
