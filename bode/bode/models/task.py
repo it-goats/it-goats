@@ -5,7 +5,6 @@ from sqlalchemy.exc import IntegrityError, NoResultFound
 
 from bode.app import db
 from bode.models.tag import Tag
-from bode.models.task_relation import TaskRelation
 from bode.models.task_tag import task_tag
 from bode.models.utc_datetime import UTCDateTime
 
@@ -40,21 +39,6 @@ class Task(db.Model):
         task.due_date = task_data["due_date"]
         task.is_done = task_data["is_done"]
 
-        db.session.commit()
-
-        return task
-
-    def delete(task_id):
-        subtasks = TaskRelation.get_subtasks_id_by_task_id(task_id)
-
-        for relation in TaskRelation.get_all_relations_by_task_id(task_id):
-            TaskRelation.delete(relation.id)
-        for subtask in subtasks:
-            Task.delete(subtask[0])
-
-        task = Task.get(task_id)
-
-        db.session.delete(task)
         db.session.commit()
 
         return task

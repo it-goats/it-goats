@@ -78,12 +78,12 @@ export default function SubtasksListEdit({ parentId }: Props) {
   return (
     <div>
       <Container>
-        {subtasks.map((relation) => (
+        {subtasks.map((relatedTask) => (
           <MiniTaskDelete
-            key={relation.id}
-            title={relation.task.title}
+            key={relatedTask.relationId}
+            title={relatedTask.task.title}
             onClickDelete={removeTask.mutateAsync}
-            taskId={relation.task.id}
+            taskId={relatedTask.task.id}
           />
         ))}
       </Container>

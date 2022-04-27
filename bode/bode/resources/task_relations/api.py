@@ -15,7 +15,6 @@ from bode.resources.task_relations.schemas import (
     RelatedTaskSchema,
     SimpleTaskRelationSchema,
     TaskRelationInputSchema,
-    TasksRelatedSchema,
 )
 
 blueprint = Blueprint("task-relations", "task-relations", url_prefix="/task-relations")

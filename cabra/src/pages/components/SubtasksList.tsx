@@ -75,7 +75,7 @@ export default function SubtasksList({ parentId }: PropsList) {
     <Container>
       {subtasks.map((relation) => (
         <Subtask
-          key={relation.id}
+          key={relation.relationId}
           subtask={relation.task}
           parentId={parentId}
         />

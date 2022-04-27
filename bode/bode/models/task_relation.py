@@ -100,6 +100,9 @@ class TaskRelation(db.Model):
             .all()
         )
 
+    def get_related_tasks(task_id):
+        return TaskRelation.get_lhs_related_tasks(task_id) + TaskRelation.get_rhs_related_tasks(task_id)
+
     def __repr__(self):
         return f"""<TaskRelation
         {self.first_task_id} <{self.type}> {self.second_task_id}
