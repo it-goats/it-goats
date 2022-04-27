@@ -7,7 +7,8 @@ export interface ITaskRelation {
   type: string;
 }
 
-export interface ITasksRelated {
-  id: string;
+export interface IRelatedTask {
   task: ITask;
+  relationType: string;
+  relationId: string;
 }

@@ -3,6 +3,7 @@ from flask_smorest import Blueprint, abort
 from psycopg2 import IntegrityError
 from sqlalchemy.exc import DataError, NoResultFound
 
+from bode.models import task_actions
 from bode.models.task import Task
 from bode.resources.tags.schemas import TagInputSchema
 from bode.resources.tasks.schemas import TaskInputSchema, TaskSchema
@@ -42,7 +43,7 @@ class TasksById(MethodView):
     @blueprint.response(200, TaskSchema)
     def delete(self, task_id):
         try:
-            return Task.delete(task_id)
+            return task_actions.delete_task(task_id)
         except NoResultFound:
             abort(404, message="Item not found.")
 

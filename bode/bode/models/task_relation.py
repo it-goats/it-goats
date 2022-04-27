@@ -5,6 +5,7 @@ from enum import Enum
 from sqlalchemy.dialects.postgresql import ENUM, UUID
 
 from bode.app import db
+from bode.models.task import Task
 
 
 class RelationType(Enum):
@@ -81,19 +82,26 @@ class TaskRelation(db.Model):
 
         return relation
 
-    def get_all_relations_by_task_id(task_id):
+    def get_lhs_related_tasks(task_id, filters=list()):
+        all_filters = [TaskRelation.first_task_id == task_id] + filters
         return (
-            TaskRelation.query.filter(TaskRelation.first_task_id == task_id).all()
-            + TaskRelation.query.filter(TaskRelation.second_task_id == task_id).all()
-        )
-
-    def get_subtasks_id_by_task_id(task_id):
-        return (
-            TaskRelation.query.with_entities(TaskRelation.second_task_id)
-            .filter(TaskRelation.first_task_id == task_id)
-            .filter(TaskRelation.type == RelationType.Subtask.value)
+            db.session.query(TaskRelation, Task)
+            .filter(*all_filters)
+            .join(Task, TaskRelation.second_task_id == Task.id)
             .all()
         )
+
+    def get_rhs_related_tasks(task_id, filters=list()):
+        all_filters = [TaskRelation.second_task_id == task_id] + filters
+        return (
+            db.session.query(TaskRelation, Task)
+            .filter(*all_filters)
+            .join(Task, TaskRelation.first_task_id == Task.id)
+            .all()
+        )
+
+    def get_related_tasks(task_id):
+        return TaskRelation.get_lhs_related_tasks(task_id) + TaskRelation.get_rhs_related_tasks(task_id)
 
     def __repr__(self):
         return f"""<TaskRelation

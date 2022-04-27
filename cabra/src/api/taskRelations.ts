@@ -1,11 +1,11 @@
-import { ITaskRelation, ITasksRelated } from "../types/taskRelation";
+import { IRelatedTask, ITaskRelation } from "../types/taskRelation";
 
 import axios from "axios";
 
 export const getSubtasks = {
-  cacheKey: (id: string) => ["task-relations", id, "SUBTASK"],
+  cacheKey: (id: string) => ["task-relations", id, "subtask"],
   run: (id: string) =>
-    axios.get<ITasksRelated[]>(`/task-relations/${id}/SUBTASK`),
+    axios.get<IRelatedTask[]>(`/task-relations/${id}?relationType=subtask`),
 };
 
 export const createRelation = (data: Omit<ITaskRelation, "id">) =>
