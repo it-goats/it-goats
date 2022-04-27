@@ -4,13 +4,19 @@ import { createTask, deleteTask, getTask, getTasks } from "../../api/tasks";
 import tw, { styled } from "twin.macro";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 
-import AddDependenceButton from "./AddDependenceButton";
 import { ITask } from "../../types/task";
 import { ITaskRelation } from "../../types/taskRelation";
 import MiniTaskDelete from "./MiniTaskDelete";
+import { PlusIcon } from "@heroicons/react/solid";
 
-const Container = styled.div(tw`text-gray-50 w-full space-y-4`);
-const fieldStyles = tw`w-full px-4 py-2 rounded-xl text-blue-800 placeholder:text-blue-800/60 font-size[small]`;
+const Container = styled.div(tw`text-gray-50 w-full space-y-2`);
+const AddSubtaskButton = styled.button(
+  tw`bg-secondary p-2 text-white font-semibold`,
+  tw`rounded shadow-2xl flex gap-2 transition-transform transform hover:scale-105`
+);
+const SubtaskInput = styled.input(
+  tw`form-input w-full px-4 py-2 rounded-lg shadow-2xl bg-tertiary text-black placeholder:text-primary/60`
+);
 
 const emptyTask: Omit<ITask, "id"> = {
   description: "",
@@ -77,33 +83,31 @@ export default function SubtasksListEdit({ parentId }: Props) {
 
   return (
     <div>
-      <Container>
-        {subtasks.map((relatedTask) => (
-          <MiniTaskDelete
-            key={relatedTask.relationId}
-            title={relatedTask.task.title}
-            onClickDelete={removeTask.mutateAsync}
-            taskId={relatedTask.task.id}
-          />
-        ))}
-      </Container>
       <form onSubmit={handleSubmitSubtask}>
-        <div tw="rounded-xl w-full text-blue-800  p-1.5">
-          <p tw="flex items-center">
-            <input
-              css={[tw`form-input`, fieldStyles]}
-              id="subtask"
-              type="text"
-              value={val}
-              maxLength={80}
-              required
-              onChange={(event) => setVal(event.target.value)}
-            />
-          </p>
-          <p tw="flex items-center">
-            <AddDependenceButton type="submit">+add</AddDependenceButton>
-          </p>
+        <div tw="w-full flex gap-4 mb-4">
+          <SubtaskInput
+            id="subtask"
+            maxLength={80}
+            onChange={(event) => setVal(event.target.value)}
+            placeholder="Subtask name"
+            required
+            type="text"
+            value={val}
+          />
+          <AddSubtaskButton type="submit">
+            <PlusIcon width={24} height={24} /> Add
+          </AddSubtaskButton>
         </div>
+        <Container>
+          {subtasks.map((relatedTask) => (
+            <MiniTaskDelete
+              key={relatedTask.relationId}
+              title={relatedTask.task.title}
+              onClickDelete={removeTask.mutateAsync}
+              taskId={relatedTask.task.id}
+            />
+          ))}
+        </Container>
       </form>
     </div>
   );

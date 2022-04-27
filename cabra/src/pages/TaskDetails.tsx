@@ -14,7 +14,7 @@ export default function TaskDetailsPage() {
   return (
     <Layout>
       <NavigationButton
-        tw="text-stone-50 bg-blue-800"
+        tw="text-stone-50 bg-secondary"
         onClick={() => navigate(-1)}
       >
         <ArrowLeftIcon height={20} width={20} /> Go Back

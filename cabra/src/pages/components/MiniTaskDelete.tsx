@@ -15,7 +15,7 @@ export default function MiniTaskDelete({
   taskId,
 }: Props) {
   return (
-    <div tw="rounded-xl w-full bg-white shadow-2xl text-blue-800  p-1.5">
+    <div tw="rounded-xl w-full bg-tertiary shadow-2xl text-black  p-1.5">
       <p tw="flex items-center text-sm">
         {title}
         <NavigationButton

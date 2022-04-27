@@ -28,24 +28,24 @@ const schema = yup.object({
   dueDate: yup.date().nullable(),
 });
 
-const fieldStyles = tw`w-full px-4 py-2 rounded shadow-2xl text-blue-800 placeholder:text-blue-800/60`;
+const fieldStyles = tw`w-full px-4 py-2 rounded-lg shadow-2xl bg-tertiary text-black placeholder:text-primary/60`;
 
 const Form = styled.form`
-  ${tw`flex flex-col space-y-4 w-full`}
+  ${tw`flex flex-col w-full`}
 
   .react-datepicker-wrapper {
     ${tw` text-blue-800 placeholder:text-blue-800/60`}
 
     input[type="text"] {
       max-width: 100%;
-      ${tw`rounded shadow-2xl`}
+      ${tw`bg-tertiary rounded-lg shadow-2xl text-black`}
     }
   }
 `;
-const Label = styled.label(tw`text-gray-50`);
+const Label = styled.label(tw`text-gray-50 font-bold`);
 const SubmitButton = styled.button(
-  tw`bg-gradient-to-r from-green-400 to-cyan-500 py-2 text-white font-semibold`,
-  tw`rounded shadow-2xl transition-transform transform hover:scale-105 disabled:opacity-50`
+  tw`bg-green-500 mt-4 py-2 text-white font-semibold`,
+  tw`rounded shadow-2xl transition-transform transform hover:scale-[102%] disabled:opacity-50`
 );
 
 export default function TaskForm({ task, onSubmit }: Props) {
@@ -83,21 +83,32 @@ export default function TaskForm({ task, onSubmit }: Props) {
 
   return (
     <Form onSubmit={handleSubmit(internalOnSubmit)}>
-      <div tw="grid gap-4 grid-cols-1 sm:grid-cols-[1fr 200px]">
-        <div tw="w-full">
-          <Label htmlFor="task-title">Title</Label>
+      <fieldset tw="space-y-2">
+        <div tw="space-y-2">
+          <Label htmlFor="task-title">Name:</Label>
           <input
             css={[tw`form-input`, fieldStyles]}
             id="task-title"
             type="text"
             maxLength={80}
-            placeholder="Your next task... "
+            placeholder="My new task"
             required
             {...register("title")}
           />
         </div>
-        <div tw="w-full">
-          <Label htmlFor="title">Due date</Label>
+        <div tw="space-y-2">
+          <Label htmlFor="task-description">Description:</Label>
+          <textarea
+            css={[tw`form-textarea text-sm`, fieldStyles]}
+            id="task-description"
+            maxLength={1024}
+            placeholder="My new task details"
+            rows={6}
+            {...register("description")}
+          ></textarea>
+        </div>
+        <div tw="space-y-2">
+          <Label htmlFor="title">Due date:</Label>
           <Controller
             control={control}
             name="dueDate"
@@ -118,22 +129,11 @@ export default function TaskForm({ task, onSubmit }: Props) {
             )}
           />
         </div>
-      </div>
-      <div>
-        <Label htmlFor="task-description">Description</Label>
-        <textarea
-          css={[tw`form-textarea text-sm`, fieldStyles]}
-          id="task-description"
-          maxLength={1024}
-          placeholder="Some description..."
-          rows={6}
-          {...register("description")}
-        ></textarea>
-      </div>
+      </fieldset>
       <SubmitButton type="submit" disabled={isSubmitting}>
         Submit!
       </SubmitButton>
-      <div tw="text-orange-500 pt-1">&nbsp;{errors.title?.message}</div>
+      <div tw="text-red-500 pt-1">&nbsp;{errors.title?.message}</div>
     </Form>
   );
 }
