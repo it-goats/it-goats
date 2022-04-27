@@ -2,8 +2,10 @@ import { PencilIcon, TrashIcon } from "@heroicons/react/solid";
 
 import CardField from "./CardField";
 import CheckBox from "./CheckBox";
+import { DirectedRelationType } from "../../types/taskRelation";
 import { Link } from "react-router-dom";
 import NavigationButton from "./NavigationButton";
+import RelatedTasksList from "./RelatedTaskList";
 import SubtasksList from "./SubtasksList";
 import { formatDateTime } from "../../utils/dates";
 import { routeHelpers } from "../../routes";
@@ -68,16 +70,25 @@ export default function TaskDetails({ id }: Props) {
           {task.description || "<No description>"}
         </CardField>
         <CardField title="Subtasks" span={3}>
-          <SubtasksList parentId={id} />
+          <SubtasksList parentTaskId={id} />
         </CardField>
         <CardField title="Is dependent on" span={1}>
-          {"<No tasks>"}
+          <RelatedTasksList
+            relationType={DirectedRelationType.IsDependentOn}
+            parentTaskId={id}
+          />
         </CardField>
         <CardField title="Depends on" span={1}>
-          {"<No tasks>"}
+          <RelatedTasksList
+            relationType={DirectedRelationType.DependsOn}
+            parentTaskId={id}
+          />
         </CardField>
         <CardField title="Interchangeable tasks" span={1}>
-          {"<No tasks>"}
+          <RelatedTasksList
+            relationType={DirectedRelationType.Interchangable}
+            parentTaskId={id}
+          />
         </CardField>
       </Content>
     </div>

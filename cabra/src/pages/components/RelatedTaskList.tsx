@@ -5,16 +5,20 @@ import RelatedTask from "./RelatedTask";
 import { getRelatedTasks } from "../../api/taskRelations";
 import { useQuery } from "react-query";
 
-interface Props {
+interface RelatedTasksListProps {
+  relationType: DirectedRelationType;
   parentTaskId: string;
 }
 
-const Container = styled.div(tw`flex flex-row`);
+const Container = styled.div(tw``);
 
-export default function SubtasksList({ parentTaskId }: Props) {
+export default function RelatedTasksList({
+  relationType,
+  parentTaskId,
+}: RelatedTasksListProps) {
   const { data, isLoading, error } = useQuery(
-    getRelatedTasks.cacheKey(parentTaskId, DirectedRelationType.Subtask),
-    () => getRelatedTasks.run(parentTaskId, DirectedRelationType.Subtask)
+    getRelatedTasks.cacheKey(parentTaskId, relationType),
+    () => getRelatedTasks.run(parentTaskId, relationType)
   );
 
   if (isLoading) return <Container>Loading</Container>;
@@ -24,7 +28,7 @@ export default function SubtasksList({ parentTaskId }: Props) {
   const subtasks = data.data.slice().reverse();
 
   if (subtasks.length == 0) {
-    return <div>{"<No tasks>"}</div>;
+    return <Container>{"<No tasks>"}</Container>;
   }
 
   return (
@@ -33,7 +37,7 @@ export default function SubtasksList({ parentTaskId }: Props) {
         <RelatedTask
           key={relatedTask.relationId}
           task={relatedTask.task}
-          relationType={DirectedRelationType.Subtask}
+          relationType={relationType}
           parentTaskId={parentTaskId}
         />
       ))}
