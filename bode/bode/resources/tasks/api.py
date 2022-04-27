@@ -15,7 +15,7 @@ blueprint = Blueprint("tasks", "tasks", url_prefix="/tasks")
 class Tasks(MethodView):
     @blueprint.response(200, TaskSchema(many=True))
     def get(self):
-        return Task.query.all()
+        return Task.query.order_by(Task.is_done, Task.due_date).all()
 
     @blueprint.arguments(TaskInputSchema)
     @blueprint.response(201, TaskSchema)

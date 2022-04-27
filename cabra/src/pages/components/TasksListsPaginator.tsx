@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { ITask } from "../../types/task";
 import ReactPaginate from "react-paginate";
 import Select from "react-select";
-import Task from "./Task";
+import TaskListItem from "./TaskListItem";
 
 const Container = styled.div(tw`text-gray-50 w-full space-y-4`);
 
@@ -17,8 +17,6 @@ interface PaginationOption {
 }
 
 const paginationOptions: PaginationOption[] = [
-  { value: 1, label: "1" },
-  { value: 2, label: "2" },
   { value: 5, label: "5" },
   { value: 10, label: "10" },
   { value: 20, label: "20" },
@@ -48,14 +46,13 @@ export default function TasksListsPaginator({ items }: Props) {
     <>
       <div>
         <Container>
-          {paginatedItems &&
-            paginatedItems.map((item: ITask) => (
-              <Task key={item.id} task={item} detailsLink />
-            ))}
+          {paginatedItems?.map((item: ITask) => (
+            <TaskListItem key={item.id} task={item} />
+          ))}
         </Container>
       </div>
 
-      <div>
+      <div tw="text-primary">
         Items per page: {itemsPerPage}
         <Select
           onChange={(selected) =>
@@ -66,7 +63,7 @@ export default function TasksListsPaginator({ items }: Props) {
         />
       </div>
 
-      <div>
+      <div tw="text-primary">
         <ReactPaginate
           nextLabel="next >"
           onPageChange={handlePageClick}

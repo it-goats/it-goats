@@ -52,7 +52,11 @@ export default function RelatedTask({
     <Container>
       <p tw="font-bold text-base">{task.title}</p>
       <p tw="place-self-end">
-        <Checkbox checked={task.isDone} onChange={handleIsDoneChange} />
+        <Checkbox
+          id={task.id}
+          checked={task.isDone}
+          onChange={handleIsDoneChange}
+        />
       </p>
       {errorMessage && (
         <p tw="flex items-center text-orange-500 pt-1">&nbsp;{errorMessage}</p>
