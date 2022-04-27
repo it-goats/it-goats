@@ -97,7 +97,7 @@ export default function TaskForm({ task, onSubmit }: Props) {
           />
         </div>
         <div tw="space-y-2">
-          <Label htmlFor="task-description">Description</Label>
+          <Label htmlFor="task-description">Description:</Label>
           <textarea
             css={[tw`form-textarea text-sm`, fieldStyles]}
             id="task-description"
@@ -108,7 +108,7 @@ export default function TaskForm({ task, onSubmit }: Props) {
           ></textarea>
         </div>
         <div tw="space-y-2">
-          <Label htmlFor="title">Due date</Label>
+          <Label htmlFor="title">Due date:</Label>
           <Controller
             control={control}
             name="dueDate"

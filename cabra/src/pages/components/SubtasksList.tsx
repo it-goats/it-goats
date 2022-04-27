@@ -46,7 +46,12 @@ const Subtask = ({ subtask, parentId }: Props) => {
     <div tw="rounded-xl bg-tertiary text-secondary p-1.5 grid">
       <p tw="font-medium text-xs">{subtask.title}</p>
       <p tw="place-self-end">
-        <Checkbox checked={subtask.isDone} onChange={handleIsDoneChange} />
+        <Checkbox
+          id={subtask.id}
+          checked={subtask.isDone}
+          onChange={handleIsDoneChange}
+          size="sm"
+        />
       </p>
       {errorMessage && (
         <p tw="flex items-center text-orange-500 pt-1">&nbsp;{errorMessage}</p>
