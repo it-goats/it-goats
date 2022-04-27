@@ -5,6 +5,7 @@ from enum import Enum
 from sqlalchemy.dialects.postgresql import ENUM, UUID
 
 from bode.app import db
+from bode.models.task import Task
 
 
 class RelationType(Enum):
@@ -18,20 +19,6 @@ class RelationType(Enum):
 
 
 SYMMETRIC_RELATIONS = [RelationType.Interchangable.value]
-
-
-class RelationTypeRequest(Enum):
-    """Enum containing strings used for requesting relation types. It is used to handle unsymmetric relations."""
-
-    IsDependentOn = "is_dependent_on"
-    DependsOn = "depends_on"
-    Subtask = "subtask"
-    Supertask = "supertask"
-    Interchangable = "interchangable"
-
-    @classmethod
-    def list(cls):
-        return [c.value for c in cls]
 
 
 class TaskRelation(db.Model):
@@ -84,6 +71,24 @@ class TaskRelation(db.Model):
         db.session.commit()
 
         return relation
+
+    def get_lhs_related_tasks(task_id, filters=list()):
+        all_filters = [TaskRelation.first_task_id == task_id] + filters
+        return (
+            db.session.query(TaskRelation, Task)
+            .filter(*all_filters)
+            .join(Task, TaskRelation.second_task_id == Task.id)
+            .all()
+        )
+
+    def get_rhs_related_tasks(task_id, filters=list()):
+        all_filters = [TaskRelation.second_task_id == task_id] + filters
+        return (
+            db.session.query(TaskRelation, Task)
+            .filter(*all_filters)
+            .join(Task, TaskRelation.first_task_id == Task.id)
+            .all()
+        )
 
     def __repr__(self):
         return f"""<TaskRelation
