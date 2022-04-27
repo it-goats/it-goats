@@ -3,6 +3,7 @@ import "twin.macro";
 import { DirectedRelationType } from "../../types/taskRelation";
 import RelatedTask from "./RelatedTask";
 import { getRelatedTasks } from "../../api/taskRelations";
+import { useNavigate } from "react-router-dom";
 import { useQuery } from "react-query";
 
 interface Props {
@@ -20,6 +21,7 @@ export default function RelatedTasksList({
     getRelatedTasks.cacheKey(parentTaskId, relationType),
     () => getRelatedTasks.run(parentTaskId, relationType)
   );
+  const navigate = useNavigate();
 
   if (isLoading) return <div>Loading</div>;
   if (error) return <div>Oops</div>;
@@ -39,6 +41,9 @@ export default function RelatedTasksList({
           task={relatedTask.task}
           relationType={relationType}
           parentTaskId={parentTaskId}
+          onClick={(taskId: string) => {
+            navigate("../task/" + taskId);
+          }}
         />
       ))}
     </div>

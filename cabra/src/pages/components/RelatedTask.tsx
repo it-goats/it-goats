@@ -20,7 +20,7 @@ export default function RelatedTask({
   task,
   relationType,
   parentTaskId,
-  onClick = (taskId: string) => alert("Clicked on: " + taskId),
+  onClick,
 }: Props) {
   const [errorMessage, setErrorMessage] = useState("");
   const client = useQueryClient();
@@ -49,8 +49,10 @@ export default function RelatedTask({
 
   return (
     <div
-      onClick={() => onClick(task.id)}
-      tw="rounded-xl bg-tertiary text-secondary m-1.5 p-1.5 grid"
+      onClick={() => {
+        if (onClick != null) onClick(task.id);
+      }}
+      tw="rounded-xl bg-tertiary text-secondary m-1.5 p-1.5 grid cursor-pointer hover:opacity-80 hover:scale-105"
     >
       <p tw="font-bold text-base">{task.title}</p>
       <p tw="place-self-end">

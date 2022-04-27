@@ -6,12 +6,6 @@ import {
 
 import axios from "axios";
 
-export const getSubtasks = {
-  cacheKey: (id: string) => ["task-relations", id, "subtask"],
-  run: (id: string) =>
-    axios.get<IRelatedTask[]>(`/task-relations/${id}?relationType=subtask`),
-};
-
 export const getRelatedTasks = {
   cacheKey: (taskId: string, type: DirectedRelationType) => [
     "task-relations",
