@@ -35,10 +35,7 @@ class Task(db.Model):
     def edit(task_id, **task_data):
         task = Task.get(task_id)
 
-        if task_data["is_done"] and not task.is_done:
-            for interchangable in TaskRelation.get_interchangable_id_by_task_id(task_id):
-                inter_task = Task.get(interchangable[0])
-                inter_task.is_done = True
+        old_value = task.is_done
 
         task.title = task_data["title"]
         task.description = task_data["description"]
@@ -46,6 +43,19 @@ class Task(db.Model):
         task.is_done = task_data["is_done"]
 
         db.session.commit()
+
+        if task_data["is_done"] and not old_value:
+            for interchangable in TaskRelation.get_interchangable_id_by_task_id(task_id):
+                inter_task = Task.get(interchangable[0])
+                if inter_task.is_done:
+                    continue
+                inter_task_data = {
+                    "title": inter_task.title,
+                    "description": inter_task.description,
+                    "due_date": inter_task.due_date,
+                    "is_done": True,
+                }
+                Task.edit(interchangable[0], **inter_task_data)
 
         return task
 
