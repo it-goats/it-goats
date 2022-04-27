@@ -5,6 +5,7 @@ from enum import Enum
 from sqlalchemy.dialects.postgresql import ENUM, UUID
 
 from bode.app import db
+from bode.models.task import Task
 
 
 class RelationType(Enum):
@@ -21,6 +22,16 @@ SYMMETRIC_RELATIONS = [RelationType.Interchangable.value]
 
 
 class TaskRelation(db.Model):
+    """
+    Type meaning:
+    T1 := first_task_id
+    T2 := second_task_id
+
+    type = SUBTASKS -> T2 is subtask of T1
+    type = DEPENDET -> T2 is dependent on T1
+    type = INTERCHANGABLE -> T1 is interchangable with T2 and (T2, T1, INTERCHANGABLE) record is in the database
+    """
+
     __tablename__ = "tasks_relations"
 
     id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
@@ -71,7 +82,28 @@ class TaskRelation(db.Model):
 
         return relation
 
+    def get_lhs_related_tasks(task_id, filters=list()):
+        all_filters = [TaskRelation.first_task_id == task_id] + filters
+        return (
+            db.session.query(TaskRelation, Task)
+            .filter(*all_filters)
+            .join(Task, TaskRelation.second_task_id == Task.id)
+            .all()
+        )
+
+    def get_rhs_related_tasks(task_id, filters=list()):
+        all_filters = [TaskRelation.second_task_id == task_id] + filters
+        return (
+            db.session.query(TaskRelation, Task)
+            .filter(*all_filters)
+            .join(Task, TaskRelation.first_task_id == Task.id)
+            .all()
+        )
+
+    def get_related_tasks(task_id):
+        return TaskRelation.get_lhs_related_tasks(task_id) + TaskRelation.get_rhs_related_tasks(task_id)
+
     def __repr__(self):
         return f"""<TaskRelation
-        {self.first_task_id} <{self.relationship}> {self.second_task_id}
+        {self.first_task_id} <{self.type}> {self.second_task_id}
         >"""

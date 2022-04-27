@@ -43,14 +43,6 @@ class Task(db.Model):
 
         return task
 
-    def delete(task_id):
-        task = Task.get(task_id)
-
-        db.session.delete(task)
-        db.session.commit()
-
-        return task
-
     def add_tag(task_id, **tag_data):
         task = Task.get(task_id)
         tag_name = tag_data["name"]
