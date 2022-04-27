@@ -15,6 +15,7 @@ from bode.resources.task_relations.schemas import (
     RelatedTaskSchema,
     SimpleTaskRelationSchema,
     TaskRelationInputSchema,
+    TasksRelatedSchema,
 )
 
 blueprint = Blueprint("task-relations", "task-relations", url_prefix="/task-relations")
@@ -29,6 +30,10 @@ class TasksRelations(MethodView):
             return TaskRelation.create(**relation_data)
         except IntegrityError:
             abort(422, message="Relation already exists")
+
+    @blueprint.response(200, SimpleTaskRelationSchema(many=True))
+    def get(self):
+        return TaskRelation.query.all()
 
 
 @blueprint.route("/<relation_id>")
