@@ -16,7 +16,7 @@ interface PropsList {
   parentId: string;
 }
 
-const Container = styled.div(tw`space-x-2 space-y-3 grid grid-cols-4`);
+const Container = styled.div(tw`grid grid-cols-4 gap-3`);
 
 const Subtask = ({ subtask, parentId }: Props) => {
   const [errorMessage, setErrorMessage] = useState("");
