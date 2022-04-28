@@ -1,11 +1,11 @@
+import { DirectedRelationType, ITaskRelation } from "../../types/taskRelation";
 import { FormEvent, useState } from "react";
-import { createRelation, getSubtasks } from "../../api/taskRelations";
+import { createRelation, getRelatedTasks } from "../../api/taskRelations";
 import { createTask, deleteTask, getTask, getTasks } from "../../api/tasks";
 import tw, { styled } from "twin.macro";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 
 import { ITask } from "../../types/task";
-import { ITaskRelation } from "../../types/taskRelation";
 import MiniTaskDelete from "./MiniTaskDelete";
 import { PlusIcon } from "@heroicons/react/solid";
 
@@ -38,7 +38,9 @@ export default function SubtasksListEdit({ parentId }: Props) {
     onSuccess: () => {
       client.invalidateQueries(getTasks.cacheKey);
       client.invalidateQueries(getTask.cacheKey(parentId));
-      client.invalidateQueries(getSubtasks.cacheKey(parentId));
+      client.invalidateQueries(
+        getRelatedTasks.cacheKey(parentId, DirectedRelationType.Subtask)
+      );
     },
   });
   const addSubtask = useMutation(createTask, {
@@ -66,13 +68,15 @@ export default function SubtasksListEdit({ parentId }: Props) {
     onSuccess: () => {
       client.invalidateQueries(getTasks.cacheKey);
       client.invalidateQueries(getTask.cacheKey(parentId));
-      client.invalidateQueries(getSubtasks.cacheKey(parentId));
+      client.invalidateQueries(
+        getRelatedTasks.cacheKey(parentId, DirectedRelationType.Subtask)
+      );
     },
   });
 
   const { data, isLoading, error } = useQuery(
-    getSubtasks.cacheKey(parentId),
-    () => getSubtasks.run(parentId)
+    getRelatedTasks.cacheKey(parentId, DirectedRelationType.Subtask),
+    () => getRelatedTasks.run(parentId, DirectedRelationType.Subtask)
   );
 
   if (isLoading) return <Container>Loading</Container>;

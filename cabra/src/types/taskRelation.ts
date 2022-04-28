@@ -12,3 +12,11 @@ export interface IRelatedTask {
   relationType: string;
   relationId: string;
 }
+
+export enum DirectedRelationType {
+  IsDependentOn = "is_dependent_on",
+  DependsOn = "depends_on",
+  Subtask = "subtask",
+  Supertask = "supertask",
+  Interchangable = "interchangable",
+}
