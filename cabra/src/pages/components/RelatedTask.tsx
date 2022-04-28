@@ -1,5 +1,6 @@
+import "twin.macro";
+
 import { getTask, getTasks, updateTask } from "../../api/tasks";
-import tw, { styled } from "twin.macro";
 import { useMutation, useQueryClient } from "react-query";
 
 import Checkbox from "./CheckBox";
@@ -12,16 +13,14 @@ interface Props {
   task: ITask;
   relationType: DirectedRelationType;
   parentTaskId: string;
+  onClick?: (taskId: string) => void;
 }
-
-const Container = styled.div(
-  tw`rounded-xl bg-tertiary text-secondary m-1.5 p-1.5 grid`
-);
 
 export default function RelatedTask({
   task,
   relationType,
   parentTaskId,
+  onClick,
 }: Props) {
   const [errorMessage, setErrorMessage] = useState("");
   const client = useQueryClient();
@@ -49,7 +48,10 @@ export default function RelatedTask({
   };
 
   return (
-    <Container>
+    <div
+      onClick={() => onClick?.(task.id)}
+      tw="rounded-xl bg-tertiary text-secondary m-1.5 p-1.5 grid cursor-pointer hover:opacity-80"
+    >
       <p tw="font-bold text-base">{task.title}</p>
       <p tw="place-self-end">
         <Checkbox
@@ -61,6 +63,6 @@ export default function RelatedTask({
       {errorMessage && (
         <p tw="flex items-center text-orange-500 pt-1">&nbsp;{errorMessage}</p>
       )}
-    </Container>
+    </div>
   );
 }
