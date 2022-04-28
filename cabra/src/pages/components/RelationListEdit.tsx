@@ -89,7 +89,8 @@ export default function RelationListEdit({
   return (
     <div>
       <AddSubtaskButton onClick={handleAddClick}>
-        <PlusIcon width={24} height={24} /> Submit
+        {/* Feel free to rename this button xd */}
+        <PlusIcon width={24} height={24} /> {"Save & Submit Relation"}
       </AddSubtaskButton>
       <Container>
         {allRelatedTasks.map((relatedTask) => (

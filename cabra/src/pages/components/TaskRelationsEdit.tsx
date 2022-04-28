@@ -29,8 +29,10 @@ const relationshipOptions: RelationshipOption[] = [
   { value: DirectedRelationType.Interchangable, label: "Interchangeable" },
 ];
 
+const default_subtask = DirectedRelationType.Subtask;
+
 export default function TaskRelationsEdit({ taskId }: Props) {
-  const [value, setValue] = useState<DirectedRelationType>();
+  const [tasksRelation, setTaskRelation] = useState<DirectedRelationType>();
   const [relatedTasks, setRelatedTasks] = useState<ITask[]>([]);
 
   const { data, isLoading, error } = useQuery(getTasks.cacheKey, getTasks.run);
@@ -50,18 +52,25 @@ export default function TaskRelationsEdit({ taskId }: Props) {
   return (
     <>
       <div>
-        <Label>TasksRelationsEdit</Label>
+        <Label>Task Relations</Label>
       </div>
       <div tw="flex justify-evenly self-stretch object-fill">
         <Select
-          onChange={(selected) => setValue(selected?.value)}
+          onChange={(selected) => {
+            setTaskRelation(selected?.value);
+            if (selected?.value) {
+              relationshipOptions.filter((option) => {
+                option.value != selected?.value;
+              });
+            }
+          }}
           options={relationshipOptions}
-          value={relationshipOptions.find(
-            ({ label }) => label === relationshipOptions[0].label
-          )}
+          value={relationshipOptions.find(({ label }) => {
+            label === relationshipOptions[0].label;
+          })}
         />
         <Select
-          // defaultValue={[colourOptions[2], colourOptions[3]]}
+          defaultValue={[formattedTasks[0]]}
           onChange={(selected) => {
             const arr: ITask[] = [];
             selected.forEach((opt) => {
@@ -77,14 +86,14 @@ export default function TaskRelationsEdit({ taskId }: Props) {
         />
       </div>
       <Label>
-        {value}
+        {tasksRelation}
         {relatedTasks.map((v) => (
           <li key={v.id}>{v.title}</li>
         ))}
       </Label>
       <RelationListEdit
         parentId={taskId}
-        relationType={value || DirectedRelationType.Subtask}
+        relationType={tasksRelation || default_subtask}
         relatedTasks={relatedTasks}
       />
     </>
