@@ -14,14 +14,6 @@ const AddSubtaskButton = styled.button(
   tw`rounded shadow-2xl flex gap-2 transition-transform transform hover:scale-105`
 );
 
-// const emptyTask: Omit<ITask, "id"> = {
-//   description: "",
-//   dueDate: null,
-//   title: "",
-//   isDone: false,
-//   tags: [],
-// };
-
 interface Props {
   parentId: string;
   relationType: DirectedRelationType;
@@ -42,26 +34,24 @@ export default function RelationListEdit({
       client.invalidateQueries(
         getRelatedTasks.cacheKey(parentId, relationType)
       );
-      // eslint-disable-next-line no-console
-      console.log("Success");
     },
   });
 
-  const removeTask = useMutation((subtaskId: string) => deleteTask(subtaskId), {
-    onSuccess: () => {
-      client.invalidateQueries(getTasks.cacheKey);
-      client.invalidateQueries(getTask.cacheKey(parentId));
-      client.invalidateQueries(
-        getRelatedTasks.cacheKey(parentId, relationType)
-      );
-    },
-  });
+  const removeTask = useMutation(
+    (relatedTaskId: string) => deleteTask(relatedTaskId),
+    {
+      onSuccess: () => {
+        client.invalidateQueries(getTasks.cacheKey);
+        client.invalidateQueries(getTask.cacheKey(parentId));
+        client.invalidateQueries(
+          getRelatedTasks.cacheKey(parentId, relationType)
+        );
+      },
+    }
+  );
 
   const handleAddClick = function () {
     let relationString: string;
-    // Dependent = "DEPENDENT"
-    // Interchangable = "INTERCHANGABLE"
-    // Subtask = "SUBTASK"
     switch (relationType) {
       case DirectedRelationType.DependsOn.valueOf() ||
         DirectedRelationType.IsDependentOn.valueOf():
@@ -94,7 +84,7 @@ export default function RelationListEdit({
   if (error) return <Container>Oops</Container>;
   if (!data?.data) return <Container />;
 
-  const subtasks = data.data.slice().reverse();
+  const allRelatedTasks = data.data.slice().reverse();
 
   return (
     <div>
@@ -102,7 +92,7 @@ export default function RelationListEdit({
         <PlusIcon width={24} height={24} /> Submit
       </AddSubtaskButton>
       <Container>
-        {subtasks.map((relatedTask) => (
+        {allRelatedTasks.map((relatedTask) => (
           <MiniTaskDelete
             key={relatedTask.relationId}
             title={relatedTask.task.title}

@@ -84,7 +84,7 @@ export default function TaskRelationsEdit({ taskId }: Props) {
       </Label>
       <RelationListEdit
         parentId={taskId}
-        relationType={DirectedRelationType.Subtask}
+        relationType={value || DirectedRelationType.Subtask}
         relatedTasks={relatedTasks}
       />
     </>
