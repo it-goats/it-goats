@@ -23,12 +23,14 @@ interface Props {
   parentId: string;
   relationType: DirectedRelationType;
   relatedTasks: ITask[];
+  parentCallback: () => void;
 }
 
 export default function RelationListEdit({
   parentId,
   relationType,
   relatedTasks,
+  parentCallback,
 }: Props) {
   const client = useQueryClient();
 
@@ -98,6 +100,7 @@ export default function RelationListEdit({
       }
       addRelation.mutateAsync(relation);
     });
+    parentCallback();
   };
 
   const handleRemoveClick = function (relationId: string) {
@@ -117,7 +120,7 @@ export default function RelationListEdit({
 
   return (
     <div>
-      <AddSubtaskButton onClick={handleAddClick}>
+      <AddSubtaskButton onClick={handleAddClick} tw="m-auto">
         <PlusIcon width={24} height={24} /> {"Save & Submit Relation"}
       </AddSubtaskButton>
       <CenteredLabel>

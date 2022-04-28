@@ -9,6 +9,7 @@ import { useQuery } from "react-query";
 import { useState } from "react";
 
 const Label = styled.label(tw`text-gray-50 font-bold`);
+const CenteredLabel = styled.div(tw`text-gray-50 font-bold text-center`);
 const Container = styled.div(tw`text-gray-50 w-full space-y-4`);
 interface Props {
   readonly taskId: string;
@@ -34,6 +35,7 @@ const DEFAULT_RELATION_TYPE = DirectedRelationType.Subtask;
 export default function TaskRelationsEdit({ taskId }: Props) {
   const [tasksRelation, setTaskRelation] = useState<DirectedRelationType>();
   const [relatedTasks, setRelatedTasks] = useState<ITask[]>([]);
+  const [showSelected, setShowSelected] = useState(false);
 
   const { data, isLoading, error } = useQuery(getTasks.cacheKey, getTasks.run);
 
@@ -44,10 +46,14 @@ export default function TaskRelationsEdit({ taskId }: Props) {
     .filter((task) => !task.isDone && task.id != taskId)
     .map((task) => ({ value: task, label: task.title }));
 
+  const toggleShowSelected = function () {
+    setShowSelected(!showSelected);
+  };
+
   return (
     <>
       <div>
-        <Label>Task Relations</Label>
+        <CenteredLabel>Task Relations:</CenteredLabel>
       </div>
       <div tw="flex justify-evenly self-stretch object-fill">
         <Select
@@ -55,29 +61,28 @@ export default function TaskRelationsEdit({ taskId }: Props) {
             setTaskRelation(selected?.value);
           }}
           options={relationshipOptions}
-          value={relationshipOptions.find(({ label }) => {
-            label === relationshipOptions[0].label;
-          })}
+          defaultValue={relationshipOptions[0]}
         />
         <Select
-          defaultValue={[formattedTasks[0]]}
           onChange={(selected) => {
             setRelatedTasks(selected.map((opt) => opt.value));
+            setShowSelected(true);
           }}
           isMulti
           options={formattedTasks}
+          key={`unique_select_key__${showSelected}`}
         />
       </div>
       <Label>
-        {relatedTasks.length > 0 && "Currently chosen:"}
-        {relatedTasks.map((v) => (
-          <li key={v.id}>{v.title}</li>
-        ))}
+        {relatedTasks.length > 0 && showSelected && "selected tasks:"}
+        {showSelected &&
+          relatedTasks.map((sel) => <li key={sel.id}>{sel.title}</li>)}
       </Label>
       <RelationListEdit
         parentId={taskId}
         relationType={tasksRelation || DEFAULT_RELATION_TYPE}
         relatedTasks={relatedTasks}
+        parentCallback={toggleShowSelected}
       />
     </>
   );
