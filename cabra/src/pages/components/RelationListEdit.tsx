@@ -10,10 +10,9 @@ import { useMutation, useQuery, useQueryClient } from "react-query";
 
 import { ITask } from "../../types/task";
 import MiniTaskDelete from "./MiniTaskDelete";
-import { PlusIcon } from "@heroicons/react/solid";
 
 const Container = styled.div(tw`text-gray-50 w-full space-y-2`);
-const CenteredLabel = styled.div(tw`text-gray-50 font-bold text-center`);
+const Label = styled.div(tw`text-gray-50 font-bold`);
 const AddSubtaskButton = styled.button(
   tw`bg-secondary p-2 text-white font-semibold`,
   tw`rounded shadow-2xl flex gap-2 transition-transform transform hover:scale-105`
@@ -103,6 +102,19 @@ export default function RelationListEdit({
     parentCallback();
   };
 
+  function resolveRelationLabel(relationType: DirectedRelationType): string {
+    switch (relationType) {
+      case DirectedRelationType.DependsOn:
+        return "Depends on";
+      case DirectedRelationType.IsDependentOn:
+        return "Is dependent on";
+      case DirectedRelationType.Subtask:
+        return "Subtask";
+      default:
+        return "Interchangable";
+    }
+  }
+
   const handleRemoveClick = function (relationId: string) {
     removeRelation.mutateAsync(relationId);
   };
@@ -120,20 +132,15 @@ export default function RelationListEdit({
 
   return (
     <div>
-      <AddSubtaskButton onClick={handleAddClick} tw="m-auto">
-        <PlusIcon width={24} height={24} /> {"Save & Submit Relation"}
+      <AddSubtaskButton onClick={handleAddClick} tw="mb-10">
+        Submit
+        {/* <PlusIcon width={24} height={24} /> */}
       </AddSubtaskButton>
-      <CenteredLabel>
-        {relationType == DirectedRelationType.DependsOn && "Depends on:"}
-        {relationType == DirectedRelationType.IsDependentOn &&
-          "Is dependent on:"}
-        {relationType == DirectedRelationType.Subtask && "Subtask:"}
-        {relationType == DirectedRelationType.Interchangable &&
-          "Interchangeable:"}
-      </CenteredLabel>
+      <Label>{resolveRelationLabel(relationType)}</Label>
       <Container>
-        <div tw="text-center">
-          {allRelatedTasks.length == 0 && "<No related task>"}
+        <div>
+          {allRelatedTasks.length == 0 &&
+            "No task related as " + resolveRelationLabel(relationType)}
         </div>
         {allRelatedTasks.map((relatedTask) => (
           <MiniTaskDelete
