@@ -53,7 +53,6 @@ export default function TaskEditPage() {
         <TaskForm task={data.data} onSubmit={editTask.mutateAsync} />
         <div tw="grid gap-4">
           <div tw="w-full">
-            <Label>Tags:</Label>
             <TagsEdit tags={data.data.tags} taskId={id} />
             <Label>Subtasks:</Label>
             <SubtasksListEdit parentId={id} />
