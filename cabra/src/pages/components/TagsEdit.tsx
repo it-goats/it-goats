@@ -13,6 +13,11 @@ interface Props {
   taskId: string;
 }
 
+interface TagOption {
+  value: string;
+  label: string;
+}
+
 const Label = styled.label(tw`text-gray-50 font-bold`);
 
 export function TagsEdit({ tags, taskId }: Props) {
@@ -30,11 +35,8 @@ export function TagsEdit({ tags, taskId }: Props) {
     },
   });
 
-  //   const [selectedTags, setSelectedTags] = useState<
-  //     { value: string; label: string }[]
-  //   >(tags.map((item) => ({ value: item.id, label: item.name })));
-  const [selectedTags, setSelectedTags] = useState<string[]>(
-    tags.map((item) => item.name)
+  const [selectedTags, setSelectedTags] = useState<TagOption[]>(
+    tags.map((item) => ({ value: item.id, label: item.name }))
   );
 
   const { data, isLoading, error } = useQuery(getTags.cacheKey, getTags.run);
@@ -42,39 +44,30 @@ export function TagsEdit({ tags, taskId }: Props) {
   if (isLoading) return <Label>Loading</Label>;
   if (error || !data?.data) return <Label>Oops</Label>;
 
-  //   const options: { value: string; label: string }[] = data.data.map((item) => ({
-  //     value: item.id,
-  //     label: item.name,
-  //   }));
-  const options: string[] = data.data.map((item) => item.name);
+  const options: TagOption[] = data.data.map((item) => ({
+    value: item.id,
+    label: item.name,
+  }));
 
   const onChangeHandle = (
-    newValue: MultiValue<string>,
-    actionMeta: ActionMeta<string>
+    newValue: MultiValue<TagOption>,
+    actionMeta: ActionMeta<TagOption>
   ) => {
     if (
       actionMeta.action == "remove-value" ||
       actionMeta.action == "pop-value"
     ) {
-      //   removeTag.mutateAsync({ name: actionMeta.removedValue.label });
-      removeTag.mutateAsync({ name: actionMeta.removedValue });
+      removeTag.mutateAsync({ name: actionMeta.removedValue.label });
     } else if (actionMeta.action == "clear") {
-      //   actionMeta.removedValues.forEach((value) =>
-      //     removeTag.mutateAsync({ name: value.label })
-      //   );
       actionMeta.removedValues.forEach((value) =>
-        removeTag.mutateAsync({ name: value })
+        removeTag.mutateAsync({ name: value.label })
       );
     } else if (
       actionMeta.action == "create-option" ||
       actionMeta.action == "select-option"
     ) {
-      //   newValue.forEach((item) => addTag.mutateAsync({ name: item.label }));
-      newValue.forEach((item) => addTag.mutateAsync({ name: item }));
-
-      //   newValue.length && addTag.mutateAsync({name: newValue.at(-1).label})
+      newValue.forEach((item) => addTag.mutateAsync({ name: item.label }));
     }
-    // setSelectedTags(newValue);
     setSelectedTags([...newValue]);
   };
 
