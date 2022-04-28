@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "@escape.tech/mookme": "^2.0.0-beta.1"
+    "@escape.tech/mookme": "^2.0.0-beta.1",
+    "react-select": "^5.3.1"
   }
 }

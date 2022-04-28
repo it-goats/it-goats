@@ -4,6 +4,7 @@ import Layout from "./components/Layout";
 import { Link } from "react-router-dom";
 import NavigationButton from "./components/NavigationButton";
 import { PlusIcon } from "@heroicons/react/solid";
+import TagFilter from "./components/TagFilter";
 import TasksList from "./components/TasksList";
 import { routeHelpers } from "../routes";
 
@@ -18,6 +19,7 @@ export default function HomePage() {
             </NavigationButton>
           </Link>
         </div>
+        <TagFilter></TagFilter>
         <TasksList />
       </div>
     </Layout>
