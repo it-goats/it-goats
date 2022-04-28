@@ -19,12 +19,11 @@ export default function MiniTaskDelete({
   taskId,
   relationType,
 }: Props) {
-  const handleClick = function () {
-    if (relationType == DirectedRelationType.Subtask) {
+  const handleClick = () => {
+    if (relationType === DirectedRelationType.Subtask) {
       return onClickDeleteTask(taskId);
-    } else {
-      return onClickRemoveRelation(taskId);
     }
+    return onClickRemoveRelation(taskId);
   };
 
   return (

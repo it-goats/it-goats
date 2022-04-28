@@ -45,26 +45,14 @@ export default function RelationListEdit({
   const removeTask = useMutation(
     (relatedTaskId: string) => deleteTask(relatedTaskId),
     {
-      onSuccess: () => {
-        client.invalidateQueries(getTasks.cacheKey);
-        client.invalidateQueries(getTask.cacheKey(parentId));
-        client.invalidateQueries(
-          getRelatedTasks.cacheKey(parentId, relationType)
-        );
-      },
+      onSuccess: () => invalidateCommonQueries(),
     }
   );
 
   const removeRelation = useMutation(
     (relationId: string) => deleteRelation(relationId),
     {
-      onSuccess: () => {
-        client.invalidateQueries(getTasks.cacheKey);
-        client.invalidateQueries(getTask.cacheKey(parentId));
-        client.invalidateQueries(
-          getRelatedTasks.cacheKey(parentId, relationType)
-        );
-      },
+      onSuccess: () => invalidateCommonQueries(),
     }
   );
 
@@ -103,10 +91,6 @@ export default function RelationListEdit({
     parentCallback();
   };
 
-  const handleRemoveClick = function (relationId: string) {
-    removeRelation.mutateAsync(relationId);
-  };
-
   const { data, isLoading, error } = useQuery(
     getRelatedTasks.cacheKey(parentId, relationType),
     () => getRelatedTasks.run(parentId, relationType)
@@ -133,7 +117,7 @@ export default function RelationListEdit({
       </CenteredLabel>
       <Container>
         <div tw="text-center">
-          {allRelatedTasks.length == 0 && "<No related task>"}
+          {allRelatedTasks.length === 0 && "<No related task>"}
         </div>
         {allRelatedTasks.map((relatedTask) => (
           <MiniTaskDelete
@@ -141,7 +125,7 @@ export default function RelationListEdit({
             title={relatedTask.task.title}
             onClickDeleteTask={removeTask.mutateAsync}
             onClickRemoveRelation={() =>
-              handleRemoveClick(relatedTask.relationId)
+              removeRelation.mutateAsync(relatedTask.relationId)
             }
             taskId={relatedTask.task.id}
             relationType={relationType}
@@ -150,4 +134,10 @@ export default function RelationListEdit({
       </Container>
     </div>
   );
+
+  function invalidateCommonQueries() {
+    client.invalidateQueries(getTasks.cacheKey);
+    client.invalidateQueries(getTask.cacheKey(parentId));
+    client.invalidateQueries(getRelatedTasks.cacheKey(parentId, relationType));
+  }
 }
