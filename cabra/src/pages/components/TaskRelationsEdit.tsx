@@ -8,8 +8,6 @@ import { getTasks } from "../../api/tasks";
 import { useQuery } from "react-query";
 import { useState } from "react";
 
-const Label = styled.label(tw`text-gray-50 font-bold`);
-const CenteredLabel = styled.div(tw`text-gray-50 font-bold text-center`);
 const Container = styled.div(tw`text-gray-50 w-full space-y-4`);
 interface Props {
   readonly taskId: string;
@@ -55,9 +53,9 @@ export default function TaskRelationsEdit({ taskId }: Props) {
   return (
     <>
       <div>
-        <CenteredLabel>Task Relations:</CenteredLabel>
+        <div tw="text-gray-50 font-bold mb-3">Add related tasks:</div>
       </div>
-      <div tw="flex justify-evenly self-stretch object-fill">
+      <div tw="flex space-x-5 justify-evenly self-stretch object-fill mb-3">
         <Select
           onChange={(selected) => {
             selected
@@ -66,6 +64,7 @@ export default function TaskRelationsEdit({ taskId }: Props) {
           }}
           options={relationshipOptions}
           defaultValue={relationshipOptions[0]}
+          tw="flex-1"
         />
         <Select
           onChange={(selected) => {
@@ -75,13 +74,9 @@ export default function TaskRelationsEdit({ taskId }: Props) {
           isMulti
           options={formattedTasks}
           key={`unique_select_key__${showSelected}`}
+          tw="flex-1"
         />
       </div>
-      <Label>
-        {relatedTasks.length > 0 && showSelected && "selected tasks:"}
-        {showSelected &&
-          relatedTasks.map(({ id, title }) => <li key={id}>{title}</li>)}
-      </Label>
       <RelationListEdit
         parentId={taskId}
         relationType={tasksRelation}
