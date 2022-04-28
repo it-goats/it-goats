@@ -9,6 +9,7 @@ import MiniTaskDelete from "./MiniTaskDelete";
 import { PlusIcon } from "@heroicons/react/solid";
 
 const Container = styled.div(tw`text-gray-50 w-full space-y-2`);
+const CenteredLabel = styled.div(tw`text-gray-50 font-bold text-center`);
 const AddSubtaskButton = styled.button(
   tw`bg-secondary p-2 text-white font-semibold`,
   tw`rounded shadow-2xl flex gap-2 transition-transform transform hover:scale-105`
@@ -29,8 +30,6 @@ export default function RelationListEdit({
 
   const addRelation = useMutation(createRelation, {
     onSuccess: () => {
-      client.invalidateQueries(getTasks.cacheKey);
-      client.invalidateQueries(getTask.cacheKey(parentId));
       client.invalidateQueries(
         getRelatedTasks.cacheKey(parentId, relationType)
       );
@@ -53,8 +52,8 @@ export default function RelationListEdit({
   const handleAddClick = function () {
     let relationString: string;
     switch (relationType) {
-      case DirectedRelationType.DependsOn.valueOf() ||
-        DirectedRelationType.IsDependentOn.valueOf():
+      case DirectedRelationType.DependsOn:
+      case DirectedRelationType.IsDependentOn:
         relationString = "DEPENDENT";
         break;
       case DirectedRelationType.Interchangable:
@@ -66,11 +65,20 @@ export default function RelationListEdit({
     }
 
     relatedTasks.forEach((t) => {
-      const relation: Omit<ITaskRelation, "id"> = {
-        firstTaskId: parentId,
-        secondTaskId: t.id,
-        type: relationString,
-      };
+      let relation: Omit<ITaskRelation, "id">;
+      if (relationType == DirectedRelationType.IsDependentOn) {
+        relation = {
+          firstTaskId: t.id,
+          secondTaskId: parentId,
+          type: relationString,
+        };
+      } else {
+        relation = {
+          firstTaskId: parentId,
+          secondTaskId: t.id,
+          type: relationString,
+        };
+      }
       addRelation.mutateAsync(relation);
     });
   };
@@ -92,13 +100,25 @@ export default function RelationListEdit({
         {/* Feel free to rename this button xd */}
         <PlusIcon width={24} height={24} /> {"Save & Submit Relation"}
       </AddSubtaskButton>
+      <CenteredLabel>
+        {relationType == DirectedRelationType.DependsOn && "Depends on:"}
+        {relationType == DirectedRelationType.IsDependentOn &&
+          "Is dependent on:"}
+        {relationType == DirectedRelationType.Subtask && "Subtask:"}
+        {relationType == DirectedRelationType.Interchangable &&
+          "Interchangeable:"}
+      </CenteredLabel>
       <Container>
+        <div tw="text-center">
+          {allRelatedTasks.length == 0 && "<No related task>"}
+        </div>
         {allRelatedTasks.map((relatedTask) => (
           <MiniTaskDelete
             key={relatedTask.relationId}
             title={relatedTask.task.title}
             onClickDelete={removeTask.mutateAsync}
             taskId={relatedTask.task.id}
+            relationType={relationType}
           />
         ))}
       </Container>

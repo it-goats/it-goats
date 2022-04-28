@@ -29,7 +29,7 @@ const relationshipOptions: RelationshipOption[] = [
   { value: DirectedRelationType.Interchangable, label: "Interchangeable" },
 ];
 
-const default_subtask = DirectedRelationType.Subtask;
+const DEFAULT_RELATION_TYPE = DirectedRelationType.Subtask;
 
 export default function TaskRelationsEdit({ taskId }: Props) {
   const [tasksRelation, setTaskRelation] = useState<DirectedRelationType>();
@@ -40,14 +40,9 @@ export default function TaskRelationsEdit({ taskId }: Props) {
   if (isLoading) return <Container>Loading</Container>;
   if (error || !data?.data) return <Container>Oops</Container>;
 
-  const tasksPossible = data.data
-    .slice()
-    .filter((task) => !task.isDone && task.id != taskId);
-
-  const formattedTasks: TaskOption[] = [];
-  tasksPossible.forEach((task) => {
-    formattedTasks.push({ value: task, label: task.title });
-  });
+  const formattedTasks: TaskOption[] = data.data
+    .filter((task) => !task.isDone && task.id != taskId)
+    .map((task) => ({ value: task, label: task.title }));
 
   return (
     <>
@@ -58,11 +53,6 @@ export default function TaskRelationsEdit({ taskId }: Props) {
         <Select
           onChange={(selected) => {
             setTaskRelation(selected?.value);
-            if (selected?.value) {
-              relationshipOptions.filter((option) => {
-                option.value != selected?.value;
-              });
-            }
           }}
           options={relationshipOptions}
           value={relationshipOptions.find(({ label }) => {
@@ -72,28 +62,21 @@ export default function TaskRelationsEdit({ taskId }: Props) {
         <Select
           defaultValue={[formattedTasks[0]]}
           onChange={(selected) => {
-            const arr: ITask[] = [];
-            selected.forEach((opt) => {
-              arr.push(opt.value);
-            });
-            setRelatedTasks(arr);
+            setRelatedTasks(selected.map((opt) => opt.value));
           }}
           isMulti
-          name="colors"
           options={formattedTasks}
-          className="basic-multi-select"
-          classNamePrefix="select"
         />
       </div>
       <Label>
-        {tasksRelation}
+        {relatedTasks.length > 0 && "Currently chosen:"}
         {relatedTasks.map((v) => (
           <li key={v.id}>{v.title}</li>
         ))}
       </Label>
       <RelationListEdit
         parentId={taskId}
-        relationType={tasksRelation || default_subtask}
+        relationType={tasksRelation || DEFAULT_RELATION_TYPE}
         relatedTasks={relatedTasks}
       />
     </>
