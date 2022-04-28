@@ -10,6 +10,7 @@ import { ArrowLeftIcon } from "@heroicons/react/solid";
 import Layout from "./components/Layout";
 import NavigationButton from "./components/NavigationButton";
 import SubtasksListEdit from "./components/SubtasksListEdit";
+import { TagsEdit } from "./components/TagsEdit";
 import { routeHelpers } from "../routes";
 
 const Label = styled.label(tw`text-gray-50 font-bold`);
@@ -52,6 +53,7 @@ export default function TaskEditPage() {
         <TaskForm task={data.data} onSubmit={editTask.mutateAsync} />
         <div tw="grid gap-4">
           <div tw="w-full">
+            <TagsEdit tags={data.data.tags} taskId={id} />
             <Label>Subtasks:</Label>
             <SubtasksListEdit parentId={id} />
           </div>
