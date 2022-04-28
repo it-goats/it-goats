@@ -1,5 +1,9 @@
 import { DirectedRelationType, ITaskRelation } from "../../types/taskRelation";
-import { createRelation, getRelatedTasks } from "../../api/taskRelations";
+import {
+  createRelation,
+  deleteRelation,
+  getRelatedTasks,
+} from "../../api/taskRelations";
 import { deleteTask, getTask, getTasks } from "../../api/tasks";
 import tw, { styled } from "twin.macro";
 import { useMutation, useQuery, useQueryClient } from "react-query";
@@ -49,6 +53,19 @@ export default function RelationListEdit({
     }
   );
 
+  const removeRelation = useMutation(
+    (relationId: string) => deleteRelation(relationId),
+    {
+      onSuccess: () => {
+        client.invalidateQueries(getTasks.cacheKey);
+        client.invalidateQueries(getTask.cacheKey(parentId));
+        client.invalidateQueries(
+          getRelatedTasks.cacheKey(parentId, relationType)
+        );
+      },
+    }
+  );
+
   const handleAddClick = function () {
     let relationString: string;
     switch (relationType) {
@@ -83,6 +100,10 @@ export default function RelationListEdit({
     });
   };
 
+  const handleRemoveClick = function (relationId: string) {
+    removeRelation.mutateAsync(relationId);
+  };
+
   const { data, isLoading, error } = useQuery(
     getRelatedTasks.cacheKey(parentId, relationType),
     () => getRelatedTasks.run(parentId, relationType)
@@ -97,7 +118,6 @@ export default function RelationListEdit({
   return (
     <div>
       <AddSubtaskButton onClick={handleAddClick}>
-        {/* Feel free to rename this button xd */}
         <PlusIcon width={24} height={24} /> {"Save & Submit Relation"}
       </AddSubtaskButton>
       <CenteredLabel>
@@ -116,7 +136,10 @@ export default function RelationListEdit({
           <MiniTaskDelete
             key={relatedTask.relationId}
             title={relatedTask.task.title}
-            onClickDelete={removeTask.mutateAsync}
+            onClickDeleteTask={removeTask.mutateAsync}
+            onClickRemoveRelation={() =>
+              handleRemoveClick(relatedTask.relationId)
+            }
             taskId={relatedTask.task.id}
             relationType={relationType}
           />

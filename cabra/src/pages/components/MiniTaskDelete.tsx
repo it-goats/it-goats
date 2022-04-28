@@ -7,16 +7,26 @@ import { TrashIcon } from "@heroicons/react/solid";
 interface Props {
   title: string;
   taskId: string;
-  onClickDelete: (taskId: string) => void;
+  onClickDeleteTask: (taskId: string) => void;
+  onClickRemoveRelation: (taskId: string) => void;
   relationType: DirectedRelationType;
 }
 
 export default function MiniTaskDelete({
   title,
-  onClickDelete,
+  onClickDeleteTask,
+  onClickRemoveRelation,
   taskId,
   relationType,
 }: Props) {
+  const handleClick = function () {
+    if (relationType == DirectedRelationType.Subtask) {
+      return onClickDeleteTask(taskId);
+    } else {
+      return onClickRemoveRelation(taskId);
+    }
+  };
+
   return (
     <div tw="rounded-xl w-full bg-tertiary shadow-2xl text-black  p-1.5">
       <div tw="flex items-center text-sm">
@@ -33,7 +43,7 @@ export default function MiniTaskDelete({
         </div>
         <NavigationButton
           tw="text-stone-50 bg-red-500 flex ml-auto"
-          onClick={() => onClickDelete(taskId)}
+          onClick={handleClick}
         >
           <TrashIcon height={10} width={10} />
         </NavigationButton>
