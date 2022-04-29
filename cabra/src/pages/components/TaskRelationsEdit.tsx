@@ -4,6 +4,7 @@ import { DirectedRelationType } from "../../types/taskRelation";
 import { ITask } from "../../types/task";
 import RelationListEdit from "./RelationListEdit";
 import Select from "react-select";
+import SubtasksListEdit from "./SubtasksListEdit";
 import { getTasks } from "../../api/tasks";
 import { useQuery } from "react-query";
 import { useState } from "react";
@@ -22,13 +23,12 @@ interface TaskOption {
 }
 
 const relationshipOptions: RelationshipOption[] = [
-  { value: DirectedRelationType.Subtask, label: "Subtask" },
   { value: DirectedRelationType.DependsOn, label: "Depends on" },
   { value: DirectedRelationType.IsDependentOn, label: "Is dependent on" },
   { value: DirectedRelationType.Interchangable, label: "Interchangeable" },
 ];
 
-const DEFAULT_RELATION_TYPE = DirectedRelationType.Subtask;
+const DEFAULT_RELATION_TYPE = DirectedRelationType.DependsOn;
 
 export default function TaskRelationsEdit({ taskId }: Props) {
   const [tasksRelation, setTaskRelation] = useState<DirectedRelationType>(
@@ -52,6 +52,12 @@ export default function TaskRelationsEdit({ taskId }: Props) {
 
   return (
     <>
+      <div>
+        <div tw="text-gray-50 font-bold mb-3">Add subtasks:</div>
+        <div>
+          <SubtasksListEdit parentId={taskId} />
+        </div>
+      </div>
       <div>
         <div tw="text-gray-50 font-bold mb-3">Add related tasks:</div>
       </div>
