@@ -1,12 +1,12 @@
 import "twin.macro";
 
 import Select, { StylesConfig } from "react-select";
-import tw, { styled } from "twin.macro";
 
 import { getTags } from "../../api/tags";
+import { styled } from "twin.macro";
 import { useQuery } from "react-query";
 
-const Container = styled.div(tw`bg-secondary`);
+const Container = styled.div();
 
 export default function TagFilter() {
   const { data, isLoading, error } = useQuery(getTags.cacheKey, getTags.run);
@@ -31,16 +31,11 @@ export default function TagFilter() {
   type IsMulti = true;
 
   const selectStyles: StylesConfig<SelectOption, IsMulti> = {
-    // option: (provided, state) => ({
-    //   ...provided,
-    //   color: 'blue',
-
-    // }),
     control: (provided) => ({
       ...provided,
       backgroundColor: "#071275",
       padding: "5px",
-      borderRadius: "50px",
+      borderRadius: "40px",
     }),
   };
 
