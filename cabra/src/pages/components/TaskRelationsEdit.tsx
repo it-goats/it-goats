@@ -4,7 +4,6 @@ import { DirectedRelationType } from "../../types/taskRelation";
 import { ITask } from "../../types/task";
 import RelationListEdit from "./RelationListEdit";
 import Select from "react-select";
-import SubtasksListEdit from "./SubtasksListEdit";
 import { getTasks } from "../../api/tasks";
 import { useQuery } from "react-query";
 import { useState } from "react";
@@ -52,12 +51,6 @@ export default function TaskRelationsEdit({ taskId }: Props) {
 
   return (
     <>
-      <div>
-        <div tw="text-gray-50 font-bold mb-3">Add subtasks:</div>
-        <div>
-          <SubtasksListEdit parentId={taskId} />
-        </div>
-      </div>
       <div>
         <div tw="text-gray-50 font-bold mb-3">Add related tasks:</div>
       </div>

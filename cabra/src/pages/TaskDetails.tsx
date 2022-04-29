@@ -6,6 +6,7 @@ import { ArrowLeftIcon } from "@heroicons/react/solid";
 import Layout from "./components/Layout";
 import NavigationButton from "./components/NavigationButton";
 import TaskDetails from "./components/TaskDetailsCard";
+import { routeHelpers } from "../routes";
 
 export default function TaskDetailsPage() {
   const navigate = useNavigate();
@@ -15,7 +16,7 @@ export default function TaskDetailsPage() {
     <Layout>
       <NavigationButton
         tw="text-stone-50 bg-secondary"
-        onClick={() => navigate(-1)}
+        onClick={() => navigate(routeHelpers.tasks)}
       >
         <ArrowLeftIcon height={20} width={20} /> Go Back
       </NavigationButton>

@@ -47,7 +47,7 @@ const Label = styled.label<{ size: Size }>`
 
 export default function Checkbox({ id, size = "base", ...props }: Props) {
   return (
-    <Label id={id} size={size}>
+    <Label id={id} size={size} onClick={(event) => event.stopPropagation()}>
       <StyledInput {...props} id={id} type="checkbox" />
       <span className="checkmark">
         <CheckCircleIcon {...iconSizes[size]} />

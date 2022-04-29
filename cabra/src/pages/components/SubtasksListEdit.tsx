@@ -1,13 +1,12 @@
+import { DirectedRelationType, ITaskRelation } from "../../types/taskRelation";
 import { FormEvent, useState } from "react";
 import tw, { styled } from "twin.macro";
 import { useMutation, useQuery } from "react-query";
 
-import { DirectedRelationType } from "../../types/taskRelation";
 import { ITask } from "../../types/task";
-import { ITaskRelation } from "../../types/taskRelation";
 import MiniTaskDelete from "./MiniTaskDelete";
 import { createTask } from "../../api/tasks";
-import { getSubtasks } from "../../api/taskRelations";
+import { getRelatedTasks } from "../../api/taskRelations";
 import useTaskRelations from "../hooks/useTaskRelations";
 
 const Container = styled.div(tw`text-gray-50 w-full space-y-4`);
@@ -63,8 +62,8 @@ export default function SubtasksListEdit({ parentId }: Props) {
   };
 
   const { data, isLoading, error } = useQuery(
-    getSubtasks.cacheKey(parentId),
-    () => getSubtasks.run(parentId)
+    getRelatedTasks.cacheKey(parentId, DirectedRelationType.Subtask),
+    () => getRelatedTasks.run(parentId, DirectedRelationType.Subtask)
   );
 
   if (isLoading) return <Container>Loading</Container>;
