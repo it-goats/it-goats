@@ -25,11 +25,13 @@ interface Props {
   align?: Align;
 }
 
-const CardField = ({ className, children, title, span, align }: Props) => (
-  <Field className={className} $span={span} $align={align}>
-    {title && <Title>{title}</Title>}
-    {children}
-  </Field>
-);
+function CardField({ className, children, title, span, align }: Props) {
+  return (
+    <Field className={className} $span={span} $align={align}>
+      {title && <Title>{title}</Title>}
+      {children}
+    </Field>
+  );
+}
 
 export default CardField;

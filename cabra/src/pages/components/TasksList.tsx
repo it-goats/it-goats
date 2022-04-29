@@ -14,7 +14,7 @@ export default function TasksList() {
 
   const tasks = data.data;
 
-  const hasNoTasks = !tasks || tasks.length == 0;
+  const hasNoTasks = !tasks || tasks.length === 0;
   return (
     <Container>
       {hasNoTasks ? (
