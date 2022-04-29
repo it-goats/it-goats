@@ -1,15 +1,11 @@
 import { DirectedRelationType, ITaskRelation } from "../../types/taskRelation";
-import {
-  createRelation,
-  deleteRelation,
-  getRelatedTasks,
-} from "../../api/taskRelations";
-import { deleteTask, getTask, getTasks } from "../../api/tasks";
 import tw, { styled } from "twin.macro";
-import { useMutation, useQuery, useQueryClient } from "react-query";
 
 import { ITask } from "../../types/task";
 import MiniTaskDelete from "./MiniTaskDelete";
+import { getRelatedTasks } from "../../api/taskRelations";
+import { useQuery } from "react-query";
+import useTaskRelations from "../hooks/useTaskRelations";
 
 const Container = styled.div(tw`text-gray-50 w-full space-y-2`);
 const Label = styled.div(tw`text-gray-50 font-bold`);
@@ -31,29 +27,10 @@ export default function RelationListEdit({
   relatedTasks,
   parentCallback,
 }: Props) {
-  const client = useQueryClient();
-
-  const addRelation = useMutation(createRelation, {
-    onSuccess: () => {
-      client.invalidateQueries(
-        getRelatedTasks.cacheKey(parentId, relationType)
-      );
-    },
+  const { addRelation, removeRelation, removeTask } = useTaskRelations({
+    parentId,
+    relationType,
   });
-
-  const removeTask = useMutation(
-    (relatedTaskId: string) => deleteTask(relatedTaskId),
-    {
-      onSuccess: () => invalidateCommonQueries(),
-    }
-  );
-
-  const removeRelation = useMutation(
-    (relationId: string) => deleteRelation(relationId),
-    {
-      onSuccess: () => invalidateCommonQueries(),
-    }
-  );
 
   const handleAddClick = function () {
     let relationString: string;
@@ -140,10 +117,4 @@ export default function RelationListEdit({
       </Container>
     </div>
   );
-
-  function invalidateCommonQueries() {
-    client.invalidateQueries(getTasks.cacheKey);
-    client.invalidateQueries(getTask.cacheKey(parentId));
-    client.invalidateQueries(getRelatedTasks.cacheKey(parentId, relationType));
-  }
 }
