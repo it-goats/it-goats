@@ -97,9 +97,7 @@ export default function SubtasksListEdit({ parentId }: Props) {
             />
           </p>
           <p>
-            <AddDependenceButton type="submit" tw="">
-              + Add
-            </AddDependenceButton>
+            <AddDependenceButton type="submit">+ Add</AddDependenceButton>
           </p>
         </div>
       </form>
