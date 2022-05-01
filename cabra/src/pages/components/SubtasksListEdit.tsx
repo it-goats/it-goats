@@ -12,8 +12,10 @@ import useTaskRelations from "../hooks/useTaskRelations";
 const Container = styled.div(tw`text-gray-50 w-full space-y-4`);
 const fieldStyles = tw`w-full px-4 py-2 rounded-xl text-blue-800 placeholder:text-blue-800/60 font-size[small]`;
 const AddDependenceButton = styled.button(
-  tw`rounded-lg flex flex-row items-start h-5 py-1 px-4 w-16 bg-tertiary font-bold text-lg color[#787DAB]`
+  tw`bg-secondary p-2 text-white font-semibold`,
+  tw`rounded shadow-2xl flex gap-2 transition-transform transform hover:scale-105`
 );
+const Label = styled.label(tw`text-gray-50 font-bold`);
 
 const emptyTask: Omit<ITask, "id"> = {
   description: "",
@@ -56,11 +58,6 @@ export default function SubtasksListEdit({ parentId }: Props) {
     addSubtask.mutateAsync(inputs);
   };
 
-  const handleClickDeleteRelation = () => {
-    // eslint-disable-next-line no-console
-    console.log("Mockup function");
-  };
-
   const { data, isLoading, error } = useQuery(
     getRelatedTasks.cacheKey(parentId, DirectedRelationType.Subtask),
     () => getRelatedTasks.run(parentId, DirectedRelationType.Subtask)
@@ -74,20 +71,20 @@ export default function SubtasksListEdit({ parentId }: Props) {
 
   return (
     <div>
+      <Label>Subtasks:</Label>
       <Container>
         {subtasks.map((relatedTask) => (
           <MiniTaskDelete
             key={relatedTask.relationId}
             title={relatedTask.task.title}
             onClickDeleteTask={removeTask.mutateAsync}
-            onClickRemoveRelation={handleClickDeleteRelation}
             taskId={relatedTask.task.id}
             relationType={relationType}
           />
         ))}
       </Container>
       <form onSubmit={handleSubmitSubtask}>
-        <div tw="rounded-xl w-full text-blue-800  p-1.5">
+        <div tw="rounded-xl w-full text-blue-800  p-1.5 space-y-2">
           <p tw="flex items-center">
             <input
               css={[tw`form-input`, fieldStyles]}
@@ -99,8 +96,10 @@ export default function SubtasksListEdit({ parentId }: Props) {
               onChange={(event) => setVal(event.target.value)}
             />
           </p>
-          <p tw="flex items-center">
-            <AddDependenceButton type="submit">+add</AddDependenceButton>
+          <p>
+            <AddDependenceButton type="submit" tw="">
+              + Add
+            </AddDependenceButton>
           </p>
         </div>
       </form>

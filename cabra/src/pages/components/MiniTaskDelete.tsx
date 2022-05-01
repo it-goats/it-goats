@@ -7,8 +7,8 @@ import { TrashIcon } from "@heroicons/react/solid";
 interface Props {
   title: string;
   taskId: string;
-  onClickDeleteTask: (taskId: string) => void;
-  onClickRemoveRelation: (taskId: string) => void;
+  onClickDeleteTask?: (taskId: string) => void;
+  onClickRemoveRelation?: (taskId: string) => void;
   relationType: DirectedRelationType;
 }
 
@@ -21,9 +21,9 @@ export default function MiniTaskDelete({
 }: Props) {
   const handleClick = () => {
     if (relationType === DirectedRelationType.Subtask) {
-      return onClickDeleteTask(taskId);
+      return onClickDeleteTask?.(taskId);
     }
-    return onClickRemoveRelation(taskId);
+    return onClickRemoveRelation?.(taskId);
   };
 
   return (
