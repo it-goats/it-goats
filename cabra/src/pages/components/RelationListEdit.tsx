@@ -49,7 +49,7 @@ export default function RelationListEdit({
 
     relatedTasks.forEach((t) => {
       let relation: Omit<ITaskRelation, "id">;
-      if (relationType == DirectedRelationType.IsDependentOn) {
+      if (relationType === DirectedRelationType.IsDependentOn) {
         relation = {
           firstTaskId: t.id,
           secondTaskId: parentId,
@@ -99,7 +99,7 @@ export default function RelationListEdit({
       <Label>{resolveRelationLabel(relationType)}</Label>
       <Container>
         <div tw="text-center">
-          {allRelatedTasks.length == 0 &&
+          {allRelatedTasks.length === 0 &&
             "No task related as " + resolveRelationLabel(relationType)}
         </div>
         {allRelatedTasks.map((relatedTask) => (

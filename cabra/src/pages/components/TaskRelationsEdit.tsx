@@ -42,7 +42,7 @@ export default function TaskRelationsEdit({ taskId }: Props) {
   if (error || !data?.data) return <Container>Oops</Container>;
 
   const formattedTasks: TaskOption[] = data.data
-    .filter(({ isDone, id }) => !isDone && id != taskId)
+    .filter(({ isDone, id }) => !isDone && id !== taskId)
     .map((task) => ({ value: task, label: task.title }));
 
   const toggleShowSelected = () => {
