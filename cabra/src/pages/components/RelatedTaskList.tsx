@@ -30,7 +30,7 @@ export default function RelatedTasksList({
 
   const subtasks = data.data.slice().reverse();
 
-  if (subtasks.length == 0) {
+  if (subtasks.length === 0) {
     return <div>{"<No tasks>"}</div>;
   }
 
