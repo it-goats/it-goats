@@ -4,6 +4,7 @@ import { DirectedRelationType } from "../../types/taskRelation";
 import { ITask } from "../../types/task";
 import RelationListEdit from "./RelationListEdit";
 import Select from "react-select";
+import { getRelatedTasks } from "../../api/taskRelations";
 import { getTasks } from "../../api/tasks";
 import { useQuery } from "react-query";
 import { useState } from "react";
@@ -36,13 +37,27 @@ export default function TaskRelationsEdit({ taskId }: Props) {
   const [relatedTasks, setRelatedTasks] = useState<ITask[]>([]);
   const [showSelected, setShowSelected] = useState(false);
 
+  const { data: dataSubtasks } = useQuery(
+    getRelatedTasks.cacheKey(taskId, DirectedRelationType.Subtask),
+    () => getRelatedTasks.run(taskId, DirectedRelationType.Subtask)
+  );
   const { data, isLoading, error } = useQuery(getTasks.cacheKey, getTasks.run);
 
   if (isLoading) return <Container>Loading</Container>;
   if (error || !data?.data) return <Container>Oops</Container>;
 
-  const formattedTasks: TaskOption[] = data.data
-    .filter(({ isDone, id }) => !isDone && id !== taskId)
+  const subtasks = dataSubtasks?.data;
+
+  const potentialRelative = (isDone: boolean, id: string) => {
+    return (
+      !isDone &&
+      id !== taskId &&
+      !subtasks?.map(({ task: subtask }) => subtask.id).includes(id)
+    );
+  };
+
+  const formattedRelativesToBe: TaskOption[] = data.data
+    .filter(({ isDone, id }) => potentialRelative(isDone, id))
     .map((task) => ({ value: task, label: task.title }));
 
   const toggleShowSelected = () => {
@@ -71,7 +86,7 @@ export default function TaskRelationsEdit({ taskId }: Props) {
             setShowSelected(true);
           }}
           isMulti
-          options={formattedTasks}
+          options={formattedRelativesToBe}
           key={`unique_select_key__${showSelected}`}
           tw="flex-1"
         />
