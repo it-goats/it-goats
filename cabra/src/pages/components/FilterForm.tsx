@@ -2,8 +2,10 @@ import "twin.macro";
 
 import Select, { StylesConfig } from "react-select";
 
+import { ITag } from "../../types/task";
 import { getTags } from "../../api/tags";
 import { styled } from "twin.macro";
+import tw from "twin.macro";
 import { useQuery } from "react-query";
 
 type IsMulti = true;
@@ -13,16 +15,35 @@ type SelectOption = {
   value: string;
 };
 
-const tagsSelectStyles: StylesConfig<SelectOption, IsMulti> = {
+const selectStyles: StylesConfig<SelectOption, IsMulti> = {
+  option: (provided) => ({
+    ...provided,
+    color: "black",
+    padding: 8,
+  }),
   control: (provided) => ({
     ...provided,
-    backgroundColor: "#071275",
-    padding: "5px",
-    borderRadius: "40px",
+    borderRadius: "12px",
   }),
 };
 
-const Container = styled.div();
+const mapTagToOption = (tag: ITag) => ({
+  value: tag.name,
+  label: tag.name,
+});
+
+const statusOptions: SelectOption[] = [
+  { value: "done", label: "Done" },
+  { value: "notDone", label: "Not done" },
+  { value: "interchangableDone", label: "Interchangable done" },
+];
+
+const MainContainer = styled.div(
+  tw`p-4 bg-primary rounded-lg text-white space-y-3`
+);
+const ItemContainer = styled.div(
+  tw`rounded-lg p-1.5 bg-secondary flex justify-items-stretch items-center space-x-5`
+);
 
 export default function FilterForm() {
   const {
@@ -31,35 +52,35 @@ export default function FilterForm() {
     error,
   } = useQuery(getTags.cacheKey, getTags.run);
 
-  if (isLoading) return <Container>Loading tag filtering...</Container>;
+  if (isLoading) return <MainContainer>Loading tag filtering...</MainContainer>;
   if (error)
     return (
-      <Container>Oops! An error occured when loading tag filtering.</Container>
+      <MainContainer>
+        Oops! An error occured when loading tag filtering.
+      </MainContainer>
     );
-  if (!tagsData?.data) return <Container />;
-
-  const tagsOptions: SelectOption[] = tagsData?.data.map((tag) => ({
-    value: tag.name,
-    label: tag.name,
-  }));
-
-  const statusOptions: SelectOption[] = [
-    { value: "done", label: "DONE" },
-    { value: "notDone", label: "NOT DONE" },
-    { value: "interchangableDone", label: "INTERCHANGABLE DONE" },
-  ];
+  if (!tagsData?.data) return <MainContainer />;
 
   return (
-    <Container>
-      <h1>Filters:</h1>
-      <div tw="flex flex-grow">
-        <p tw="block">Tags</p>
-        <Select options={tagsOptions} styles={tagsSelectStyles} isMulti />
-      </div>
-      <div tw="flex">
+    <MainContainer>
+      <h1 tw="text-xl font-bold">Filtering</h1>
+      <ItemContainer>
+        <p>Tags</p>
+        <Select
+          tw="flex-1"
+          options={tagsData?.data.map(mapTagToOption)}
+          styles={selectStyles}
+          isMulti
+        />
+      </ItemContainer>
+      <ItemContainer>
         <p>Status</p>
-        <Select options={statusOptions} />{" "}
-      </div>
-    </Container>
+        <Select
+          tw="flex-1"
+          options={statusOptions}
+          styles={selectStyles}
+        />{" "}
+      </ItemContainer>
+    </MainContainer>
   );
 }
