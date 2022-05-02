@@ -1,10 +1,10 @@
 import { FormEvent, useState } from "react";
+import { ITask, TaskStatus } from "../../types/task";
 import { createRelation, getSubtasks } from "../../api/taskRelations";
 import { createTask, deleteTask, getTask, getTasks } from "../../api/tasks";
 import tw, { styled } from "twin.macro";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 
-import { ITask } from "../../types/task";
 import { ITaskRelation } from "../../types/taskRelation";
 import MiniTaskDelete from "./MiniTaskDelete";
 import { PlusIcon } from "@heroicons/react/solid";
@@ -22,7 +22,7 @@ const emptyTask: Omit<ITask, "id"> = {
   description: "",
   dueDate: null,
   title: "",
-  isDone: false,
+  status: TaskStatus.TODO,
   tags: [],
 };
 

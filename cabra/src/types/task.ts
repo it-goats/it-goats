@@ -3,11 +3,17 @@ interface ITag {
   name: string;
 }
 
+export enum TaskStatus {
+  TODO = "todo",
+  INDIRECTLY_DONE = "indirectly_done",
+  DONE = "done",
+}
+
 export interface ITask {
   id: string;
   title: string;
   description: string;
   dueDate: string | null;
-  isDone: boolean;
+  status: TaskStatus;
   tags: ITag[];
 }

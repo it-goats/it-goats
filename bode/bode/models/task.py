@@ -1,5 +1,7 @@
+import enum
 import uuid
 
+from sqlalchemy import Enum
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.exc import IntegrityError, NoResultFound
 
@@ -9,6 +11,15 @@ from bode.models.task_tag import task_tag
 from bode.models.utc_datetime import UTCDateTime
 
 
+class Status(enum.Enum):
+    todo = "todo"
+    indirectly_done = "indirectly_done"
+    done = "done"
+
+    def __str__(self):
+        return self.name
+
+
 class Task(db.Model):
     __tablename__ = "tasks"
 
@@ -16,7 +27,7 @@ class Task(db.Model):
     title = db.Column(db.String(80), nullable=False)
     description = db.Column(db.String(1024), nullable=False, server_default="")
     due_date = db.Column(UTCDateTime(), nullable=True)
-    is_done = db.Column(db.Boolean, nullable=False, server_default="false")
+    status = db.Column(Enum(Status), nullable=False, server_default="todo")
 
     tags = db.relationship("Tag", secondary=task_tag, back_populates="task")
 

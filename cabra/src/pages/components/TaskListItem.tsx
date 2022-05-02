@@ -1,10 +1,10 @@
+import { ITask, TaskStatus } from "../../types/task";
 import { getTask, updateTask } from "../../api/tasks";
 import tw, { styled } from "twin.macro";
 import { useMutation, useQueryClient } from "react-query";
 
 import { ArrowRightIcon } from "@heroicons/react/solid";
 import CheckBox from "./CheckBox";
-import { ITask } from "../../types/task";
 import { Link } from "react-router-dom";
 import NavigationButton from "./NavigationButton";
 import { formatDateTime } from "../../utils/dates";
@@ -21,7 +21,7 @@ const TagChip = styled.div(tw`rounded-full px-2 bg-tertiary text-secondary`);
 
 export default function TaskListItem({ task }: Props) {
   const [errorMessage, setErrorMessage] = useState("");
-  const [isDone, setIsDone] = useState(() => task.isDone);
+  const [status, setStatus] = useState<TaskStatus>(() => task.status);
   const client = useQueryClient();
   const editTask = useMutation((task: ITask) => updateTask(task.id, task), {
     onSuccess: () => {
@@ -29,15 +29,17 @@ export default function TaskListItem({ task }: Props) {
     },
   });
   const handleIsDoneChange = async () => {
+    const newStatus =
+      task.status === TaskStatus.DONE ? TaskStatus.TODO : TaskStatus.DONE;
     try {
       const updatedTask = {
         ...task,
-        isDone: !task.isDone,
+        status: newStatus,
       };
-      setIsDone(!isDone);
+      setStatus(newStatus);
       await editTask.mutateAsync(updatedTask);
     } catch (error) {
-      setIsDone(isDone);
+      setStatus(newStatus);
       setErrorMessage(
         "Something went wrong :C, It's not possible to uncheck the task."
       );
@@ -64,7 +66,7 @@ export default function TaskListItem({ task }: Props) {
         <div>
           <Card tw="flex justify-center items-center gap-4">
             <CheckBox
-              checked={isDone}
+              checked={status !== TaskStatus.TODO}
               id={`task-${task.id}`}
               onChange={handleIsDoneChange}
               size="sm"

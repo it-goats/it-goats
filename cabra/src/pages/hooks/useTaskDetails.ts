@@ -1,7 +1,7 @@
+import { ITask, TaskStatus } from "../../types/task";
 import { deleteTask, getTask, getTasks, updateTask } from "../../api/tasks";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 
-import { ITask } from "../../types/task";
 import { routeHelpers } from "../../routes";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
@@ -30,7 +30,8 @@ const useTask = (id: string) => {
   const handleStatusChange = async () => {
     const updatedTask = {
       ...task,
-      isDone: !task?.isDone,
+      status:
+        task.status === TaskStatus.DONE ? TaskStatus.TODO : TaskStatus.DONE,
     };
     editTask.mutate(updatedTask);
   };
