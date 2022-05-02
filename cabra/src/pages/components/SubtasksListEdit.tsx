@@ -1,22 +1,21 @@
+import { DirectedRelationType, ITaskRelation } from "../../types/taskRelation";
 import { FormEvent, useState } from "react";
 import { ITask, TaskStatus } from "../../types/task";
-import { createRelation, getSubtasks } from "../../api/taskRelations";
-import { createTask, deleteTask, getTask, getTasks } from "../../api/tasks";
 import tw, { styled } from "twin.macro";
-import { useMutation, useQuery, useQueryClient } from "react-query";
+import { useMutation, useQuery } from "react-query";
 
-import { ITaskRelation } from "../../types/taskRelation";
 import MiniTaskDelete from "./MiniTaskDelete";
-import { PlusIcon } from "@heroicons/react/solid";
+import { createTask } from "../../api/tasks";
+import { getRelatedTasks } from "../../api/taskRelations";
+import useTaskRelations from "../hooks/useTaskRelations";
 
-const Container = styled.div(tw`text-gray-50 w-full space-y-2`);
-const AddSubtaskButton = styled.button(
+const Container = styled.div(tw`text-gray-50 w-full space-y-4`);
+const fieldStyles = tw`w-full px-4 py-2 rounded-xl text-blue-800 placeholder:text-blue-800/60 font-size[small]`;
+const AddDependenceButton = styled.button(
   tw`bg-secondary p-2 text-white font-semibold`,
   tw`rounded shadow-2xl flex gap-2 transition-transform transform hover:scale-105`
 );
-const SubtaskInput = styled.input(
-  tw`form-input w-full px-4 py-2 rounded-lg shadow-2xl bg-tertiary text-black placeholder:text-primary/60`
-);
+const Label = styled.label(tw`text-gray-50 font-bold`);
 
 const emptyTask: Omit<ITask, "id"> = {
   description: "",
@@ -32,15 +31,12 @@ interface Props {
 
 export default function SubtasksListEdit({ parentId }: Props) {
   const [val, setVal] = useState("");
-  const client = useQueryClient();
-
-  const addRelation = useMutation(createRelation, {
-    onSuccess: () => {
-      client.invalidateQueries(getTasks.cacheKey);
-      client.invalidateQueries(getTask.cacheKey(parentId));
-      client.invalidateQueries(getSubtasks.cacheKey(parentId));
-    },
+  const relationType = DirectedRelationType.Subtask;
+  const { addRelation, removeTask } = useTaskRelations({
+    parentId,
+    relationType,
   });
+
   const addSubtask = useMutation(createTask, {
     onSuccess: (data) => {
       const relation: Omit<ITaskRelation, "id"> = {
@@ -62,17 +58,9 @@ export default function SubtasksListEdit({ parentId }: Props) {
     addSubtask.mutateAsync(inputs);
   };
 
-  const removeTask = useMutation((subtaskId: string) => deleteTask(subtaskId), {
-    onSuccess: () => {
-      client.invalidateQueries(getTasks.cacheKey);
-      client.invalidateQueries(getTask.cacheKey(parentId));
-      client.invalidateQueries(getSubtasks.cacheKey(parentId));
-    },
-  });
-
   const { data, isLoading, error } = useQuery(
-    getSubtasks.cacheKey(parentId),
-    () => getSubtasks.run(parentId)
+    getRelatedTasks.cacheKey(parentId, DirectedRelationType.Subtask),
+    () => getRelatedTasks.run(parentId, DirectedRelationType.Subtask)
   );
 
   if (isLoading) return <Container>Loading</Container>;
@@ -83,31 +71,35 @@ export default function SubtasksListEdit({ parentId }: Props) {
 
   return (
     <div>
-      <form onSubmit={handleSubmitSubtask}>
-        <div tw="w-full flex gap-4 mb-4">
-          <SubtaskInput
-            id="subtask"
-            maxLength={80}
-            onChange={(event) => setVal(event.target.value)}
-            placeholder="Subtask name"
-            required
-            type="text"
-            value={val}
+      <Label>Subtasks:</Label>
+      <Container>
+        {subtasks.map((relatedTask) => (
+          <MiniTaskDelete
+            key={relatedTask.relationId}
+            title={relatedTask.task.title}
+            onClickDeleteTask={removeTask.mutateAsync}
+            taskId={relatedTask.task.id}
+            relationType={relationType}
           />
-          <AddSubtaskButton type="submit">
-            <PlusIcon width={24} height={24} /> Add
-          </AddSubtaskButton>
-        </div>
-        <Container>
-          {subtasks.map((relatedTask) => (
-            <MiniTaskDelete
-              key={relatedTask.relationId}
-              title={relatedTask.task.title}
-              onClickDelete={removeTask.mutateAsync}
-              taskId={relatedTask.task.id}
+        ))}
+      </Container>
+      <form onSubmit={handleSubmitSubtask}>
+        <div tw="rounded-xl w-full text-blue-800  p-1.5 space-y-2">
+          <p tw="flex items-center">
+            <input
+              css={[tw`form-input`, fieldStyles]}
+              id="subtask"
+              type="text"
+              value={val}
+              maxLength={80}
+              required
+              onChange={(event) => setVal(event.target.value)}
             />
-          ))}
-        </Container>
+          </p>
+          <p>
+            <AddDependenceButton type="submit">+ Add</AddDependenceButton>
+          </p>
+        </div>
       </form>
     </div>
   );

@@ -133,7 +133,7 @@ export default function TaskForm({ task, onSubmit }: Props) {
       <SubmitButton type="submit" disabled={isSubmitting}>
         Submit!
       </SubmitButton>
-      <div tw="text-red-500 pt-1">&nbsp;{errors.title?.message}</div>
+      <div tw="text-red-500 pt-1 mb-6">&nbsp;{errors.title?.message}</div>
     </Form>
   );
 }

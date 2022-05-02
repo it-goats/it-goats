@@ -17,7 +17,15 @@
   },
   "plugins": ["@typescript-eslint", "prettier"],
   "rules": {
+    "camelcase": "error",
+    "eqeqeq": "error",
     "no-console": "error",
+    "prefer-const": "error",
+    "no-var": "error",
+    "react/function-component-definition": [
+      "error",
+      { "namedComponents": "function-declaration" }
+    ],
     "react/react-in-jsx-scope": "off",
     "sort-imports": "error",
     "@typescript-eslint/no-inferrable-types": "off",

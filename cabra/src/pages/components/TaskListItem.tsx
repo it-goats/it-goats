@@ -1,5 +1,5 @@
 import { ITask, TaskStatus } from "../../types/task";
-import { getTask, updateTask } from "../../api/tasks";
+import { getTask, getTasks, updateTask } from "../../api/tasks";
 import tw, { styled } from "twin.macro";
 import { useMutation, useQueryClient } from "react-query";
 
@@ -21,11 +21,11 @@ const TagChip = styled.div(tw`rounded-full px-2 bg-tertiary text-secondary`);
 
 export default function TaskListItem({ task }: Props) {
   const [errorMessage, setErrorMessage] = useState("");
-  const [status, setStatus] = useState<TaskStatus>(() => task.status);
   const client = useQueryClient();
   const editTask = useMutation((task: ITask) => updateTask(task.id, task), {
     onSuccess: () => {
       client.invalidateQueries(getTask.cacheKey(task.id));
+      client.invalidateQueries(getTasks.cacheKey);
     },
   });
   const handleIsDoneChange = async () => {
@@ -36,10 +36,8 @@ export default function TaskListItem({ task }: Props) {
         ...task,
         status: newStatus,
       };
-      setStatus(newStatus);
       await editTask.mutateAsync(updatedTask);
     } catch (error) {
-      setStatus(newStatus);
       setErrorMessage(
         "Something went wrong :C, It's not possible to uncheck the task."
       );
@@ -66,7 +64,7 @@ export default function TaskListItem({ task }: Props) {
         <div>
           <Card tw="flex justify-center items-center gap-4">
             <CheckBox
-              checked={status !== TaskStatus.TODO}
+              checked={task.status !== TaskStatus.TODO}
               id={`task-${task.id}`}
               onChange={handleIsDoneChange}
               size="sm"

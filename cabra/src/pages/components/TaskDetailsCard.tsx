@@ -6,7 +6,6 @@ import { DirectedRelationType } from "../../types/taskRelation";
 import { Link } from "react-router-dom";
 import NavigationButton from "./NavigationButton";
 import RelatedTasksList from "./RelatedTaskList";
-import SubtasksList from "./SubtasksList";
 import { TaskStatus } from "../../types/task";
 import { formatDateTime } from "../../utils/dates";
 import { routeHelpers } from "../../routes";
@@ -71,7 +70,11 @@ export default function TaskDetails({ id }: Props) {
           {task.description || "<No description>"}
         </CardField>
         <CardField title="Subtasks" span={3}>
-          <SubtasksList parentTaskId={id} />
+          <RelatedTasksList
+            relationType={DirectedRelationType.Subtask}
+            parentTaskId={id}
+            tw="flex"
+          />
         </CardField>
         <CardField title="Is dependent on" span={1}>
           <RelatedTasksList

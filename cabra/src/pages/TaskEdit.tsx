@@ -2,7 +2,6 @@ import "twin.macro";
 
 import TaskForm, { TaskFormInputs } from "./components/TaskForm";
 import { getTask, getTasks, updateTask } from "../api/tasks";
-import tw, { styled } from "twin.macro";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -10,9 +9,9 @@ import { ArrowLeftIcon } from "@heroicons/react/solid";
 import Layout from "./components/Layout";
 import NavigationButton from "./components/NavigationButton";
 import SubtasksListEdit from "./components/SubtasksListEdit";
+import { TagsEdit } from "./components/TagsEdit";
+import TaskRelationsEdit from "./components/TaskRelationsEdit";
 import { routeHelpers } from "../routes";
-
-const Label = styled.label(tw`text-gray-50 font-bold`);
 
 export default function TaskEditPage() {
   const navigate = useNavigate();
@@ -50,11 +49,10 @@ export default function TaskEditPage() {
           </NavigationButton>
         </div>
         <TaskForm task={data.data} onSubmit={editTask.mutateAsync} />
-        <div tw="grid gap-4">
-          <div tw="w-full">
-            <Label>Subtasks:</Label>
-            <SubtasksListEdit parentId={id} />
-          </div>
+        <div>
+          <TaskRelationsEdit taskId={id} />
+          <TagsEdit tags={data.data.tags} taskId={id} />
+          <SubtasksListEdit parentId={id} />
         </div>
       </div>
     </Layout>
