@@ -66,9 +66,7 @@ export default function TaskRelationsEdit({ taskId }: Props) {
 
   return (
     <>
-      <div>
-        <div tw="text-gray-50 font-bold mb-3">Add related tasks:</div>
-      </div>
+      <div tw="text-gray-50 font-bold mb-3">Add related tasks:</div>
       <div tw="flex space-x-5 justify-evenly self-stretch object-fill mb-3">
         <Select
           onChange={(selected) => {
