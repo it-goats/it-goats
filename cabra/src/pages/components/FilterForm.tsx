@@ -123,18 +123,16 @@ export default function FilterForm({ filters, setFilters }: Props) {
           type="text"
           placeholder="Task title"
           value={filters.titlePattern || ""}
-          onChange={(e) =>
-            setFilters({ ...filters, titlePattern: e.target.value })
+          onChange={(changeEvent) =>
+            setFilters({ ...filters, titlePattern: changeEvent.target.value })
           }
         />
       </InputContainer>
       <InputContainer>
         <Label>From:</Label>
         <DatePicker
-          onChange={(v) => {
-            // eslint-disable-next-line no-console
-            // console.log(v);
-            setFilters({ ...filters, dateFrom: v });
+          onChange={(date) => {
+            setFilters({ ...filters, dateFrom: date });
           }}
           value={
             filters.dateFrom ? format(filters.dateFrom, DATE_FORMAT) : undefined
@@ -146,7 +144,7 @@ export default function FilterForm({ filters, setFilters }: Props) {
         />
         <Label>To:</Label>
         <DatePicker
-          onChange={(v) => setFilters({ ...filters, dateTo: v })}
+          onChange={(date) => setFilters({ ...filters, dateTo: date })}
           value={
             filters.dateTo ? format(filters.dateTo, DATE_FORMAT) : undefined
           }
