@@ -1,6 +1,7 @@
 import "twin.macro";
 
-import Select, { StylesConfig } from "react-select";
+import { Dispatch, SetStateAction } from "react";
+import Select, { CSSObjectWithLabel } from "react-select";
 
 import { DATE_FORMAT } from "../../utils/dates";
 import DatePicker from "react-datepicker";
@@ -18,19 +19,19 @@ type SelectOption = {
 };
 
 type Props = {
-  setFilters: (filters: IFilterFormState) => void;
+  setFilters: Dispatch<SetStateAction<IFilterFormState>>;
   filters: IFilterFormState;
 };
 
 export type FilterFormInputs = IFilterFormState;
 
-const selectStyles: StylesConfig<SelectOption, true> = {
-  option: (provided) => ({
+const selectStyles = {
+  option: (provided: CSSObjectWithLabel) => ({
     ...provided,
     color: "black",
     padding: 8,
   }),
-  control: (provided) => ({
+  control: (provided: CSSObjectWithLabel) => ({
     ...provided,
     borderRadius: "12px",
   }),
@@ -52,7 +53,7 @@ const Container = styled.div(
   tw`p-4 bg-primary rounded-lg text-white space-y-3`
 );
 const InputContainer = styled.div(
-  tw`rounded-lg pl-2 pr-2 pb-1 pt-1 bg-secondary flex items-center space-x-5`
+  tw`rounded-lg px-2 py-1 bg-secondary flex items-center space-x-5`
 );
 const Label = styled.label(tw`w-1/12`);
 
@@ -104,14 +105,12 @@ export default function FilterForm({ filters, setFilters }: Props) {
           onChange={(option) =>
             setFilters({
               ...filters,
-              status: (option as unknown as SelectOption).value,
+              status: option ? option.value : null,
             })
           }
           value={
             filters.status
-              ? statusOptions.filter(
-                  (option) => option.value === filters.status
-                )[0]
+              ? statusOptions.find(({ value }) => value === filters.status)
               : null
           }
         />

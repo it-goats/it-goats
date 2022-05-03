@@ -5,4 +5,3 @@ export interface IFilterFormState {
   dateFrom: Date | null;
   dateTo: Date | null;
 }
-``;

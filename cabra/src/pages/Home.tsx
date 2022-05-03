@@ -19,9 +19,6 @@ export default function HomePage() {
     dateTo: null,
   });
 
-  // eslint-disable-next-line no-console
-  console.log(filters);
-
   return (
     <Layout>
       <div tw="w-[90%] max-w-2xl space-y-6 relative z-10">
