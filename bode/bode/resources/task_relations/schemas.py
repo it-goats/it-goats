@@ -26,8 +26,8 @@ class SimpleTaskRelationSchema(BaseSchema):
 
 
 class DirectedRelationType(Enum):
-    IsDependentOn = "is_dependent_on"
-    DependsOn = "depends_on"
+    Blocks = "blocks"
+    IsBlockedBy = "is_blocked_by"
     Subtask = "subtask"
     Supertask = "supertask"
     Interchangable = "interchangable"
@@ -38,8 +38,8 @@ class DirectedRelationType(Enum):
 
 
 SYMMETRIC_RELATION_TYPES = [DirectedRelationType.Interchangable.value]
-LHS_RELATION_TYPES = [DirectedRelationType.DependsOn.value, DirectedRelationType.Subtask.value]
-RHS_RELATION_TYPES = [DirectedRelationType.IsDependentOn.value, DirectedRelationType.Supertask.value]
+LHS_RELATION_TYPES = [DirectedRelationType.IsBlockedBy.value, DirectedRelationType.Subtask.value]
+RHS_RELATION_TYPES = [DirectedRelationType.Blocks.value, DirectedRelationType.Supertask.value]
 
 
 class DirectedRelationSchema(BaseSchema):
