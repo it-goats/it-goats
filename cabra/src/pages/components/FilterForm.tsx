@@ -43,7 +43,8 @@ const mapTagToOption = (tag: ITag) => ({
 
 const statusOptions: SelectOption[] = [
   { value: "done", label: "Done" },
-  { value: "notDone", label: "Not done" },
+  { value: "todo", label: "Todo" },
+  { value: "indirectlyDone", label: "Indirectly done" },
   { value: "none", label: "None" },
 ];
 
@@ -51,16 +52,34 @@ const Container = styled.div(
   tw`p-4 bg-primary rounded-lg text-white space-y-3`
 );
 const InputContainer = styled.div(
-  tw`rounded-lg p-1.5 bg-secondary flex justify-items-stretch items-center space-x-5`
+  tw`rounded-lg pl-2 pr-2 pb-1 pt-1 bg-secondary flex items-center space-x-5`
 );
 const Label = styled.label(tw`w-1/12`);
 
 export default function FilterForm({ filters, setFilters }: Props) {
   const { data: tagsData } = useQuery(getTags.cacheKey, getTags.run);
 
+  const resetFilters = () => {
+    setFilters({
+      tagNames: null,
+      status: null,
+      titlePattern: null,
+      dateFrom: null,
+      dateTo: null,
+    });
+  };
+
   return (
     <Container>
-      <h1 tw="text-xl font-bold">Filtering</h1>
+      <div tw="flex flex-row justify-between hover:opacity-95 px-2">
+        <h1 tw="text-xl font-bold">Filtering</h1>
+        <button
+          tw="rounded-2xl bg-red-700 text-white font-bold py-0.5 px-2"
+          onClick={resetFilters}
+        >
+          Reset filters
+        </button>
+      </div>
       <InputContainer>
         <Label>Tags:</Label>
         <Select
@@ -82,11 +101,19 @@ export default function FilterForm({ filters, setFilters }: Props) {
           tw="flex-1"
           options={statusOptions}
           styles={selectStyles}
-          onChange={(option) => {
-            // that's probably only one opion to achieve what we want :v (react-select <3)
-            const value: string = (option as unknown as SelectOption).value;
-            setFilters({ ...filters, status: value === "done" });
-          }}
+          onChange={(option) =>
+            setFilters({
+              ...filters,
+              status: (option as unknown as SelectOption).value,
+            })
+          }
+          value={
+            filters.status
+              ? statusOptions.filter(
+                  (option) => option.value === filters.status
+                )[0]
+              : null
+          }
         />
       </InputContainer>
       <InputContainer>
@@ -103,7 +130,7 @@ export default function FilterForm({ filters, setFilters }: Props) {
         />
       </InputContainer>
       <InputContainer>
-        <Label>Date from:</Label>
+        <Label>From:</Label>
         <DatePicker
           onChange={(v) => {
             // eslint-disable-next-line no-console
@@ -118,22 +145,16 @@ export default function FilterForm({ filters, setFilters }: Props) {
           dateFormat={DATE_FORMAT}
           tw="text-black rounded-lg"
         />
-      </InputContainer>
-      <InputContainer>
-        <Label>Date to:</Label>
+        <Label>To:</Label>
         <DatePicker
-          onChange={(v) => {
-            // eslint-disable-next-line no-console
-            // console.log(v);
-            setFilters({ ...filters, dateTo: v });
-          }}
+          onChange={(v) => setFilters({ ...filters, dateTo: v })}
           value={
             filters.dateTo ? format(filters.dateTo, DATE_FORMAT) : undefined
           }
           id="date-to"
           placeholderText="Date to"
           dateFormat={DATE_FORMAT}
-          tw="text-black rounded-lg flex-1"
+          tw="text-black rounded-lg"
         />
       </InputContainer>
     </Container>
