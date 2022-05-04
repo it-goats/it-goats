@@ -62,9 +62,9 @@ export default function FilterForm({ filters, setFilters }: Props) {
 
   const resetFilters = () => {
     setFilters({
-      tagNames: null,
+      tags: null,
       status: null,
-      titlePattern: null,
+      title: null,
       dateFrom: null,
       dateTo: null,
     });
@@ -98,12 +98,12 @@ export default function FilterForm({ filters, setFilters }: Props) {
           onChange={(options) =>
             setFilters({
               ...filters,
-              tagNames: options.map(({ value }) => value),
+              tags: options.map(({ value }) => value),
             })
           }
           value={
-            filters.tagNames && tagsData
-              ? filters.tagNames.map((name) => ({ value: name, label: name }))
+            filters.tags && tagsData
+              ? filters.tags.map((name) => ({ value: name, label: name }))
               : []
           }
         />
@@ -134,9 +134,9 @@ export default function FilterForm({ filters, setFilters }: Props) {
           id="task-title-pattern"
           type="text"
           placeholder="Task title"
-          value={filters.titlePattern || ""}
+          value={filters.title || ""}
           onChange={(changeEvent) =>
-            setFilters({ ...filters, titlePattern: changeEvent.target.value })
+            setFilters({ ...filters, title: changeEvent.target.value })
           }
         />
       </InputContainer>

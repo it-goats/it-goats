@@ -1,7 +1,7 @@
 export interface IFilterFormState {
-  tagNames: string[] | null;
+  tags: string[] | null;
   status: string | null;
-  titlePattern: string | null;
+  title: string | null;
   dateFrom: Date | null;
   dateTo: Date | null;
 }

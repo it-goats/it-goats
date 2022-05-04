@@ -6,7 +6,15 @@ export const filtersToUrlParams = (filters: IFilterFormState): string => {
   const params = new URLSearchParams();
   Object.entries(filters)
     .filter(([_, value]) => value)
-    .forEach((entry) => params.append(...entry));
+    .forEach(([key, value]) => {
+      if (Array.isArray(value)) {
+        value.forEach((element) => params.append(key, element));
+      } else if (value instanceof Date) {
+        params.append(key, value.toISOString());
+      } else {
+        params.append(key, value);
+      }
+    });
   return params.toString();
 };
 
@@ -22,22 +30,27 @@ export const getTask = {
 export const getTasks = {
   cacheKey: (
     filters: IFilterFormState = {
-      tagNames: null,
+      tags: null,
       status: null,
-      titlePattern: null,
+      title: null,
       dateFrom: null,
       dateTo: null,
     }
   ) => ["tasks", filtersToUrlParams(filters)],
   run: (
     filters: IFilterFormState = {
-      tagNames: null,
+      tags: null,
       status: null,
-      titlePattern: null,
+      title: null,
       dateFrom: null,
       dateTo: null,
     }
-  ) => axios.get<ITask[]>("/tasks?" + filtersToUrlParams(filters)),
+  ) => {
+    const urlParams = filtersToUrlParams(filters);
+    // eslint-disable-next-line no-console
+    console.log(urlParams);
+    return axios.get<ITask[]>("/tasks?" + urlParams);
+  },
 };
 
 export const deleteTask = (id: string) => axios.delete<ITask>(`/tasks/${id}`);

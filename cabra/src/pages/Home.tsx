@@ -14,9 +14,9 @@ import { useState } from "react";
 
 export default function HomePage() {
   const [filters, setFilters] = useState<IFilterFormState>({
-    tagNames: null,
+    tags: null,
     status: null,
-    titlePattern: null,
+    title: null,
     dateFrom: null,
     dateTo: null,
   });
