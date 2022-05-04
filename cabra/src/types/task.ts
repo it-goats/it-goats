@@ -9,5 +9,6 @@ export interface ITask {
   description: string;
   dueDate: string | null;
   isDone: boolean;
+  isBlocked: boolean;
   tags: ITag[];
 }

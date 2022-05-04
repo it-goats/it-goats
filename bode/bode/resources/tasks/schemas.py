@@ -1,5 +1,6 @@
 from marshmallow import EXCLUDE, fields, validate
 
+from bode.models.task_relation import TaskRelation
 from bode.resources.base_schema import BaseSchema
 from bode.resources.tags.schemas import TagInputSchema, TagSchema
 
@@ -21,4 +22,5 @@ class TaskSchema(BaseSchema):
     description = fields.String()
     due_date = fields.DateTime()
     is_done = fields.Boolean()
+    is_blocked = fields.Function(lambda obj: not obj.is_done and TaskRelation.is_task_blocked(obj.id))
     tags = fields.List(fields.Nested(TagSchema))

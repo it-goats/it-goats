@@ -51,6 +51,7 @@ export default function TaskDetails({ id }: Props) {
               checked={task.isDone}
               id={`task-${task.id}`}
               onChange={handleStatusChange}
+              disabled={task.isBlocked}
             />
             <Link to={routeHelpers.task.edit(task.id)}>
               <NavigationButton tw="text-amber-600 bg-amber-100">
@@ -64,6 +65,11 @@ export default function TaskDetails({ id }: Props) {
               <TrashIcon height={20} width={20} />
             </NavigationButton>
           </Ctas>
+          {task.isBlocked && (
+            <p tw="flex items-center text-coolGray-500 pt-1">
+              Task is blocked by other task.
+            </p>
+          )}
         </ColumnFields>
         <CardField title="Description" span={3}>
           {task.description || "<No description>"}

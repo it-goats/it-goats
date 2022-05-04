@@ -103,6 +103,12 @@ class TaskRelation(db.Model):
     def get_related_tasks(task_id):
         return TaskRelation.get_lhs_related_tasks(task_id) + TaskRelation.get_rhs_related_tasks(task_id)
 
+    def is_task_blocked(task_id):
+        for relation, task in TaskRelation.get_rhs_related_tasks(task_id):
+            if relation.type == RelationType.Dependent.value and not task.is_done:
+                return True
+        return False
+
     def __repr__(self):
         return f"""<TaskRelation
         {self.first_task_id} <{self.type}> {self.second_task_id}

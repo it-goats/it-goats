@@ -1,7 +1,9 @@
 import { deleteTask, getTask, getTasks, updateTask } from "../../api/tasks";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 
+import { DirectedRelationType } from "../../types/taskRelation";
 import { ITask } from "../../types/task";
+import { getRelatedTasks } from "../../api/taskRelations";
 import { routeHelpers } from "../../routes";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
@@ -25,6 +27,15 @@ const useTask = (id: string) => {
     onSuccess: () => {
       client.invalidateQueries(getTasks.cacheKey);
       client.invalidateQueries(getTask.cacheKey(task?.id));
+      client.invalidateQueries(
+        getRelatedTasks.cacheKey(task?.id, DirectedRelationType.IsDependentOn)
+      );
+      client.invalidateQueries(
+        getRelatedTasks.cacheKey(task?.id, DirectedRelationType.Interchangable)
+      );
+      client.invalidateQueries(
+        getRelatedTasks.cacheKey(task?.id, DirectedRelationType.DependsOn)
+      );
     },
   });
   const handleStatusChange = async () => {

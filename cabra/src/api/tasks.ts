@@ -1,7 +1,7 @@
 import { ITask } from "../types/task";
 import axios from "axios";
 
-interface TaskApiInput extends Omit<ITask, "id" | "dueDate"> {
+interface TaskApiInput extends Omit<ITask, "id" | "dueDate" | "isBlocked"> {
   dueDate: Date | string | null;
 }
 

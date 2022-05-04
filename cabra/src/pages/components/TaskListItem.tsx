@@ -65,6 +65,7 @@ export default function TaskListItem({ task }: Props) {
               checked={task.isDone}
               id={`task-${task.id}`}
               onChange={handleIsDoneChange}
+              disabled={task.isBlocked}
               size="sm"
             />
             <Link to={routeHelpers.task.details(task.id)} state={{ task }}>
@@ -75,6 +76,11 @@ export default function TaskListItem({ task }: Props) {
           </Card>
         </div>
       </Column>
+      {task.isBlocked && (
+        <p tw="flex items-center text-coolGray-500 pt-1">
+          Task is blocked by other task.
+        </p>
+      )}
       {errorMessage && (
         <p tw="flex items-center text-orange-500 pt-1">&nbsp;{errorMessage}</p>
       )}

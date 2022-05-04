@@ -17,7 +17,7 @@ const AddDependenceButton = styled.button(
 );
 const Label = styled.label(tw`text-gray-50 font-bold`);
 
-const emptyTask: Omit<ITask, "id"> = {
+const emptyTask: Omit<ITask, "id" | "isBlocked"> = {
   description: "",
   dueDate: null,
   title: "",
