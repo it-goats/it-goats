@@ -7,7 +7,9 @@ import { Link } from "react-router-dom";
 import NavigationButton from "./components/NavigationButton";
 import { PlusIcon } from "@heroicons/react/solid";
 import TasksList from "./components/TasksList";
+import { getTasks } from "../api/tasks";
 import { routeHelpers } from "../routes";
+import { useQuery } from "react-query";
 import { useState } from "react";
 
 export default function HomePage() {
@@ -18,6 +20,14 @@ export default function HomePage() {
     dateFrom: null,
     dateTo: null,
   });
+
+  const { data, isLoading, error } = useQuery(
+    getTasks.cacheKey(filters),
+    () => getTasks.run(filters),
+    { keepPreviousData: true }
+  );
+
+  const tasks = error || !data ? null : data.data;
 
   return (
     <Layout>
@@ -30,7 +40,7 @@ export default function HomePage() {
           </Link>
         </div>
         <FilterForm filters={filters} setFilters={setFilters} />
-        <TasksList />
+        <TasksList isLoading={isLoading} tasks={tasks} />
       </div>
     </Layout>
   );

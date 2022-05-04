@@ -42,7 +42,7 @@ export default function useTaskRelations({
   );
 
   function invalidateCommonQueries() {
-    client.invalidateQueries(getTasks.cacheKey);
+    client.invalidateQueries(getTasks.cacheKey());
     client.invalidateQueries(getTask.cacheKey(parentId));
     client.invalidateQueries(getRelatedTasks.cacheKey(parentId, relationType));
   }

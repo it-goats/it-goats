@@ -1,12 +1,11 @@
 import "twin.macro";
 
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import Select, { CSSObjectWithLabel } from "react-select";
 
 import { DATE_FORMAT } from "../../utils/dates";
 import DatePicker from "react-datepicker";
 import { IFilterFormState } from "../../types/filterFormState";
-import { ITag } from "../../types/task";
 import { format } from "date-fns";
 import { getTags } from "../../api/tags";
 import { styled } from "twin.macro";
@@ -37,11 +36,6 @@ const selectStyles = {
   }),
 };
 
-const mapTagToOption = (tag: ITag) => ({
-  value: tag.name,
-  label: tag.name,
-});
-
 const statusOptions: SelectOption[] = [
   { value: "done", label: "Done" },
   { value: "todo", label: "Todo" },
@@ -57,8 +51,14 @@ const InputContainer = styled.div(
 );
 const Label = styled.label(tw`w-1/12`);
 
+const HideButton = styled.button(
+  tw`px-2 py-1 text-white font-bold bg-secondary`
+);
+
 export default function FilterForm({ filters, setFilters }: Props) {
   const { data: tagsData } = useQuery(getTags.cacheKey, getTags.run);
+
+  const [isHidden, setIsHidden] = useState(true);
 
   const resetFilters = () => {
     setFilters({
@@ -70,10 +70,14 @@ export default function FilterForm({ filters, setFilters }: Props) {
     });
   };
 
-  return (
+  return isHidden ? (
+    <Container>
+      <HideButton onClick={() => setIsHidden(false)}>Show filters</HideButton>
+    </Container>
+  ) : (
     <Container>
       <div tw="flex flex-row justify-between hover:opacity-95 px-2">
-        <h1 tw="text-xl font-bold">Filtering</h1>
+        <HideButton onClick={() => setIsHidden(true)}>Hide filters</HideButton>
         <button
           tw="rounded-2xl bg-red-700 text-white font-bold py-0.5 px-2"
           onClick={resetFilters}
@@ -85,7 +89,10 @@ export default function FilterForm({ filters, setFilters }: Props) {
         <Label>Tags:</Label>
         <Select
           tw="flex-1"
-          options={tagsData?.data.map(mapTagToOption)}
+          options={tagsData?.data.map(({ name }) => ({
+            value: name,
+            label: name,
+          }))}
           styles={selectStyles}
           isMulti
           onChange={(options) =>
@@ -93,6 +100,11 @@ export default function FilterForm({ filters, setFilters }: Props) {
               ...filters,
               tagNames: options.map(({ value }) => value),
             })
+          }
+          value={
+            filters.tagNames && tagsData
+              ? filters.tagNames.map((name) => ({ value: name, label: name }))
+              : []
           }
         />
       </InputContainer>

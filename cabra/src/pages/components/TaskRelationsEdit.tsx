@@ -41,7 +41,9 @@ export default function TaskRelationsEdit({ taskId }: Props) {
     getRelatedTasks.cacheKey(taskId, DirectedRelationType.Subtask),
     () => getRelatedTasks.run(taskId, DirectedRelationType.Subtask)
   );
-  const { data, isLoading, error } = useQuery(getTasks.cacheKey, getTasks.run);
+  const { data, isLoading, error } = useQuery(getTasks.cacheKey(), () =>
+    getTasks.run()
+  );
 
   if (isLoading) return <Container>Loading</Container>;
   if (error || !data?.data) return <Container>Oops</Container>;

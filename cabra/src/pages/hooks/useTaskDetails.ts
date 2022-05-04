@@ -23,7 +23,7 @@ const useTask = (id: string) => {
   const client = useQueryClient();
   const editTask = useMutation((task: ITask) => updateTask(task.id, task), {
     onSuccess: () => {
-      client.invalidateQueries(getTasks.cacheKey);
+      client.invalidateQueries(getTasks.cacheKey());
       client.invalidateQueries(getTask.cacheKey(task?.id));
     },
   });
