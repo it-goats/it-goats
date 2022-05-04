@@ -22,3 +22,11 @@ class TaskSchema(BaseSchema):
     due_date = fields.DateTime()
     is_done = fields.Boolean()
     tags = fields.List(fields.Nested(TagSchema))
+
+
+class TaskParamSchema(BaseSchema):
+    status = fields.String(validate=validate.OneOf(["todo", "done", "indirectlyDone"]))
+    tags = fields.List(fields.String())
+    date_from = fields.DateTime()
+    date_to = fields.DateTime()
+    title = fields.String()

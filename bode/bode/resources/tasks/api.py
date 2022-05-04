@@ -1,21 +1,44 @@
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
 from psycopg2 import IntegrityError
+from sqlalchemy import or_
 from sqlalchemy.exc import DataError, NoResultFound
 
 from bode.models import task_actions
+from bode.models.tag import Tag
 from bode.models.task import Task
 from bode.resources.tags.schemas import TagInputSchema
-from bode.resources.tasks.schemas import TaskInputSchema, TaskSchema
+from bode.resources.tasks.schemas import TaskInputSchema, TaskParamSchema, TaskSchema
 
 blueprint = Blueprint("tasks", "tasks", url_prefix="/tasks")
 
 
 @blueprint.route("")
 class Tasks(MethodView):
+    @blueprint.arguments(TaskParamSchema, location="query")
     @blueprint.response(200, TaskSchema(many=True))
-    def get(self):
-        return Task.query.order_by(Task.is_done, Task.due_date).all()
+    def get(self, params: TaskParamSchema):
+        status = params.get("status")
+        tags = params.get("tags")
+        date_from = params.get("date_from")
+        date_to = params.get("date_to")
+        title = params.get("title")
+
+        all_filters = []
+        if status and status == "todo":
+            all_filters.append(Task.is_done == False)  # noqa
+        if title:
+            all_filters.append(Task.title.like("%" + title + "%"))
+        if date_from:
+            all_filters.append(Task.due_date >= date_from)
+        if date_to:
+            all_filters.append(Task.due_date <= date_to)
+        if tags:
+            or_filters = []
+            for tag in tags:
+                or_filters.append(Task.tags.any(Tag.name == tag))
+            all_filters.append(or_(*or_filters))
+        return Task.query.filter(*all_filters).all()
 
     @blueprint.arguments(TaskInputSchema)
     @blueprint.response(201, TaskSchema)
