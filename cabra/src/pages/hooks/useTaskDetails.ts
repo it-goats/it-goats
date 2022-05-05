@@ -25,16 +25,16 @@ const useTask = (id: string) => {
   const client = useQueryClient();
   const editTask = useMutation((task: ITask) => updateTask(task.id, task), {
     onSuccess: () => {
-      client.invalidateQueries(getTasks.cacheKey);
+      client.invalidateQueries(getTasks.cacheKey());
       client.invalidateQueries(getTask.cacheKey(task?.id));
       client.invalidateQueries(
-        getRelatedTasks.cacheKey(task?.id, DirectedRelationType.IsDependentOn)
+        getRelatedTasks.cacheKey(task?.id, DirectedRelationType.IsBlockedBy)
       );
       client.invalidateQueries(
         getRelatedTasks.cacheKey(task?.id, DirectedRelationType.Interchangable)
       );
       client.invalidateQueries(
-        getRelatedTasks.cacheKey(task?.id, DirectedRelationType.DependsOn)
+        getRelatedTasks.cacheKey(task?.id, DirectedRelationType.Blocks)
       );
     },
   });

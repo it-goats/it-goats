@@ -28,7 +28,7 @@ class TaskRelation(db.Model):
     T2 := second_task_id
 
     type = SUBTASKS -> T2 is subtask of T1
-    type = DEPENDET -> T2 is dependent on T1
+    type = DEPENDENT -> T2 is dependent on T1
     type = INTERCHANGABLE -> T1 is interchangable with T2 and (T2, T1, INTERCHANGABLE) record is in the database
     """
 

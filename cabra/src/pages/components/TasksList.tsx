@@ -1,18 +1,18 @@
 import tw, { styled } from "twin.macro";
 
+import { ITask } from "../../types/task";
 import TasksListPaginator from "./TasksListsPaginator";
-import { getTasks } from "../../api/tasks";
-import { useQuery } from "react-query";
 
 const Container = styled.div(tw`text-gray-50 w-full space-y-4`);
 
-export default function TasksList() {
-  const { data, isLoading, error } = useQuery(getTasks.cacheKey, getTasks.run);
+interface Props {
+  tasks: ITask[] | null;
+  isLoading: boolean;
+}
 
-  if (isLoading) return <Container>Loading</Container>;
-  if (error || !data?.data) return <Container>Oops</Container>;
-
-  const tasks = data.data;
+export default function TasksList({ tasks, isLoading }: Props) {
+  if (isLoading) return <Container>Loading tasks</Container>;
+  if (!tasks) return <Container>Oops! Error loading tasks.</Container>;
 
   const hasNoTasks = !tasks || tasks.length === 0;
   return (

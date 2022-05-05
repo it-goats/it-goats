@@ -26,7 +26,7 @@ export default function RelatedTask({
   const client = useQueryClient();
   const editTask = useMutation((task: ITask) => updateTask(task.id, task), {
     onSuccess: () => {
-      client.invalidateQueries(getTasks.cacheKey);
+      client.invalidateQueries(getTasks.cacheKey());
       client.invalidateQueries(getTask.cacheKey(parentTaskId));
       client.invalidateQueries(
         getRelatedTasks.cacheKey(parentTaskId, relationType)

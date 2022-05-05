@@ -19,7 +19,7 @@ export default function CreateTaskForm() {
   const client = useQueryClient();
   const addTask = useMutation(createTask, {
     onSuccess: () => {
-      client.invalidateQueries(getTasks.cacheKey);
+      client.invalidateQueries(getTasks.cacheKey());
       navigate(routeHelpers.tasks);
     },
   });

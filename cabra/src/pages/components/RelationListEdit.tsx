@@ -1,6 +1,6 @@
-import { DirectedRelationType, ITaskRelation } from "../../types/taskRelation";
 import tw, { styled } from "twin.macro";
 
+import { DirectedRelationType } from "../../types/taskRelation";
 import { ITask } from "../../types/task";
 import MiniTaskDelete from "./MiniTaskDelete";
 import { getRelatedTasks } from "../../api/taskRelations";
@@ -21,6 +21,22 @@ interface Props {
   parentCallback: () => void;
 }
 
+const relationLabel: Record<DirectedRelationType, string> = {
+  [DirectedRelationType.Blocks]: "Blocks",
+  [DirectedRelationType.Interchangable]: "Interchangeable",
+  [DirectedRelationType.IsBlockedBy]: "Is blocked by",
+  [DirectedRelationType.Subtask]: "Subtask",
+  [DirectedRelationType.Supertask]: "Supertask",
+};
+
+const relationApiType: Record<DirectedRelationType, string> = {
+  [DirectedRelationType.Blocks]: "DEPENDENT",
+  [DirectedRelationType.Interchangable]: "INTERCHANGABLE",
+  [DirectedRelationType.IsBlockedBy]: "DEPENDENT",
+  [DirectedRelationType.Subtask]: "SUBTASK",
+  [DirectedRelationType.Supertask]: "SUBTASK",
+};
+
 export default function RelationListEdit({
   parentId,
   relationType,
@@ -33,52 +49,21 @@ export default function RelationListEdit({
   });
 
   const handleAddClick = function () {
-    let relationString: string;
-    switch (relationType) {
-      case DirectedRelationType.DependsOn:
-      case DirectedRelationType.IsDependentOn:
-        relationString = "DEPENDENT";
-        break;
-      case DirectedRelationType.Interchangable:
-        relationString = "INTERCHANGABLE";
-        break;
-      default:
-        relationString = "SUBTASK";
-        break;
-    }
+    const type = relationApiType[relationType];
 
     relatedTasks.forEach((t) => {
-      let relation: Omit<ITaskRelation, "id">;
-      if (relationType === DirectedRelationType.IsDependentOn) {
-        relation = {
-          firstTaskId: t.id,
-          secondTaskId: parentId,
-          type: relationString,
-        };
-      } else {
-        relation = {
-          firstTaskId: parentId,
-          secondTaskId: t.id,
-          type: relationString,
-        };
-      }
-      addRelation.mutateAsync(relation);
+      const tasksIds = [parentId, t.id];
+      if (relationType === DirectedRelationType.Blocks) tasksIds.reverse();
+      const [firstTaskId, secondTaskId] = tasksIds;
+
+      addRelation.mutateAsync({
+        type,
+        firstTaskId,
+        secondTaskId,
+      });
     });
     parentCallback();
   };
-
-  function resolveRelationLabel(relationType: DirectedRelationType): string {
-    switch (relationType) {
-      case DirectedRelationType.DependsOn:
-        return "Depends on";
-      case DirectedRelationType.IsDependentOn:
-        return "Is dependent on";
-      case DirectedRelationType.Subtask:
-        return "Subtask";
-      default:
-        return "Interchangable";
-    }
-  }
 
   const { data, isLoading, error } = useQuery(
     getRelatedTasks.cacheKey(parentId, relationType),
@@ -96,11 +81,11 @@ export default function RelationListEdit({
       <AddSubtaskButton onClick={handleAddClick} tw="mb-10">
         Submit
       </AddSubtaskButton>
-      <Label>{resolveRelationLabel(relationType)}</Label>
+      <Label>{relationLabel[relationType]}</Label>
       <Container>
         <div tw="text-center">
           {allRelatedTasks.length === 0 &&
-            "No task related as " + resolveRelationLabel(relationType)}
+            "No task related as " + relationLabel[relationType]}
         </div>
         {allRelatedTasks.map((relatedTask) => (
           <MiniTaskDelete
