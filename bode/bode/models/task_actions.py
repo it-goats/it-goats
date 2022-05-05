@@ -1,5 +1,5 @@
 from bode.app import db
-from bode.models.task import Status, Task
+from bode.models.task import Task, TaskStatus
 from bode.models.task_relation import RelationType, TaskRelation
 
 
@@ -30,23 +30,21 @@ def edit_task(task_id, **task_data):
 
     task = Task.get(task_id)
 
-    task.title = task_data["title"]
-    task.description = task_data["description"]
-    task.due_date = task_data["due_date"]
-    task.status = task_data["status"]
+    for key, value in task_data.items():
+        setattr(task, key, value)
 
     db.session.commit()
 
-    if task_data["status"] == Status.done.name:
+    if task_data["status"] != TaskStatus.TODO.value:
         for relation, related_task in TaskRelation.get_related_tasks(task_id):
             if is_interchangable_relation(relation):
-                if related_task.status != Status.todo:
+                if related_task.status != TaskStatus.TODO:
                     continue
                 inter_task_data = {
                     "title": related_task.title,
                     "description": related_task.description,
                     "due_date": related_task.due_date,
-                    "status": Status.indirectly_done.name,
+                    "status": TaskStatus.INDIRECTLY_DONE.value,
                 }
                 edit_task(str(related_task.id), **inter_task_data)
 

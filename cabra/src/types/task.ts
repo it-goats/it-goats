@@ -4,9 +4,9 @@ export interface ITag {
 }
 
 export enum TaskStatus {
-  TODO = "todo",
-  INDIRECTLY_DONE = "indirectly_done",
-  DONE = "done",
+  TODO = "TODO",
+  INDIRECTLY_DONE = "INDIRECTLY_DONE",
+  DONE = "DONE",
 }
 
 export interface ITask {

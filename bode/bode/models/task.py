@@ -11,13 +11,17 @@ from bode.models.task_tag import task_tag
 from bode.models.utc_datetime import UTCDateTime
 
 
-class Status(enum.Enum):
-    todo = "todo"
-    indirectly_done = "indirectly_done"
-    done = "done"
+class TaskStatus(enum.Enum):
+    TODO = "TODO"
+    INDIRECTLY_DONE = "INDIRECTLY_DONE"
+    DONE = "DONE"
 
     def __str__(self):
-        return self.name
+        return self.value
+
+    @classmethod
+    def list(cls):
+        return [c.value for c in cls]
 
 
 class Task(db.Model):
@@ -27,7 +31,7 @@ class Task(db.Model):
     title = db.Column(db.String(80), nullable=False)
     description = db.Column(db.String(1024), nullable=False, server_default="")
     due_date = db.Column(UTCDateTime(), nullable=True)
-    status = db.Column(Enum(Status), nullable=False, server_default="todo")
+    status = db.Column(Enum(TaskStatus), nullable=False, server_default="TODO")
 
     tags = db.relationship("Tag", secondary=task_tag, back_populates="task")
 
