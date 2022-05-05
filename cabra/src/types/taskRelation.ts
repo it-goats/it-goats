@@ -14,8 +14,8 @@ export interface IRelatedTask {
 }
 
 export enum DirectedRelationType {
-  IsDependentOn = "is_dependent_on",
-  DependsOn = "depends_on",
+  Blocks = "blocks",
+  IsBlockedBy = "is_blocked_by",
   Subtask = "subtask",
   Supertask = "supertask",
   Interchangable = "interchangable",

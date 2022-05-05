@@ -28,7 +28,7 @@ export default function TaskEditPage() {
 
   const editTask = useMutation((task: TaskFormInputs) => updateTask(id, task), {
     onSuccess: () => {
-      client.invalidateQueries(getTasks.cacheKey);
+      client.invalidateQueries(getTasks.cacheKey());
       client.invalidateQueries(getTask.cacheKey(id));
       navigate(-1);
     },

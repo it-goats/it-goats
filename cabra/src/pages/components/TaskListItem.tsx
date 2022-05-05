@@ -25,7 +25,7 @@ export default function TaskListItem({ task }: Props) {
   const editTask = useMutation((task: ITask) => updateTask(task.id, task), {
     onSuccess: () => {
       client.invalidateQueries(getTask.cacheKey(task.id));
-      client.invalidateQueries(getTasks.cacheKey);
+      client.invalidateQueries(getTasks.cacheKey());
     },
   });
   const handleIsDoneChange = async () => {

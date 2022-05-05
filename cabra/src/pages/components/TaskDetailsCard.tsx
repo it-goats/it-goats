@@ -76,21 +76,21 @@ export default function TaskDetails({ id }: Props) {
             tw="flex"
           />
         </CardField>
-        <CardField title="Is dependent on" span={1}>
+        <CardField title="Is blocked by" span={1}>
           <RelatedTasksList
-            relationType={DirectedRelationType.IsDependentOn}
-            parentTaskId={id}
-          />
-        </CardField>
-        <CardField title="Depends on" span={1}>
-          <RelatedTasksList
-            relationType={DirectedRelationType.DependsOn}
+            relationType={DirectedRelationType.IsBlockedBy}
             parentTaskId={id}
           />
         </CardField>
         <CardField title="Interchangeable tasks" span={1}>
           <RelatedTasksList
             relationType={DirectedRelationType.Interchangable}
+            parentTaskId={id}
+          />
+        </CardField>
+        <CardField title="Blocks" span={1}>
+          <RelatedTasksList
+            relationType={DirectedRelationType.Blocks}
             parentTaskId={id}
           />
         </CardField>

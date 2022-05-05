@@ -25,18 +25,17 @@ export default function RelatedTasksList({
   const navigate = useNavigate();
 
   if (isLoading) return <div>Loading</div>;
-  if (error) return <div>Oops</div>;
-  if (!data?.data) return <div />;
+  if (error || !data?.data) return <div>Oops</div>;
 
-  const subtasks = data.data.slice().reverse();
+  const relatedTasks = data.data;
 
-  if (subtasks.length === 0) {
+  if (relatedTasks.length === 0) {
     return <div>{"<No tasks>"}</div>;
   }
 
   return (
     <div className={className}>
-      {subtasks.map(({ relationId, task }) => (
+      {relatedTasks.map(({ relationId, task }) => (
         <RelatedTask
           key={relationId}
           task={task}

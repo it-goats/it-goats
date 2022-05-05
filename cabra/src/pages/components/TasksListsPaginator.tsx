@@ -8,6 +8,8 @@ import TaskListItem from "./TaskListItem";
 
 const Container = styled.div(tw`text-gray-50 w-full space-y-4`);
 
+const DEFAULT_ITEMS_PER_PAGE = 20;
+
 interface Props {
   items: ITask[];
 }
@@ -27,9 +29,7 @@ export default function TasksListsPaginator({ items }: Props) {
   const [paginatedItems, setPaginatedItems] = useState<ITask[]>([]);
   const [pageCount, setPageCount] = useState(0);
   const [itemOffset, setItemOffset] = useState(0);
-  const [itemsPerPage, setItemsPerPage] = useState(5);
-
-  const DEFAULT_ITEMS_PER_PAGE = 5;
+  const [itemsPerPage, setItemsPerPage] = useState(DEFAULT_ITEMS_PER_PAGE);
 
   useEffect(() => {
     const endOffset = itemOffset + itemsPerPage;

@@ -46,7 +46,7 @@ class TasksRelationsById(MethodView):
 class TasksInRelationWith(MethodView):
     def lhs_relation_filter(self, relation_type: str):
         match relation_type:
-            case DirectedRelationType.DependsOn.value:
+            case DirectedRelationType.IsBlockedBy.value:
                 return TaskRelation.type == RelationType.Dependent.value
             case DirectedRelationType.Subtask.value:
                 return TaskRelation.type == RelationType.Subtask.value
@@ -57,7 +57,7 @@ class TasksInRelationWith(MethodView):
 
     def rhs_relation_filter(self, relation_type):
         match relation_type:
-            case DirectedRelationType.IsDependentOn.value:
+            case DirectedRelationType.Blocks.value:
                 return TaskRelation.type == RelationType.Dependent.value
             case DirectedRelationType.Supertask.value:
                 return TaskRelation.type == RelationType.Subtask.value
@@ -70,9 +70,9 @@ class TasksInRelationWith(MethodView):
         match relation.type:
             case RelationType.Dependent.value:
                 type = (
-                    DirectedRelationType.IsDependentOn.value
+                    DirectedRelationType.Blocks.value
                     if task.id == relation.first_task_id
-                    else DirectedRelationType.DependsOn.value
+                    else DirectedRelationType.IsBlockedBy.value
                 )
             case RelationType.Subtask.value:
                 type = (

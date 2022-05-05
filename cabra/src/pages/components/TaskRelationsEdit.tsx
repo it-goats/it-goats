@@ -10,25 +10,28 @@ import { useQuery } from "react-query";
 import { useState } from "react";
 
 const Container = styled.div(tw`text-gray-50 w-full space-y-4`);
+
 interface Props {
   readonly taskId: string;
 }
+
 interface RelationshipOption {
   readonly value: DirectedRelationType;
   readonly label: string;
 }
+
 interface TaskOption {
   value: ITask;
   label: string;
 }
 
 const relationshipOptions: RelationshipOption[] = [
-  { value: DirectedRelationType.DependsOn, label: "Depends on" },
-  { value: DirectedRelationType.IsDependentOn, label: "Is dependent on" },
+  { value: DirectedRelationType.IsBlockedBy, label: "Is blocked by" },
+  { value: DirectedRelationType.Blocks, label: "Blocks" },
   { value: DirectedRelationType.Interchangable, label: "Interchangeable" },
 ];
 
-const DEFAULT_RELATION_TYPE = DirectedRelationType.DependsOn;
+const DEFAULT_RELATION_TYPE = DirectedRelationType.IsBlockedBy;
 
 export default function TaskRelationsEdit({ taskId }: Props) {
   const [tasksRelation, setTaskRelation] = useState<DirectedRelationType>(
@@ -41,7 +44,9 @@ export default function TaskRelationsEdit({ taskId }: Props) {
     getRelatedTasks.cacheKey(taskId, DirectedRelationType.Subtask),
     () => getRelatedTasks.run(taskId, DirectedRelationType.Subtask)
   );
-  const { data, isLoading, error } = useQuery(getTasks.cacheKey, getTasks.run);
+  const { data, isLoading, error } = useQuery(getTasks.cacheKey(), () =>
+    getTasks.run()
+  );
 
   if (isLoading) return <Container>Loading</Container>;
   if (error || !data?.data) return <Container>Oops</Container>;
