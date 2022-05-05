@@ -1,7 +1,7 @@
+import { ITask, TaskStatus } from "../../types/task";
 import { createTask, getTasks } from "../../api/tasks";
 import { useMutation, useQueryClient } from "react-query";
 
-import { ITask } from "../../types/task";
 import TaskForm from "./TaskForm";
 import { routeHelpers } from "../../routes";
 import { useNavigate } from "react-router-dom";
@@ -10,7 +10,7 @@ const emptyTask: Omit<ITask, "id"> = {
   description: "",
   dueDate: null,
   title: "",
-  isDone: false,
+  status: TaskStatus.TODO,
   tags: [],
 };
 

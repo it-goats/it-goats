@@ -1,10 +1,10 @@
+import { ITask, TaskStatus } from "../../types/task";
 import { getTask, getTasks, updateTask } from "../../api/tasks";
 import tw, { styled } from "twin.macro";
 import { useMutation, useQueryClient } from "react-query";
 
 import { ArrowRightIcon } from "@heroicons/react/solid";
 import CheckBox from "./CheckBox";
-import { ITask } from "../../types/task";
 import { Link } from "react-router-dom";
 import NavigationButton from "./NavigationButton";
 import { formatDateTime } from "../../utils/dates";
@@ -29,10 +29,12 @@ export default function TaskListItem({ task }: Props) {
     },
   });
   const handleIsDoneChange = async () => {
+    const newStatus =
+      task.status === TaskStatus.DONE ? TaskStatus.TODO : TaskStatus.DONE;
     try {
       const updatedTask = {
         ...task,
-        isDone: !task.isDone,
+        status: newStatus,
       };
       await editTask.mutateAsync(updatedTask);
     } catch (error) {
@@ -62,7 +64,7 @@ export default function TaskListItem({ task }: Props) {
         <div>
           <Card tw="flex justify-center items-center gap-4">
             <CheckBox
-              checked={task.isDone}
+              checked={task.status !== TaskStatus.TODO}
               id={`task-${task.id}`}
               onChange={handleIsDoneChange}
               size="sm"

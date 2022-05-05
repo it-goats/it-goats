@@ -6,6 +6,7 @@ import { DirectedRelationType } from "../../types/taskRelation";
 import { Link } from "react-router-dom";
 import NavigationButton from "./NavigationButton";
 import RelatedTasksList from "./RelatedTaskList";
+import { TaskStatus } from "../../types/task";
 import { formatDateTime } from "../../utils/dates";
 import { routeHelpers } from "../../routes";
 import styled from "@emotion/styled";
@@ -48,7 +49,7 @@ export default function TaskDetails({ id }: Props) {
           </CardField>
           <Ctas align="center">
             <CheckBox
-              checked={task.isDone}
+              checked={task.status !== TaskStatus.TODO}
               id={`task-${task.id}`}
               onChange={handleStatusChange}
             />

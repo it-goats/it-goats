@@ -1,7 +1,7 @@
+import { ITask, TaskStatus } from "../../types/task";
 import tw, { styled } from "twin.macro";
 
 import { DirectedRelationType } from "../../types/taskRelation";
-import { ITask } from "../../types/task";
 import RelationListEdit from "./RelationListEdit";
 import Select from "react-select";
 import { getRelatedTasks } from "../../api/taskRelations";
@@ -53,16 +53,16 @@ export default function TaskRelationsEdit({ taskId }: Props) {
 
   const subtasks = dataSubtasks?.data;
 
-  const potentialRelative = (isDone: boolean, id: string) => {
+  const potentialRelative = (status: TaskStatus, id: string) => {
     return (
-      !isDone &&
+      status === TaskStatus.TODO &&
       id !== taskId &&
       !subtasks?.map(({ task: subtask }) => subtask.id).includes(id)
     );
   };
 
   const formattedRelativesToBe: TaskOption[] = data.data
-    .filter(({ isDone, id }) => potentialRelative(isDone, id))
+    .filter(({ status, id }) => potentialRelative(status, id))
     .map((task) => ({ value: task, label: task.title }));
 
   const toggleShowSelected = () => {
