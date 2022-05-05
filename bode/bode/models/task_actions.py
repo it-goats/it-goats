@@ -23,7 +23,7 @@ def delete_task(task_id):
 
 
 def edit_task(task_id, **task_data):
-    """Function edit task. If task is checked, all interchangable tasks will be checked."""
+    """Function edits task. If task is checked, all interchangable tasks with status todo will be indirectly checked."""
 
     def is_interchangable_relation(relation):
         return relation.type == RelationType.Interchangable.value and str(relation.first_task_id) == task_id
