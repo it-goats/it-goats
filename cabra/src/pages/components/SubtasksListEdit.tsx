@@ -1,9 +1,9 @@
 import { DirectedRelationType, ITaskRelation } from "../../types/taskRelation";
 import { FormEvent, useState } from "react";
+import { ITask, TaskStatus } from "../../types/task";
 import tw, { styled } from "twin.macro";
 import { useMutation, useQuery } from "react-query";
 
-import { ITask } from "../../types/task";
 import MiniTaskDelete from "./MiniTaskDelete";
 import { createTask } from "../../api/tasks";
 import { getRelatedTasks } from "../../api/taskRelations";
@@ -21,7 +21,7 @@ const emptyTask: Omit<ITask, "id"> = {
   description: "",
   dueDate: null,
   title: "",
-  isDone: false,
+  status: TaskStatus.TODO,
   tags: [],
 };
 
