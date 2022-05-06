@@ -28,17 +28,15 @@ class Tasks(MethodView):
         if status and status == "todo":
             all_filters.append(Task.is_done == False)  # noqa
         if title:
-            all_filters.append(Task.title.like("%" + title + "%"))
+            all_filters.append(Task.title.ilike(f"%{title}%"))
         if date_from:
             all_filters.append(Task.due_date >= date_from)
         if date_to:
             all_filters.append(Task.due_date <= date_to)
         if tags:
-            or_filters = []
-            for tag in tags:
-                or_filters.append(Task.tags.any(Tag.name == tag))
+            or_filters = [Task.tags.any(Tag.name == tag) for tag in tags]
             all_filters.append(or_(*or_filters))
-        return Task.query.filter(*all_filters).all()
+        return Task.query.order_by(Task.is_done, Task.due_date).filter(*all_filters).all()
 
     @blueprint.arguments(TaskInputSchema)
     @blueprint.response(201, TaskSchema)
