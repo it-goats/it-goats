@@ -1,3 +1,5 @@
+import { DirectedRelationType } from "./taskRelation";
+
 export interface ITag {
   id: string;
   name: string;
@@ -16,4 +18,5 @@ export interface ITask {
   dueDate: string | null;
   status: TaskStatus;
   tags: ITag[];
+  relations: DirectedRelationType[];
 }
