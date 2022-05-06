@@ -31,6 +31,8 @@ def edit_task(task_id, **task_data):
     task = Task.get(task_id)
 
     for key, value in task_data.items():
+        if key == "tags":
+            continue
         setattr(task, key, value)
 
     db.session.commit()
