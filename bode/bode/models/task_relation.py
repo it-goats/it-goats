@@ -5,7 +5,7 @@ from enum import Enum
 from sqlalchemy.dialects.postgresql import ENUM, UUID
 
 from bode.app import db
-from bode.models.task import Task
+from bode.models.task import Task, TaskStatus
 
 
 class RelationType(Enum):
@@ -105,7 +105,7 @@ class TaskRelation(db.Model):
 
     def is_task_blocked(task_id):
         for relation, task in TaskRelation.get_rhs_related_tasks(task_id):
-            if relation.type == RelationType.Dependent.value and not task.is_done:
+            if relation.type == RelationType.Dependent.value and task.status == TaskStatus.TODO.value:
                 return True
         return False
 
