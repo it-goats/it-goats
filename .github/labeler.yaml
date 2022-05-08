@@ -3,8 +3,8 @@ config:
     - "!package.json"
     - "!package-lock.json"
     - "*"
-    - .github/**/*
-    - .vscode/**/*
+    - "*github/**/*"
+    - "*vscode/**/*"
     - bode/*
     - bode/.hooks/**/*
     - cabra/*
