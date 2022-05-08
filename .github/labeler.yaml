@@ -1,25 +1,27 @@
 config:
-  - any:
-      - "*"
-      - "!package.json"
-      - "!package-lock.json"
-  - "*github/**/*"
-  - "*vscode/**/*"
+  - '*github/**/*'
+  - '*vscode/**/*'
   - bode/*
   - bode/.hooks/**/*
   - cabra/*
   - cabra/.hooks/**/*
+  - any:
+      - '*'
+      - '!**/package.json'
+      - '!**/package-lock.json'
+      - '!**/poetry.lock'
+      - '!**/pyproject.toml'
 
 deps:
-  - package.json
-  - package-lock.json
-  - cabra/package.json
-  - cabra/package-lock.json
+  - '**/package.json'
+  - '**/package-lock.json'
+  - '**/poetry.lock'
+  - '**/pyproject.toml'
 
 bode:
   - any:
       - bode/**/*
-      - "!bode/migrations/**/*"
+      - '!bode/migrations/**/*'
 
 database:
   - bode/migrations/**/*
