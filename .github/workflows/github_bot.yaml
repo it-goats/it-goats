@@ -1,9 +1,9 @@
 name: "Github Bot"
 on:
-  pull_request_target:
-    types:
-      - opened
-      - reopened
+  pull_request:
+    branches:
+      - develop
+    types: [opened, edited, reopened, synchronize]
 
 jobs:
   auto-assign:
