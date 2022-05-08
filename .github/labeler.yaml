@@ -1,0 +1,32 @@
+config:
+  - "*"
+  - .github/**/*
+  - .vscode/**/*
+  - !package.json
+  - !package-lock.json
+  - bode/*
+  - bode/.hooks/**/*
+  - cabra/*
+  - cabra/.hooks/**/*
+
+deps:
+  - package.json
+  - package-lock.json
+  - cabra/package.json
+  - cabra/package-lock.json
+
+bode:
+  - bode/**/*
+  - !bode/migrations/**/*
+
+database:
+  - bode/migrations/**/*
+
+cabra:
+  - cabra/**/*
+
+test:
+  - bode/**/test_*.py
+  - bode/**/*_test.py
+  - cabra/**/*.spec.*
+  - cabra/**/*.test.*
