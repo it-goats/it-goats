@@ -1,13 +1,14 @@
 config:
-  - "!package.json"
-  - "!package-lock.json"
-  - "*"
-  - .github/**/*
-  - .vscode/**/*
-  - bode/*
-  - bode/.hooks/**/*
-  - cabra/*
-  - cabra/.hooks/**/*
+  - any:
+    - "!package.json"
+    - "!package-lock.json"
+    - "*"
+    - .github/**/*
+    - .vscode/**/*
+    - bode/*
+    - bode/.hooks/**/*
+    - cabra/*
+    - cabra/.hooks/**/*
 
 deps:
   - package.json
@@ -16,8 +17,9 @@ deps:
   - cabra/package-lock.json
 
 bode:
-  - "!bode/migrations/**/*"
-  - bode/**/*
+  - any:
+    - "!bode/migrations/**/*"
+    - bode/**/*
 
 database:
   - bode/migrations/**/*
