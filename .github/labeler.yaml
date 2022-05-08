@@ -1,14 +1,14 @@
 config:
   - any:
     - "*"
-    - "*github/**/*"
-    - "*vscode/**/*"
-    - bode/*
-    - bode/.hooks/**/*
-    - cabra/*
-    - cabra/.hooks/**/*
     - "!package.json"
     - "!package-lock.json"
+  - "*github/**/*"
+  - "*vscode/**/*"
+  - bode/*
+  - bode/.hooks/**/*
+  - cabra/*
+  - cabra/.hooks/**/*
 
 deps:
   - package.json
