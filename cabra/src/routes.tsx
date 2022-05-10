@@ -25,7 +25,10 @@ export const routeHelpers = {
   notFound: "/not-found",
   tasks: "/",
   task: {
-    new: `/task/new`,
+    new: (date?: Date) =>
+      date
+        ? `/task/new?date=${encodeURIComponent(date.toISOString())}`
+        : `/task/new`,
     details: (id: string) => `/task/${id}`,
     edit: (id: string) => `/task/${id}/edit`,
   },

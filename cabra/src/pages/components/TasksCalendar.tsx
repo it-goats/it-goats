@@ -4,7 +4,10 @@ import FullCalendar, { EventContentArg, EventInput } from "@fullcalendar/react";
 import tw, { styled } from "twin.macro";
 
 import { ITask } from "../../types/task";
+import { Link } from "react-router-dom";
+import { PlusIcon } from "@heroicons/react/outline";
 import dayGridPlugin from "@fullcalendar/daygrid";
+import { routeHelpers } from "../../routes";
 import { useMemo } from "react";
 
 interface Props {
@@ -57,14 +60,24 @@ const CalendarWrapper = styled.div`
   }
 
   .fc-daygrid-day {
-    ${tw`p-0.5`}
+    ${tw`p-0.5 relative`}
+
+    .add-task-link {
+      ${tw`hidden`}
+    }
+
+    &:hover {
+      .add-task-link {
+        ${tw`grid`}
+      }
+    }
 
     .fc-daygrid-day-frame {
       ${tw`rounded bg-secondary`}
     }
 
     .fc-daygrid-day-top {
-      ${tw`flex-row text-xs`}
+      ${tw`flex-row`}
     }
 
     &.fc-day-other {
@@ -73,7 +86,7 @@ const CalendarWrapper = styled.div`
       }
 
       .fc-daygrid-day-top {
-        ${tw`opacity-100 `}
+        ${tw`opacity-100 text-black`}
       }
     }
 
@@ -81,18 +94,43 @@ const CalendarWrapper = styled.div`
       ${tw`bg-cyan-400 rounded`}
     }
   }
+
+  .fc-daygrid-day-number {
+    ${tw`flex w-full`}
+  }
+
+  .fc-more-popover {
+    ${tw`rounded-lg`}
+
+    .fc-popover-header {
+      ${tw`text-primary bg-transparent`}
+    }
+  }
 `;
 
 function EventContent({ event }: EventContentArg) {
-  return <div>{event.title}</div>;
+  return (
+    <Link
+      to={routeHelpers.task.details(event.extendedProps.task.id)}
+      tw="bg-primary w-full text-stone-50 px-1 mx-0.5 rounded block truncate"
+    >
+      {event.title}
+    </Link>
+  );
 }
 
 function TasksCalendar({ isLoading, tasks }: Props) {
   const calendarEvents: EventInput[] = useMemo(
     () =>
-      tasks?.map((task) => ({
-        ...task,
-      })) ?? [],
+      tasks
+        ?.filter(({ dueDate }) => !!dueDate)
+        .map((task) => ({
+          id: task.id,
+          start: new Date(task.dueDate as string),
+          end: new Date(task.dueDate as string),
+          title: task.title,
+          task,
+        })) ?? [],
     [tasks]
   );
 
@@ -116,6 +154,19 @@ function TasksCalendar({ isLoading, tasks }: Props) {
           }}
           events={calendarEvents}
           eventContent={EventContent}
+          dayMaxEvents={true}
+          dayCellContent={({ date }) => (
+            <div tw="flex justify-between w-full px-1 pt-1">
+              <div>{date.getDate()}</div>
+              <Link
+                to={routeHelpers.task.new(date)}
+                tw="grid place-items-center w-4 h-4 rounded bg-tertiary text-primary"
+                className="add-task-link"
+              >
+                <PlusIcon height={12} width={12} />
+              </Link>
+            </div>
+          )}
         />
       </CalendarWrapper>
     </Container>

@@ -3,7 +3,6 @@ import { createTask, getTasks } from "../../api/tasks";
 import { useMutation, useQueryClient } from "react-query";
 
 import TaskForm from "./TaskForm";
-import { routeHelpers } from "../../routes";
 import { useNavigate } from "react-router-dom";
 
 const emptyTask: Omit<ITask, "id"> = {
@@ -20,7 +19,7 @@ export default function CreateTaskForm() {
   const addTask = useMutation(createTask, {
     onSuccess: () => {
       client.invalidateQueries(getTasks.cacheKey());
-      navigate(routeHelpers.tasks);
+      navigate(-1);
     },
   });
 

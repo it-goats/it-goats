@@ -39,7 +39,7 @@ export default function HomePage() {
               <CalendarIcon width={20} height={20} /> Calendar
             </NavigationButton>
           </Link>
-          <Link to={routeHelpers.task.new}>
+          <Link to={routeHelpers.task.new()}>
             <NavigationButton tw="bg-secondary text-stone-50">
               <PlusIcon width={20} height={20} /> Add new task
             </NavigationButton>
