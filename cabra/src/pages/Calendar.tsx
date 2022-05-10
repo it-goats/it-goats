@@ -19,7 +19,7 @@ function CalendarPage() {
 
   return (
     <Layout>
-      <div tw="space-y-6">
+      <div tw="w-[90%] max-w-4xl space-y-6 relative z-10">
         <div tw="w-full flex justify-between gap-x-2">
           <Link to="..">
             <NavigationButton tw="bg-secondary text-stone-50">
