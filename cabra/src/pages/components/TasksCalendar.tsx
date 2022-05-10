@@ -6,6 +6,7 @@ import tw, { styled } from "twin.macro";
 import { ITask } from "../../types/task";
 import { Link } from "react-router-dom";
 import { PlusIcon } from "@heroicons/react/outline";
+import { add } from "date-fns";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import { routeHelpers } from "../../routes";
 import { useMemo } from "react";
@@ -119,6 +120,32 @@ function EventContent({ event }: EventContentArg) {
   );
 }
 
+function DayCellContent({ date, isOther }: { date: Date; isOther: boolean }) {
+  const now = new Date();
+  const linkDate = add(date, {
+    hours: now.getHours(),
+    minutes: now.getMinutes(),
+  });
+
+  return (
+    <div tw="flex justify-between w-full px-1 pt-1">
+      <div>{date.getDate()}</div>
+      <Link
+        to={routeHelpers.task.new(linkDate)}
+        css={[
+          tw`grid place-items-center w-4 h-4 rounded shadow-2xl`,
+          isOther
+            ? tw`bg-secondary text-stone-50`
+            : tw`bg-tertiary text-primary`,
+        ]}
+        className="add-task-link"
+      >
+        <PlusIcon height={12} width={12} />
+      </Link>
+    </div>
+  );
+}
+
 function TasksCalendar({ isLoading, tasks }: Props) {
   const calendarEvents: EventInput[] = useMemo(
     () =>
@@ -155,18 +182,7 @@ function TasksCalendar({ isLoading, tasks }: Props) {
           events={calendarEvents}
           eventContent={EventContent}
           dayMaxEvents={true}
-          dayCellContent={({ date }) => (
-            <div tw="flex justify-between w-full px-1 pt-1">
-              <div>{date.getDate()}</div>
-              <Link
-                to={routeHelpers.task.new(date)}
-                tw="grid place-items-center w-4 h-4 rounded bg-tertiary text-primary"
-                className="add-task-link"
-              >
-                <PlusIcon height={12} width={12} />
-              </Link>
-            </div>
-          )}
+          dayCellContent={DayCellContent}
         />
       </CalendarWrapper>
     </Container>

@@ -1,9 +1,9 @@
 import { ITask, TaskStatus } from "../../types/task";
 import { createTask, getTasks } from "../../api/tasks";
 import { useMutation, useQueryClient } from "react-query";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 import TaskForm from "./TaskForm";
-import { useNavigate } from "react-router-dom";
 
 const emptyTask: Omit<ITask, "id"> = {
   description: "",
@@ -15,6 +15,7 @@ const emptyTask: Omit<ITask, "id"> = {
 
 export default function CreateTaskForm() {
   const navigate = useNavigate();
+  const [params] = useSearchParams();
   const client = useQueryClient();
   const addTask = useMutation(createTask, {
     onSuccess: () => {
@@ -23,5 +24,13 @@ export default function CreateTaskForm() {
     },
   });
 
-  return <TaskForm onSubmit={addTask.mutateAsync} task={emptyTask} />;
+  return (
+    <TaskForm
+      onSubmit={addTask.mutateAsync}
+      task={{
+        ...emptyTask,
+        dueDate: params.get("date"),
+      }}
+    />
+  );
 }
