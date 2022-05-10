@@ -1,5 +1,6 @@
 import "twin.macro";
 
+import { CalendarIcon } from "@heroicons/react/outline";
 import FilterForm from "./components/FilterForm";
 import { IFilterFormState } from "../types/filterFormState";
 import Layout from "./components/Layout";
@@ -32,7 +33,12 @@ export default function HomePage() {
   return (
     <Layout>
       <div tw="w-[90%] max-w-2xl space-y-6 relative z-10">
-        <div tw="w-full flex justify-end">
+        <div tw="w-full flex justify-between gap-x-2">
+          <Link to={routeHelpers.calendar}>
+            <NavigationButton tw="bg-secondary text-stone-50">
+              <CalendarIcon width={20} height={20} /> Calendar
+            </NavigationButton>
+          </Link>
           <Link to={routeHelpers.task.new}>
             <NavigationButton tw="bg-secondary text-stone-50">
               <PlusIcon width={20} height={20} /> Add new task
