@@ -6,7 +6,7 @@ import TaskForm from "./TaskForm";
 import { routeHelpers } from "../../routes";
 import { useNavigate } from "react-router-dom";
 
-const emptyTask: Omit<ITask, "id" | "relations"> = {
+const emptyTask: Omit<ITask, "id" | "relationTypes"> = {
   description: "",
   dueDate: null,
   title: "",

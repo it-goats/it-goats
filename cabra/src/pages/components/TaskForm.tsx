@@ -16,9 +16,9 @@ import { zonedTimeToUtc } from "date-fns-tz";
 
 type Props = {
   onSubmit: (inputs: TaskFormInputs) => Promise<unknown>;
-  task: Omit<ITask, "id" | "relations">;
+  task: Omit<ITask, "id" | "relationTypes">;
 };
-export type TaskFormInputs = Omit<ITask, "id" | "dueDate"> & {
+export type TaskFormInputs = Omit<ITask, "id" | "dueDate" | "relationTypes"> & {
   dueDate: Date | null;
 };
 

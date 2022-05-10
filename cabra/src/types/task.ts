@@ -18,5 +18,5 @@ export interface ITask {
   dueDate: string | null;
   status: TaskStatus;
   tags: ITag[];
-  relations: DirectedRelationType[];
+  relationTypes: DirectedRelationType[];
 }

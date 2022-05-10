@@ -77,9 +77,9 @@ export default function TaskListItem({ task }: Props) {
             </Link>
           </Card>
         </div>
-        {task?.relations && task.relations.length > 0 && (
+        {task?.relationTypes && task.relationTypes.length > 0 && (
           <Card tw="flex gap-2">
-            {task?.relations.map((type) => (
+            {task?.relationTypes.map((type) => (
               <TaskTypeIcon key={type} type={type} />
             ))}
           </Card>
