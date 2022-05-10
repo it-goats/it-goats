@@ -23,3 +23,4 @@ class TaskSchema(BaseSchema):
     due_date = fields.DateTime()
     status = fields.String()
     tags = fields.List(fields.Nested(TagSchema))
+    relation_types = fields.List(fields.String())
