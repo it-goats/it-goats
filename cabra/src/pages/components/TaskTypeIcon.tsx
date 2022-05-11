@@ -15,7 +15,7 @@ interface Props {
 }
 
 const Icon = styled.div`
-  ${tw`text-black bg-gray-300 p-0.5`}
+  ${tw`text-blue-700 bg-tertiary p-0.5 rounded`}
 `;
 
 export function TaskTypeIcon({ type }: Props) {
@@ -28,7 +28,7 @@ export function TaskTypeIcon({ type }: Props) {
       break;
     case DirectedRelationType.Supertask:
       icon = <CollectionIcon height={20} width={20} data-tip data-for={type} />;
-      message = "Have subtask";
+      message = "Has subtask";
       break;
     case DirectedRelationType.Blocks:
       icon = (
