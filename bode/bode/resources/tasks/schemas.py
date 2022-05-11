@@ -2,6 +2,7 @@ from marshmallow import EXCLUDE, fields, validate
 
 from bode.models.task import TaskStatus
 from bode.resources.base_schema import BaseSchema
+from bode.resources.directed_relation_type import DirectedRelationType
 from bode.resources.tags.schemas import TagInputSchema, TagSchema
 
 
@@ -23,4 +24,4 @@ class TaskSchema(BaseSchema):
     due_date = fields.DateTime()
     status = fields.String()
     tags = fields.List(fields.Nested(TagSchema))
-    relation_types = fields.List(fields.String())
+    relation_types = fields.List(fields.String(validate=validate.OneOf(DirectedRelationType.list())))

@@ -74,9 +74,9 @@ class TasksInRelationWith(MethodView):
         match relation.type:
             case RelationType.Dependent.value:
                 type = (
-                    DirectedRelationType.Blocks.value
+                    DirectedRelationType.IsBlockedBy.value
                     if task.id == relation.first_task_id
-                    else DirectedRelationType.IsBlockedBy.value
+                    else DirectedRelationType.Blocks.value
                 )
             case RelationType.Subtask.value:
                 type = (
