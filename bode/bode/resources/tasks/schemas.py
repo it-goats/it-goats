@@ -3,7 +3,6 @@ from marshmallow import EXCLUDE, fields, validate
 from bode.models.task import TaskStatus
 from bode.resources.base_schema import BaseSchema
 from bode.resources.tags.schemas import TagInputSchema, TagSchema
-from bode.resources.task_relations.schemas import DirectedRelationType
 
 
 class TaskInputSchema(BaseSchema):
@@ -18,6 +17,8 @@ class TaskInputSchema(BaseSchema):
 
 
 class TaskSchema(BaseSchema):
+    from bode.resources.task_relations.schemas import DirectedRelationType
+
     id = fields.UUID(dump_only=True)
     title = fields.String()
     description = fields.String()
