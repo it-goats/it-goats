@@ -24,6 +24,6 @@ class TaskSchema(BaseSchema):
     due_date = fields.DateTime()
     status = fields.String()
     is_blocked = fields.Function(
-        lambda obj: obj.status == TaskStatus.TODO.value and TaskRelation.is_task_blocked(obj.id)
+        lambda task: task.status != TaskStatus.DONE.value and TaskRelation.is_task_blocked(task.id)
     )
     tags = fields.List(fields.Nested(TagSchema))

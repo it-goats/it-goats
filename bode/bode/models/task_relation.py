@@ -28,7 +28,7 @@ class TaskRelation(db.Model):
     T2 := second_task_id
 
     type = SUBTASKS -> T2 is subtask of T1
-    type = DEPENDENT -> T2 is dependent on T1
+    type = DEPENDENT -> T2 blocks T1
     type = INTERCHANGABLE -> T1 is interchangable with T2 and (T2, T1, INTERCHANGABLE) record is in the database
     """
 
@@ -104,7 +104,7 @@ class TaskRelation(db.Model):
         return TaskRelation.get_lhs_related_tasks(task_id) + TaskRelation.get_rhs_related_tasks(task_id)
 
     def is_task_blocked(task_id):
-        for relation, task in TaskRelation.get_rhs_related_tasks(task_id):
+        for relation, task in TaskRelation.get_lhs_related_tasks(task_id):
             if relation.type == RelationType.Dependent.value and task.status == TaskStatus.TODO.value:
                 return True
         return False
