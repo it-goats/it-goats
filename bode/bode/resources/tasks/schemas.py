@@ -31,8 +31,6 @@ class TaskInputSchema(BaseSchema):
 
 
 class TaskSchema(BaseSchema):
-    from bode.resources.task_relations.schemas import DirectedRelationType
-
     id = fields.UUID(dump_only=True)
     title = fields.String()
     description = fields.String()
