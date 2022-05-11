@@ -35,8 +35,8 @@ def map_to_related_task_schema(relation: TaskRelation, task_id):
     match relation.type:
         case RelationType.Dependent.value:
             if task_id == relation.first_task_id:
-                return DirectedRelationType.Blocks.value
-            return DirectedRelationType.IsBlockedBy.value
+                return DirectedRelationType.IsBlockedBy.value
+            return DirectedRelationType.Blocks.value
         case RelationType.Subtask.value:
             if task_id == relation.first_task_id:
                 return DirectedRelationType.Supertask.value
