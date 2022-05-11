@@ -2,6 +2,7 @@ import tw, { TwStyle, styled } from "twin.macro";
 
 import { CheckCircleIcon } from "@heroicons/react/outline";
 import { InputHTMLAttributes } from "react";
+import ReactTooltip from "react-tooltip";
 
 type Props = Omit<
   InputHTMLAttributes<HTMLInputElement>,
@@ -32,7 +33,7 @@ const Label = styled.label<{ size: Size }>`
 
   .checkmark {
     ${tw`place-items-center rounded grid cursor-pointer`}
-    ${tw`bg-slate-300 text-slate-400 transition-all shadow-xl hover:opacity-60`}
+    ${tw`bg-slate-300 text-slate-400 transition-all shadow-xl`}
     ${({ size }) => labelSizes[size]}
   }
 
@@ -43,15 +44,41 @@ const Label = styled.label<{ size: Size }>`
   input:focus ~ .checkmark {
     ${tw`ring-2`}
   }
+
+  input:disabled ~ .checkmark {
+    ${tw`bg-red-700`}
+  }
+
+  input:enabled ~ .checkmark {
+    ${tw`hover:opacity-60`}
+  }
 `;
 
-export default function Checkbox({ id, size = "base", ...props }: Props) {
+export default function Checkbox({
+  id,
+  size = "base",
+  disabled,
+  ...props
+}: Props) {
   return (
-    <Label id={id} size={size} onClick={(event) => event.stopPropagation()}>
-      <StyledInput {...props} id={id} type="checkbox" />
-      <span className="checkmark">
-        <CheckCircleIcon {...iconSizes[size]} />
-      </span>
-    </Label>
+    <>
+      <Label
+        id={id}
+        size={size}
+        onClick={(event) => event.stopPropagation()}
+        data-tip
+        data-for={id}
+      >
+        <StyledInput {...props} disabled={disabled} id={id} type="checkbox" />
+        <span className="checkmark">
+          <CheckCircleIcon {...iconSizes[size]} />
+        </span>
+      </Label>
+      {disabled && (
+        <ReactTooltip id={id} place="bottom" effect="solid">
+          Task is blocked by other task.
+        </ReactTooltip>
+      )}
+    </>
   );
 }

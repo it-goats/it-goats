@@ -30,6 +30,7 @@
     "react-query": "^3.34.18",
     "react-router-dom": "^6.3.0",
     "react-select": "^5.2.2",
+    "react-tooltip": "^4.2.21",
     "vite": "^2.6.14",
     "yup": "^0.32.11"
   },

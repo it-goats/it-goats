@@ -62,11 +62,6 @@ export default function RelatedTask({
           disabled={task.isBlocked}
         />
       </p>
-      {task.isBlocked && (
-        <p tw="flex items-center text-coolGray-500 pt-1">
-          Task is blocked by other task.
-        </p>
-      )}
       {errorMessage && (
         <p tw="flex items-center text-orange-500 pt-1">&nbsp;{errorMessage}</p>
       )}
