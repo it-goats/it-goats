@@ -1,9 +1,9 @@
 import "@fullcalendar/react/dist/vdom";
 
 import FullCalendar, { EventContentArg, EventInput } from "@fullcalendar/react";
+import { ITask, TaskStatus } from "../../types/task";
 import tw, { styled } from "twin.macro";
 
-import { ITask } from "../../types/task";
 import { Link } from "react-router-dom";
 import { PlusIcon } from "@heroicons/react/outline";
 import { add } from "date-fns";
@@ -110,12 +110,19 @@ const CalendarWrapper = styled.div`
 `;
 
 function EventContent({ event }: EventContentArg) {
+  const task: ITask = event.extendedProps.task;
   return (
     <Link
-      to={routeHelpers.task.details(event.extendedProps.task.id)}
-      tw="bg-primary w-full text-stone-50 px-1 mx-0.5 rounded block truncate"
+      to={routeHelpers.task.details(task.id)}
+      css={[
+        tw`bg-primary w-full text-stone-50 px-1 mx-0.5 rounded block truncate relative`,
+        task.status !== TaskStatus.TODO && tw`opacity-75`,
+      ]}
     >
       {event.title}
+      {task.status !== TaskStatus.TODO && (
+        <div tw="absolute -left-1 -right-1 h-0.5 bg-white pointer-events-none top-1/2 -translate-y-1/2" />
+      )}
     </Link>
   );
 }
