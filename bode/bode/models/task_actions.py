@@ -5,11 +5,12 @@ from bode.models.task_relation import RelationType, TaskRelation
 
 def delete_task(task_id):
     """Function deletes task, all it's relations and all it's subtasks reursively."""
+    from bode.models.task_relations_actions import get_related_tasks
 
     def is_subtask_relation(relation):
         return relation.type == RelationType.Subtask.value and str(relation.first_task_id) == task_id
 
-    relation_task_pairs = TaskRelation.get_related_tasks(task_id)
+    relation_task_pairs = get_related_tasks(task_id)
 
     for relation, related_task in relation_task_pairs:
         TaskRelation.delete(relation.id)
@@ -24,6 +25,7 @@ def delete_task(task_id):
 
 def edit_task(task_id, **task_data):
     """Function edits task. If task is checked, all interchangable tasks with status todo will be indirectly checked."""
+    from bode.models.task_relations_actions import get_related_tasks
 
     def is_interchangable_relation(relation):
         return relation.type == RelationType.Interchangable.value and str(relation.first_task_id) == task_id
@@ -38,7 +40,7 @@ def edit_task(task_id, **task_data):
     db.session.commit()
 
     if task_data["status"] != TaskStatus.TODO.value:
-        for relation, related_task in TaskRelation.get_related_tasks(task_id):
+        for relation, related_task in get_related_tasks(task_id):
             if is_interchangable_relation(relation):
                 if related_task.status != TaskStatus.TODO:
                     continue

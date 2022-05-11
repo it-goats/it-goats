@@ -4,6 +4,7 @@ import uuid
 from sqlalchemy import Enum
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.exc import IntegrityError, NoResultFound
+from sqlalchemy.ext.hybrid import hybrid_property
 
 from bode.app import db
 from bode.models.tag import Tag
@@ -34,6 +35,12 @@ class Task(db.Model):
     status = db.Column(Enum(TaskStatus), nullable=False, server_default="TODO")
 
     tags = db.relationship("Tag", secondary=task_tag, back_populates="task")
+
+    @hybrid_property
+    def relation_types(self):
+        from bode.models.task_relations_actions import get_relation_types
+
+        return get_relation_types(self.id)
 
     def get(task_id):
         return Task.query.get_or_404(task_id)
