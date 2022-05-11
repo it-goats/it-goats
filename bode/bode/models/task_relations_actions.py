@@ -46,6 +46,6 @@ def map_to_related_task_schema(relation: TaskRelation, task_id):
 
 
 def get_relation_types(task_id):
-    filters = [TaskRelation.first_task_id == task_id or TaskRelation.second_task_id == task_id]
-    relations = db.session.query(TaskRelation).filter(*filters).all()
-    return {map_to_related_task_schema(relation, task_id) for relation in relations}
+    relations_lhs = db.session.query(TaskRelation).filter(TaskRelation.first_task_id == task_id).all()
+    relations_rhs = db.session.query(TaskRelation).filter(TaskRelation.second_task_id == task_id).all()
+    return {map_to_related_task_schema(relation, task_id) for relation in relations_lhs + relations_rhs}

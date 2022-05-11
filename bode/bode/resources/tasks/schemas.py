@@ -1,22 +1,9 @@
-from enum import Enum
-
 from marshmallow import EXCLUDE, fields, validate
 
 from bode.models.task import TaskStatus
 from bode.resources.base_schema import BaseSchema
+from bode.resources.directed_relation_type import DirectedRelationType
 from bode.resources.tags.schemas import TagInputSchema, TagSchema
-
-
-class DirectedRelationType(Enum):
-    Blocks = "blocks"
-    IsBlockedBy = "is_blocked_by"
-    Subtask = "subtask"
-    Supertask = "supertask"
-    Interchangable = "interchangable"
-
-    @classmethod
-    def list(cls):
-        return [c.value for c in cls]
 
 
 class TaskInputSchema(BaseSchema):
