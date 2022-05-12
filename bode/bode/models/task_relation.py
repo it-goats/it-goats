@@ -5,13 +5,24 @@ from enum import Enum
 from sqlalchemy.dialects.postgresql import ENUM, UUID
 
 from bode.app import db
-from bode.models.task import Task, TaskStatus
 
 
 class RelationType(Enum):
     Dependent = "DEPENDENT"
     Interchangable = "INTERCHANGABLE"
     Subtask = "SUBTASK"
+
+    @classmethod
+    def list(cls):
+        return [c.value for c in cls]
+
+
+class DirectedRelationType(Enum):
+    Blocks = "blocks"
+    IsBlockedBy = "is_blocked_by"
+    Subtask = "subtask"
+    Supertask = "supertask"
+    Interchangable = "interchangable"
 
     @classmethod
     def list(cls):
@@ -81,33 +92,6 @@ class TaskRelation(db.Model):
         db.session.commit()
 
         return relation
-
-    def get_lhs_related_tasks(task_id, filters=list()):
-        all_filters = [TaskRelation.first_task_id == task_id] + filters
-        return (
-            db.session.query(TaskRelation, Task)
-            .filter(*all_filters)
-            .join(Task, TaskRelation.second_task_id == Task.id)
-            .all()
-        )
-
-    def get_rhs_related_tasks(task_id, filters=list()):
-        all_filters = [TaskRelation.second_task_id == task_id] + filters
-        return (
-            db.session.query(TaskRelation, Task)
-            .filter(*all_filters)
-            .join(Task, TaskRelation.first_task_id == Task.id)
-            .all()
-        )
-
-    def get_related_tasks(task_id):
-        return TaskRelation.get_lhs_related_tasks(task_id) + TaskRelation.get_rhs_related_tasks(task_id)
-
-    def is_task_blocked(task_id):
-        for relation, task in TaskRelation.get_lhs_related_tasks(task_id):
-            if relation.type == RelationType.Dependent.value and task.status == TaskStatus.TODO.value:
-                return True
-        return False
 
     def __repr__(self):
         return f"""<TaskRelation
