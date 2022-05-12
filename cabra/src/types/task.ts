@@ -1,3 +1,5 @@
+import { DirectedRelationType } from "./taskRelation";
+
 export interface ITag {
   id: string;
   name: string;
@@ -17,4 +19,5 @@ export interface ITask {
   status: TaskStatus;
   isBlocked: boolean;
   tags: ITag[];
+  relationTypes: DirectedRelationType[];
 }
