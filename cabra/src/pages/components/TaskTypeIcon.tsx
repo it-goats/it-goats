@@ -14,49 +14,41 @@ interface Props {
   type: DirectedRelationType;
 }
 
-const Icon = styled.div`
+const IconContainer = styled.div`
   ${tw`text-blue-700 bg-tertiary p-0.5 rounded`}
 `;
 
+const TYPES_TO_ICONS = {
+  [DirectedRelationType.Subtask]: {
+    Icon: DuplicateIcon,
+    message: "Subtask",
+  },
+  [DirectedRelationType.Supertask]: {
+    Icon: CollectionIcon,
+    message: "Has subtask",
+  },
+  [DirectedRelationType.Blocks]: {
+    Icon: ArrowCircleDownIcon,
+    message: "Blocks another task",
+  },
+  [DirectedRelationType.IsBlockedBy]: {
+    Icon: ArrowCircleUpIcon,
+    message: "Is blocked by another task",
+  },
+  [DirectedRelationType.Interchangable]: {
+    Icon: SwitchHorizontalIcon,
+    message: "Interchangeable task",
+  },
+};
+
 export function TaskTypeIcon({ type }: Props) {
-  let icon;
-  let message: string = type;
-  switch (type) {
-    case DirectedRelationType.Subtask:
-      icon = <DuplicateIcon height={20} width={20} data-tip data-for={type} />;
-      message = "Subtask";
-      break;
-    case DirectedRelationType.Supertask:
-      icon = <CollectionIcon height={20} width={20} data-tip data-for={type} />;
-      message = "Has subtask";
-      break;
-    case DirectedRelationType.Blocks:
-      icon = (
-        <ArrowCircleDownIcon height={20} width={20} data-tip data-for={type} />
-      );
-      message = "Blocks task";
-      break;
-    case DirectedRelationType.IsBlockedBy:
-      icon = (
-        <ArrowCircleUpIcon height={20} width={20} data-tip data-for={type} />
-      );
-      message = "Is blocked by task";
-      break;
-    case DirectedRelationType.Interchangable:
-      icon = (
-        <SwitchHorizontalIcon height={20} width={20} data-tip data-for={type} />
-      );
-      message = "Interchangeable task";
-      break;
-    default:
-      return <div></div>;
-  }
+  const { Icon, message } = TYPES_TO_ICONS[type];
   return (
-    <Icon>
-      {icon}
+    <IconContainer>
+      <Icon height={20} width={20} data-tip data-for={type} />
       <ReactTooltip id={type} place="bottom" effect="solid">
         {message}
       </ReactTooltip>
-    </Icon>
+    </IconContainer>
   );
 }
