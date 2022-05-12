@@ -9,6 +9,7 @@ from bode.models.task_relation import RelationType, TaskRelation
 from bode.models.task_relations_actions import (
     get_lhs_related_tasks,
     get_rhs_related_tasks,
+    get_transitive_interchangable_related_tasks,
 )
 from bode.resources.task_relations.schemas import (
     LHS_RELATION_TYPES,
@@ -99,6 +100,11 @@ class TasksInRelationWith(MethodView):
         if not relation_type:
             query_result += get_lhs_related_tasks(task_id)
             query_result += get_rhs_related_tasks(task_id, [TaskRelation.type != RelationType.Interchangable.value])
+
+        elif relation_type in SYMMETRIC_RELATION_TYPES:
+            query_result += get_transitive_interchangable_related_tasks(
+                task_id, [self.lhs_relation_filter(relation_type)]
+            )
 
         elif relation_type in SYMMETRIC_RELATION_TYPES + LHS_RELATION_TYPES:
             query_result += get_lhs_related_tasks(task_id, [self.lhs_relation_filter(relation_type)])
