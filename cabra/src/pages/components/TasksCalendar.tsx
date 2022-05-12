@@ -92,7 +92,7 @@ const CalendarWrapper = styled.div`
     }
 
     &.fc-day-today {
-      ${tw`bg-cyan-400 rounded`}
+      ${tw`bg-lightBlue-500 rounded`}
     }
   }
 
