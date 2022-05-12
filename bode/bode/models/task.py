@@ -17,9 +17,6 @@ class TaskStatus(enum.Enum):
     INDIRECTLY_DONE = "INDIRECTLY_DONE"
     DONE = "DONE"
 
-    def __str__(self):
-        return self.value
-
     @classmethod
     def list(cls):
         return [c.value for c in cls]
@@ -32,7 +29,7 @@ class Task(db.Model):
     title = db.Column(db.String(80), nullable=False)
     description = db.Column(db.String(1024), nullable=False, server_default="")
     due_date = db.Column(UTCDateTime(), nullable=True)
-    status = db.Column(Enum(TaskStatus), nullable=False, server_default="TODO")
+    status = db.Column(Enum(*TaskStatus.list(), name="task_status"), nullable=False, server_default="TODO")
 
     tags = db.relationship("Tag", secondary=task_tag, back_populates="task")
 

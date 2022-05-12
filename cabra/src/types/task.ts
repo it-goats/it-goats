@@ -17,6 +17,7 @@ export interface ITask {
   description: string;
   dueDate: string | null;
   status: TaskStatus;
+  isBlocked: boolean;
   tags: ITag[];
   relationTypes: DirectedRelationType[];
 }

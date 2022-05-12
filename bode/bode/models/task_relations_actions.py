@@ -1,6 +1,6 @@
 from bode.app import db
-from bode.models.task_relation import RelationType, TaskRelation
-from bode.resources.task_relations.schemas import DirectedRelationType
+from bode.models.task import TaskStatus
+from bode.models.task_relation import DirectedRelationType, RelationType, TaskRelation
 
 
 def get_lhs_related_tasks(task_id, filters=list()):
@@ -49,3 +49,10 @@ def get_relation_types(task_id):
     relations_lhs = db.session.query(TaskRelation).filter(TaskRelation.first_task_id == task_id).all()
     relations_rhs = db.session.query(TaskRelation).filter(TaskRelation.second_task_id == task_id).all()
     return {map_to_related_task_schema(relation, task_id) for relation in relations_lhs + relations_rhs}
+
+
+def is_task_blocked(task_id):
+    for relation, task in get_lhs_related_tasks(task_id):
+        if relation.type == RelationType.Dependent.value and task.status == TaskStatus.TODO.value:
+            return True
+    return False

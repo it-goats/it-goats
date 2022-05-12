@@ -17,6 +17,18 @@ class RelationType(Enum):
         return [c.value for c in cls]
 
 
+class DirectedRelationType(Enum):
+    Blocks = "blocks"
+    IsBlockedBy = "is_blocked_by"
+    Subtask = "subtask"
+    Supertask = "supertask"
+    Interchangable = "interchangable"
+
+    @classmethod
+    def list(cls):
+        return [c.value for c in cls]
+
+
 SYMMETRIC_RELATIONS = [RelationType.Interchangable.value]
 
 
@@ -27,7 +39,7 @@ class TaskRelation(db.Model):
     T2 := second_task_id
 
     type = SUBTASKS -> T2 is subtask of T1
-    type = DEPENDENT -> T2 is dependent on T1
+    type = DEPENDENT -> T2 blocks T1
     type = INTERCHANGABLE -> T1 is interchangable with T2 and (T2, T1, INTERCHANGABLE) record is in the database
     """
 
