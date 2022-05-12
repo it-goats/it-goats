@@ -15,7 +15,11 @@ interface Props {
 }
 
 const IconContainer = styled.div`
-  ${tw`text-blue-700 bg-tertiary p-0.5 rounded`}
+  ${tw`text-blue-700 bg-tertiary p-1 rounded`}
+`;
+
+export const EmptyIcon = styled.div`
+  ${tw`bg-primary p-1 h-7 w-7 rounded`}
 `;
 
 const TYPES_TO_ICONS = {
