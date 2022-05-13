@@ -1,21 +1,42 @@
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
 from psycopg2 import IntegrityError
+from sqlalchemy import and_
 from sqlalchemy.exc import DataError, NoResultFound
 
 from bode.models import task_actions
-from bode.models.task import Task
+from bode.models.tag import Tag
+from bode.models.task import Task, TaskStatus
 from bode.resources.tags.schemas import TagInputSchema
-from bode.resources.tasks.schemas import TaskInputSchema, TaskSchema
+from bode.resources.tasks.schemas import TaskFiltersSchema, TaskInputSchema, TaskSchema
 
 blueprint = Blueprint("tasks", "tasks", url_prefix="/tasks")
 
 
 @blueprint.route("")
 class Tasks(MethodView):
+    @blueprint.arguments(TaskFiltersSchema, location="query")
     @blueprint.response(200, TaskSchema(many=True))
-    def get(self):
-        return Task.query.order_by(Task.status, Task.due_date).all()
+    def get(self, params: TaskFiltersSchema):
+        status = params.get("status")
+        tags = params.get("tags")
+        date_from = params.get("date_from")
+        date_to = params.get("date_to")
+        title = params.get("title")
+
+        all_filters = []
+        if status and status in TaskStatus.list():
+            all_filters.append(Task.status == status)  # noqa
+        if title:
+            all_filters.append(Task.title.ilike(f"%{title}%"))
+        if date_from:
+            all_filters.append(Task.due_date >= date_from)
+        if date_to:
+            all_filters.append(Task.due_date <= date_to)
+        if tags:
+            or_filters = [Task.tags.any(Tag.name == tag) for tag in tags]
+            all_filters.append(and_(*or_filters))
+        return Task.query.order_by(Task.status, Task.due_date).filter(*all_filters).all()
 
     @blueprint.arguments(TaskInputSchema)
     @blueprint.response(201, TaskSchema)

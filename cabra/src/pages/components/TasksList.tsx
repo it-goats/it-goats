@@ -18,7 +18,7 @@ export default function TasksList({ tasks, isLoading }: Props) {
   return (
     <Container>
       {hasNoTasks ? (
-        <h1>No tasks in your agenda. Go ahead, add one!</h1>
+        <h1>Nothing found</h1>
       ) : (
         <TasksListPaginator items={tasks} />
       )}

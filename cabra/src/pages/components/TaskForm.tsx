@@ -80,7 +80,7 @@ export default function TaskForm({ task, onSubmit }: Props) {
 
       reset();
     } catch (error) {
-      setError("title", { message: "Something went wrong :C" });
+      setError("title", { message: "Something went wrong :C " + error });
     }
   };
 
