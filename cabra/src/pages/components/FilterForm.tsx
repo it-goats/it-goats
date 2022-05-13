@@ -6,6 +6,7 @@ import Select, { CSSObjectWithLabel } from "react-select";
 import { DATE_FORMAT } from "../../utils/dates";
 import DatePicker from "react-datepicker";
 import { IFilterFormState } from "../../types/filterFormState";
+import { TaskStatus } from "../../types/task";
 import { format } from "date-fns";
 import { getTags } from "../../api/tags";
 import { styled } from "twin.macro";
@@ -36,12 +37,10 @@ const selectStyles = {
   }),
 };
 
-const statusOptions: SelectOption[] = [
-  { value: "done", label: "Done" },
-  { value: "todo", label: "Todo" },
-  { value: "indirectlyDone", label: "Indirectly done" },
-  { value: "none", label: "None" },
-];
+const statusOptions: SelectOption[] = Object.values(TaskStatus).map(
+  (status: TaskStatus) => ({ label: status, value: status })
+);
+statusOptions.push({ label: "No filter", value: "" });
 
 const Container = styled.div(
   tw`p-4 bg-primary rounded-lg text-white space-y-3`

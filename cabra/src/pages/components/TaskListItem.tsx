@@ -1,3 +1,4 @@
+import { EmptyIcon, TaskTypeIcon } from "./TaskTypeIcon";
 import { ITask, TaskStatus } from "../../types/task";
 import { getTask, getTasks, updateTask } from "../../api/tasks";
 import tw, { styled } from "twin.macro";
@@ -5,6 +6,7 @@ import { useMutation, useQueryClient } from "react-query";
 
 import { ArrowRightIcon } from "@heroicons/react/solid";
 import CheckBox from "./CheckBox";
+import { DirectedRelationType } from "../../types/taskRelation";
 import { Link } from "react-router-dom";
 import NavigationButton from "./NavigationButton";
 import { formatDateTime } from "../../utils/dates";
@@ -45,10 +47,10 @@ export default function TaskListItem({ task }: Props) {
   };
 
   return (
-    <div tw="rounded-xl w-full bg-primary text-stone-50 shadow-2xl p-4 grid grid-cols-[1fr 30%] gap-x-4">
+    <div tw="rounded-xl w-full text-stone-50 bg-primary shadow-2xl p-4 grid grid-cols-[1fr 30%] gap-x-4">
       <Column>
-        <Card tw="text-lg font-bold py-4">{task.title}</Card>
-        <Card tw="text-sm flex gap-y-1 gap-x-2">
+        <Card tw="text-lg font-bold py-8">{task.title}</Card>
+        <Card tw="text-sm flex gap-y-1 gap-x-2 py-3">
           Tags:
           {task.tags.length > 0
             ? task.tags.map((tag) => <TagChip key={tag.id}>{tag.name}</TagChip>)
@@ -67,6 +69,7 @@ export default function TaskListItem({ task }: Props) {
               checked={task.status !== TaskStatus.TODO}
               id={`task-${task.id}`}
               onChange={handleIsDoneChange}
+              disabled={task.isBlocked}
               size="sm"
             />
             <Link to={routeHelpers.task.details(task.id)} state={{ task }}>
@@ -76,6 +79,15 @@ export default function TaskListItem({ task }: Props) {
             </Link>
           </Card>
         </div>
+        <Card tw="grid grid-cols-5 py-2 gap-1.5 justify-items-center">
+          {Object.values(DirectedRelationType).map((type) =>
+            task.relationTypes.includes(type) ? (
+              <TaskTypeIcon key={type} type={type} />
+            ) : (
+              <EmptyIcon />
+            )
+          )}
+        </Card>
       </Column>
       {errorMessage && (
         <p tw="flex items-center text-orange-500 pt-1">&nbsp;{errorMessage}</p>

@@ -16,9 +16,12 @@ import { zonedTimeToUtc } from "date-fns-tz";
 
 type Props = {
   onSubmit: (inputs: TaskFormInputs) => Promise<unknown>;
-  task: Omit<ITask, "id">;
+  task: Omit<ITask, "id" | "relationTypes" | "isBlocked">;
 };
-export type TaskFormInputs = Omit<ITask, "id" | "dueDate"> & {
+export type TaskFormInputs = Omit<
+  ITask,
+  "id" | "dueDate" | "relationTypes" | "isBlocked"
+> & {
   dueDate: Date | null;
 };
 
@@ -77,7 +80,7 @@ export default function TaskForm({ task, onSubmit }: Props) {
 
       reset();
     } catch (error) {
-      setError("title", { message: "Something went wrong :C" });
+      setError("title", { message: "Something went wrong :C " + error });
     }
   };
 

@@ -42,7 +42,7 @@ def edit_task(task_id, **task_data):
     if task_data["status"] != TaskStatus.TODO.value:
         for relation, related_task in get_related_tasks(task_id):
             if is_interchangable_relation(relation):
-                if related_task.status != TaskStatus.TODO:
+                if related_task.status != TaskStatus.TODO.value:
                     continue
                 inter_task_data = {
                     "title": related_task.title,

@@ -17,7 +17,7 @@ branch_labels = None
 depends_on = None
 
 
-task_status = postgresql.ENUM("TODO", "INDIRECTLY_DONE", "DONE", name="taskstatus")
+task_status = postgresql.ENUM("TODO", "INDIRECTLY_DONE", "DONE", name="task_status")
 
 
 def upgrade():
@@ -27,7 +27,7 @@ def upgrade():
         "tasks",
         sa.Column(
             "status",
-            sa.Enum("TODO", "INDIRECTLY_DONE", "DONE", name="taskstatus"),
+            sa.Enum("TODO", "INDIRECTLY_DONE", "DONE", name="task_status"),
             server_default="TODO",
             nullable=False,
         ),

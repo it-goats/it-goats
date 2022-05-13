@@ -14,9 +14,9 @@ export interface IRelatedTask {
 }
 
 export enum DirectedRelationType {
-  Blocks = "blocks",
-  IsBlockedBy = "is_blocked_by",
-  Subtask = "subtask",
   Supertask = "supertask",
+  Subtask = "subtask",
+  IsBlockedBy = "is_blocked_by",
   Interchangable = "interchangable",
+  Blocks = "blocks",
 }

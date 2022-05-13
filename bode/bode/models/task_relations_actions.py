@@ -1,8 +1,8 @@
 from sqlalchemy import or_
 
 from bode.app import db
-from bode.models.task_relation import RelationType, TaskRelation
-from bode.resources.task_relations.schemas import DirectedRelationType
+from bode.models.task import TaskStatus
+from bode.models.task_relation import DirectedRelationType, RelationType, TaskRelation
 from bode.utils.graph import Graph
 
 
@@ -100,3 +100,10 @@ def get_transitive_interchangable_related_tasks(task_id, filters=list()):
         .distinct(Task.title)
         .all()
     )
+
+
+def is_task_blocked(task_id):
+    for relation, task in get_lhs_related_tasks(task_id):
+        if relation.type == RelationType.Dependent.value and task.status == TaskStatus.TODO.value:
+            return True
+    return False

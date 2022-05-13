@@ -5,7 +5,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 
 import TaskForm from "./TaskForm";
 
-const emptyTask: Omit<ITask, "id"> = {
+const emptyTask: Omit<ITask, "id" | "relationTypes" | "isBlocked"> = {
   description: "",
   dueDate: null,
   title: "",
