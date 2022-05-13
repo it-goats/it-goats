@@ -106,7 +106,7 @@ class TasksInRelationWith(MethodView):
                 task_id, [self.lhs_relation_filter(relation_type)]
             )
 
-        elif relation_type in SYMMETRIC_RELATION_TYPES + LHS_RELATION_TYPES:
+        elif relation_type in LHS_RELATION_TYPES:
             query_result += get_lhs_related_tasks(task_id, [self.lhs_relation_filter(relation_type)])
 
         elif relation_type in RHS_RELATION_TYPES:
