@@ -85,48 +85,6 @@ export default function FilterForm({ filters, setFilters }: Props) {
         </button>
       </div>
       <InputContainer>
-        <Label>Tags:</Label>
-        <Select
-          tw="flex-1"
-          options={tagsData?.data.map(({ name }) => ({
-            value: name,
-            label: name,
-          }))}
-          styles={selectStyles}
-          isMulti
-          onChange={(options) =>
-            setFilters({
-              ...filters,
-              tags: options.map(({ value }) => value),
-            })
-          }
-          value={
-            filters.tags && tagsData
-              ? filters.tags.map((name) => ({ value: name, label: name }))
-              : []
-          }
-        />
-      </InputContainer>
-      <InputContainer>
-        <Label>Status:</Label>
-        <Select
-          tw="flex-1"
-          options={statusOptions}
-          styles={selectStyles}
-          onChange={(option) =>
-            setFilters({
-              ...filters,
-              status: option ? option.value : null,
-            })
-          }
-          value={
-            filters.status
-              ? statusOptions.find(({ value }) => value === filters.status)
-              : null
-          }
-        />
-      </InputContainer>
-      <InputContainer>
         <Label htmlFor="task-title-pattern">Title:</Label>
         <input
           tw="text-black flex-1 rounded-lg"
@@ -163,6 +121,48 @@ export default function FilterForm({ filters, setFilters }: Props) {
           placeholderText="Date to"
           dateFormat={DATE_FORMAT}
           tw="text-black rounded-lg"
+        />
+      </InputContainer>
+      <InputContainer>
+        <Label>Status:</Label>
+        <Select
+          tw="flex-1"
+          options={statusOptions}
+          styles={selectStyles}
+          onChange={(option) =>
+            setFilters({
+              ...filters,
+              status: option ? option.value : null,
+            })
+          }
+          value={
+            filters.status
+              ? statusOptions.find(({ value }) => value === filters.status)
+              : null
+          }
+        />
+      </InputContainer>
+      <InputContainer>
+        <Label>Tags:</Label>
+        <Select
+          tw="flex-1"
+          options={tagsData?.data.map(({ name }) => ({
+            value: name,
+            label: name,
+          }))}
+          styles={selectStyles}
+          isMulti
+          onChange={(options) =>
+            setFilters({
+              ...filters,
+              tags: options.map(({ value }) => value),
+            })
+          }
+          value={
+            filters.tags && tagsData
+              ? filters.tags.map((name) => ({ value: name, label: name }))
+              : []
+          }
         />
       </InputContainer>
     </Container>
