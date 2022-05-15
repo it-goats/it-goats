@@ -1,6 +1,6 @@
 from marshmallow import ValidationError, fields, validate, validates_schema
 
-from bode.models.task_relation import DirectedRelationType, RelationType
+from bode.models.enums import DirectedRelationType, RelationType
 from bode.resources.base_schema import BaseSchema
 from bode.resources.tasks.schemas import TaskSchema
 

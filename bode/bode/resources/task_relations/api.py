@@ -4,18 +4,20 @@ from flask.views import MethodView
 from flask_smorest import Blueprint, abort
 from sqlalchemy.exc import IntegrityError
 
-from bode.models.task import Task
-from bode.models.task_relation import RelationType, TaskRelation
-from bode.models.task_relations_actions import (
+from bode.models.enums import DirectedRelationType, RelationType
+from bode.models.task_relation.actions import (
+    create_task_relation,
+    delete_task_relation,
     get_lhs_related_tasks,
     get_rhs_related_tasks,
 )
+from bode.models.task_relation.model import TaskRelation
+from bode.models.utils import get_directed_relation_type
 from bode.resources.task_relations.schemas import (
     LHS_RELATION_TYPES,
     RHS_RELATION_TYPES,
     SYMMETRIC_RELATION_TYPES,
     DirectedRelationSchema,
-    DirectedRelationType,
     RelatedTaskSchema,
     SimpleTaskRelationSchema,
     TaskRelationInputSchema,
@@ -30,7 +32,7 @@ class TasksRelations(MethodView):
     @blueprint.response(201, SimpleTaskRelationSchema)
     def post(self, relation_data):
         try:
-            return TaskRelation.create(**relation_data)
+            return create_task_relation(**relation_data)
         except IntegrityError:
             abort(422, message="Relation already exists")
 
@@ -43,7 +45,7 @@ class TasksRelations(MethodView):
 class TasksRelationsById(MethodView):
     @blueprint.response(200, SimpleTaskRelationSchema)
     def delete(self, relation_id):
-        return TaskRelation.delete(relation_id)
+        return delete_task_relation(relation_id)
 
 
 @blueprint.route("/<task_id>")
@@ -70,25 +72,6 @@ class TasksInRelationWith(MethodView):
             case _:
                 return None
 
-    def map_to_related_task_schema(self, relation: TaskRelation, task: Task):
-        match relation.type:
-            case RelationType.Dependent.value:
-                type = (
-                    DirectedRelationType.IsBlockedBy.value
-                    if task.id == relation.first_task_id
-                    else DirectedRelationType.Blocks.value
-                )
-            case RelationType.Subtask.value:
-                type = (
-                    DirectedRelationType.Supertask.value
-                    if task.id == relation.first_task_id
-                    else DirectedRelationType.Subtask.value
-                )
-            case _:
-                type = DirectedRelationType.Interchangable.value
-
-        return {"task": task, "relation_type": type, "relation_id": relation.id}
-
     @blueprint.arguments(DirectedRelationSchema, location="query")
     @blueprint.response(200, RelatedTaskSchema(many=True))
     def get(self, params: DirectedRelationSchema, task_id: UUID):
@@ -106,4 +89,7 @@ class TasksInRelationWith(MethodView):
         elif relation_type in RHS_RELATION_TYPES:
             query_result += get_rhs_related_tasks(task_id, [self.rhs_relation_filter(relation_type)])
 
-        return map(lambda pair: self.map_to_related_task_schema(*pair), query_result)
+        return [
+            {"task": task, "relation_type": get_directed_relation_type(relation, task_id), "relation_id": relation.id}
+            for relation, task in query_result
+        ]
