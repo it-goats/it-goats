@@ -29,6 +29,8 @@ const schema = yup.object({
   title: yup.string().required("Your task's name is needed!").max(80),
   description: yup.string().max(1024),
   dueDate: yup.date().nullable(),
+  tags: yup.array().of(yup.string()),
+  relatedTasks: yup.array().of(yup.object())
 });
 
 const fieldStyles = tw`w-full px-4 py-2 rounded-lg shadow-2xl bg-tertiary text-black placeholder:text-primary/60`;
