@@ -18,9 +18,11 @@ export const filtersToUrlParams = (filters: IFilterFormState): string => {
   return params.toString();
 };
 
-interface TaskApiInput
-  extends Omit<ITask, "id" | "dueDate" | "relationTypes" | "isBlocked"> {
+interface TaskApiInput {
+  title: string;
+  description: string;
   dueDate: Date | string | null;
+  tags: string[];
 }
 
 export const getTask = {
