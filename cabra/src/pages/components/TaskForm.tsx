@@ -17,12 +17,13 @@ import tw, { styled } from "twin.macro";
 import DatePicker from "react-datepicker";
 import { ITask } from "../../types/task";
 import { TagsEdit } from "./TagsEdit";
+import TaskRelationsEdit from "./TaskRelationsEdit";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { zonedTimeToUtc } from "date-fns-tz";
 
 type Props = {
   onSubmit: (inputs: TaskFormInputs) => Promise<unknown>;
-  task: Omit<ITask, "id" | "relationTypes" | "isBlocked">;
+  task: Omit<ITask, "id" | "relationTypes" | "isBlocked"> & { id?: string };
 };
 export type TaskFormInputs = {
   title: string;
@@ -31,7 +32,7 @@ export type TaskFormInputs = {
   tags: string[];
   relatedTasks: Array<{
     relationType: string;
-    taskId: string;
+    task: ITask;
   }>;
 };
 
@@ -156,7 +157,7 @@ export default function TaskForm({ task, onSubmit }: Props) {
         </fieldset>
 
         <TagsEdit />
-
+        <TaskRelationsEdit taskId={task.id} />
         <SubmitButton type="submit" disabled={isSubmitting}>
           Submit!
         </SubmitButton>

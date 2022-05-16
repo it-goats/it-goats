@@ -1,12 +1,16 @@
+import { ITag, ITask } from "../types/task";
+
 import { IFilterFormState } from "../types/filterFormState";
-import { ITask } from "../types/task";
 import axios from "axios";
 
-export const filtersToUrlParams = (filters: IFilterFormState): string => {
+export const filtersToUrlParams = (
+  filters: Partial<IFilterFormState>
+): string => {
   const params = new URLSearchParams();
   Object.entries(filters)
     .filter(([_, value]) => value)
     .forEach(([key, value]) => {
+      if (!value) return;
       if (Array.isArray(value)) {
         value.forEach((element) => params.append(key, element));
       } else if (value instanceof Date) {
@@ -22,7 +26,7 @@ interface TaskApiInput {
   title: string;
   description: string;
   dueDate: Date | string | null;
-  tags: string[];
+  tags: string[] | ITag[];
 }
 
 export const getTask = {
@@ -32,7 +36,7 @@ export const getTask = {
 
 export const getTasks = {
   cacheKey: (
-    filters: IFilterFormState = {
+    filters: Partial<IFilterFormState> = {
       tags: null,
       status: null,
       title: null,
@@ -41,7 +45,7 @@ export const getTasks = {
     }
   ) => ["tasks", filtersToUrlParams(filters)],
   run: (
-    filters: IFilterFormState = {
+    filters: Partial<IFilterFormState> = {
       tags: null,
       status: null,
       title: null,
@@ -50,8 +54,6 @@ export const getTasks = {
     }
   ) => {
     const urlParams = filtersToUrlParams(filters);
-    // eslint-disable-next-line no-console
-    console.log(urlParams);
     return axios.get<ITask[]>("/tasks?" + urlParams);
   },
 };
