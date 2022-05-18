@@ -74,8 +74,6 @@ def is_task_blocked(task_id):
 
 
 def get_transitive_interchangable_related_tasks(task_id, filters=list()):
-    from bode.models.task import Task
-
     def get_distinct_uuids(uuids):
         return list(set(uuids))
 
