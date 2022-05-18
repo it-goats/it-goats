@@ -10,6 +10,7 @@ from bode.models.task_relation.actions import (
     delete_task_relation,
     get_lhs_related_tasks,
     get_rhs_related_tasks,
+    get_transitive_interchangable_related_tasks,
 )
 from bode.models.task_relation.model import TaskRelation
 from bode.models.utils import get_directed_relation_type
@@ -83,7 +84,12 @@ class TasksInRelationWith(MethodView):
             query_result += get_lhs_related_tasks(task_id)
             query_result += get_rhs_related_tasks(task_id, [TaskRelation.type != RelationType.Interchangable.value])
 
-        elif relation_type in SYMMETRIC_RELATION_TYPES + LHS_RELATION_TYPES:
+        elif relation_type in SYMMETRIC_RELATION_TYPES:
+            query_result += get_transitive_interchangable_related_tasks(
+                task_id, [self.lhs_relation_filter(relation_type)]
+            )
+
+        elif relation_type in LHS_RELATION_TYPES:
             query_result += get_lhs_related_tasks(task_id, [self.lhs_relation_filter(relation_type)])
 
         elif relation_type in RHS_RELATION_TYPES:
