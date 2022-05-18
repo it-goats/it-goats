@@ -61,7 +61,7 @@ def get_transitive_interchangable_related_tasks(task_id, filters=list()):
         return list(set(uuids))
 
     def get_relation_graph(relations):
-        graph = Graph(len(all_interchangable_tasks))
+        graph = Graph()
         uuids = []
 
         for relation in relations:
@@ -73,11 +73,8 @@ def get_transitive_interchangable_related_tasks(task_id, filters=list()):
         return graph, uuids
 
     def group_tasks_subsets():
-        task_parent = parents[task_id] if task_id in parents.keys() and parents[task_id] != -1 else task_id
-        tasks_subset = []
-        for key in parents.keys():
-            if task_parent == graph.find_union.find(key):
-                tasks_subset.append(key)
+        task_parent = graph.disjoint_sets.find(task_id) if task_id in parents.keys() else task_id
+        tasks_subset = [key for key in parents.keys() if graph.disjoint_sets.find(key) == task_parent]
         return tasks_subset
 
     all_interchangable_tasks = db.session.query(TaskRelation).filter(*filters).all()
