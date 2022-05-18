@@ -94,7 +94,7 @@ def get_transitive_interchangable_related_tasks(task_id, filters=list()):
         )
         .join(Task, TaskRelation.second_task_id == Task.id)
         .filter(Task.id != task_id)
-        .distinct(Task.title)
+        .distinct(Task.id)
         .all()
     )
 
