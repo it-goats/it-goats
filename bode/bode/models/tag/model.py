@@ -3,7 +3,10 @@ import uuid
 from sqlalchemy.dialects.postgresql import UUID
 
 from bode.app import db
-from bode.models.task_tag import task_tag
+
+task_tag = db.Table(
+    "task_tag", db.Column("task_id", db.ForeignKey("tasks.id")), db.Column("tag_id", db.ForeignKey("tags.id"))
+)
 
 
 class Tag(db.Model):
@@ -13,25 +16,6 @@ class Tag(db.Model):
     name = db.Column(db.String(80), unique=True, nullable=False)
 
     task = db.relationship("Task", secondary=task_tag, back_populates="tags")
-
-    def create(tag_name):
-        tag = Tag(name=tag_name)
-
-        db.session.add(tag)
-        db.session.commit()
-
-        return tag
-
-    def delete(tag_id):
-        tag = Tag.query.get_or_404(tag_id)
-
-        db.session.delete(tag)
-        db.session.commit()
-
-        return tag
-
-    def get_by_name(tag_name):
-        return Tag.query.filter(Tag.name == tag_name).first()
 
     def __repr__(self):
         return f'<Tag {self.id} \n  name="{self.name}">'

@@ -1,8 +1,7 @@
 from marshmallow import EXCLUDE, fields, validate
 
-from bode.models.task import TaskStatus
-from bode.models.task_relation import DirectedRelationType
-from bode.models.task_relations_actions import is_task_blocked
+from bode.models.enums import DirectedRelationType, TaskStatus
+from bode.models.task_relation.actions import is_task_blocked
 from bode.resources.base_schema import BaseSchema
 from bode.resources.tags.schemas import TagInputSchema, TagSchema
 
