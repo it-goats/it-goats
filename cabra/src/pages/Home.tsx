@@ -46,7 +46,7 @@ export default function HomePage() {
           </Link>
         </div>
         <FilterForm filters={filters} setFilters={setFilters} />
-        <TasksList isLoading={isLoading} tasks={tasks} />
+        <TasksList isLoading={isLoading} tasks={tasks} filters={filters} />
       </div>
     </Layout>
   );

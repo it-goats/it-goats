@@ -1,5 +1,6 @@
 import tw, { styled } from "twin.macro";
 
+import { IFilterFormState } from "../../types/filterFormState";
 import { ITask } from "../../types/task";
 import TasksListPaginator from "./TasksListsPaginator";
 
@@ -8,9 +9,10 @@ const Container = styled.div(tw`text-gray-50 w-full space-y-4`);
 interface Props {
   tasks: ITask[] | null;
   isLoading: boolean;
+  filters: IFilterFormState;
 }
 
-export default function TasksList({ tasks, isLoading }: Props) {
+export default function TasksList({ tasks, isLoading, filters }: Props) {
   if (isLoading) return <Container>Loading tasks</Container>;
   if (!tasks) return <Container>Oops! Error loading tasks.</Container>;
 
@@ -20,7 +22,7 @@ export default function TasksList({ tasks, isLoading }: Props) {
       {hasNoTasks ? (
         <h1>Nothing found</h1>
       ) : (
-        <TasksListPaginator items={tasks} />
+        <TasksListPaginator items={tasks} filters={filters} />
       )}
     </Container>
   );

@@ -48,7 +48,7 @@ const Container = styled.div(
 const InputContainer = styled.div(
   tw`rounded-lg px-2 py-1 bg-secondary flex items-center space-x-5`
 );
-const Label = styled.label(tw`w-1/12`);
+const Label = styled.label(tw`w-10`);
 
 const HideButton = styled.button(
   tw`px-2 py-1 text-white font-bold bg-secondary`
@@ -109,7 +109,7 @@ export default function FilterForm({ filters, setFilters }: Props) {
           id="date-from"
           placeholderText="Date from"
           dateFormat={DATE_FORMAT}
-          tw="text-black rounded-lg"
+          tw="text-black rounded-lg w-full"
         />
         <Label>To:</Label>
         <DatePicker
@@ -120,7 +120,7 @@ export default function FilterForm({ filters, setFilters }: Props) {
           id="date-to"
           placeholderText="Date to"
           dateFormat={DATE_FORMAT}
-          tw="text-black rounded-lg"
+          tw="text-black rounded-lg w-full"
         />
       </InputContainer>
       <InputContainer>
