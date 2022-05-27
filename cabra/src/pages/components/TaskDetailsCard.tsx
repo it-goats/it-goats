@@ -53,6 +53,7 @@ export default function TaskDetails({ id }: Props) {
               id={`task-${task.id}`}
               onChange={handleStatusChange}
               disabled={task.isBlocked}
+              status={task.status}
             />
             <Link to={routeHelpers.task.edit(task.id)}>
               <NavigationButton tw="text-amber-600 bg-amber-100">
