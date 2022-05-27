@@ -1,4 +1,3 @@
-// import { RiCheckboxBlankCircleLine, RiCheckboxCircleLine, RiCheckboxMultipleLine } from "react-icons/ri";
 import tw, { TwStyle, styled } from "twin.macro";
 
 import CheckboxBlankIcon from "remixicon-react/CheckboxBlankCircleLineIcon";
@@ -49,17 +48,6 @@ const Label = styled.label<{ size: Size }>`
   }
 `;
 
-const resolveClassname = (status: TaskStatus) => {
-  switch (status) {
-    case TaskStatus.DONE:
-      return "done";
-    case TaskStatus.TODO:
-      return "todo";
-    case TaskStatus.INDIRECTLY_DONE:
-      return "indirectly_done";
-  }
-};
-
 const resolveIcon = (
   status: TaskStatus,
   size: Size,
@@ -95,9 +83,7 @@ export default function Checkbox({
         data-for={id}
       >
         <StyledInput {...props} disabled={disabled} id={id} type="checkbox" />
-        <span className={resolveClassname(status)}>
-          {resolveIcon(status, size, disabled)}
-        </span>
+        <span>{resolveIcon(status, size, disabled)}</span>
       </Label>
       {disabled && (
         <ReactTooltip id={id} place="bottom" effect="solid">
