@@ -7,7 +7,6 @@ import { useMutation, useQueryClient } from "react-query";
 import { ArrowRightIcon } from "@heroicons/react/solid";
 import CheckBox from "./CheckBox";
 import { DirectedRelationType } from "../../types/taskRelation";
-import { IFilterFormState } from "../../types/filterFormState";
 import { Link } from "react-router-dom";
 import NavigationButton from "./NavigationButton";
 import { formatDateTime } from "../../utils/dates";
@@ -16,21 +15,19 @@ import { useState } from "react";
 
 interface Props {
   task: ITask;
-  filters: IFilterFormState;
 }
 
 const Card = styled.div(tw`p-2 w-full bg-secondary rounded-lg`);
 const Column = styled.div(tw`flex flex-col gap-2`);
 const TagChip = styled.div(tw`rounded-full px-2 bg-tertiary text-secondary`);
 
-export default function TaskListItem({ task, filters }: Props) {
+export default function TaskListItem({ task }: Props) {
   const [errorMessage, setErrorMessage] = useState("");
   const client = useQueryClient();
   const editTask = useMutation((task: ITask) => updateTask(task.id, task), {
     onSuccess: () => {
       client.invalidateQueries(getTask.cacheKey(task.id));
       client.invalidateQueries(getTasks.cacheKey());
-      client.invalidateQueries(getTasks.cacheKey(filters));
     },
   });
   const handleIsDoneChange = async () => {

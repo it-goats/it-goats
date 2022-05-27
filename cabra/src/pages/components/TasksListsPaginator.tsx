@@ -1,7 +1,6 @@
 import tw, { styled } from "twin.macro";
 import { useEffect, useState } from "react";
 
-import { IFilterFormState } from "../../types/filterFormState";
 import { ITask } from "../../types/task";
 import ReactPaginate from "react-paginate";
 import Select from "react-select";
@@ -13,7 +12,6 @@ const DEFAULT_ITEMS_PER_PAGE = 20;
 
 interface Props {
   items: ITask[];
-  filters: IFilterFormState;
 }
 interface PaginationOption {
   readonly value: number;
@@ -27,7 +25,7 @@ const paginationOptions: PaginationOption[] = [
   { value: 100, label: "100" },
 ];
 
-export default function TasksListsPaginator({ items, filters }: Props) {
+export default function TasksListsPaginator({ items }: Props) {
   const [paginatedItems, setPaginatedItems] = useState<ITask[]>([]);
   const [pageCount, setPageCount] = useState(0);
   const [itemOffset, setItemOffset] = useState(0);
@@ -49,7 +47,7 @@ export default function TasksListsPaginator({ items, filters }: Props) {
       <div>
         <Container>
           {paginatedItems?.map((item: ITask) => (
-            <TaskListItem key={item.id} task={item} filters={filters} />
+            <TaskListItem key={item.id} task={item} />
           ))}
         </Container>
       </div>
