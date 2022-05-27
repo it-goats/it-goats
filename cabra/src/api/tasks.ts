@@ -29,15 +29,8 @@ export const getTask = {
 };
 
 export const getTasks = {
-  cacheKey: (
-    filters: IFilterFormState = {
-      tags: null,
-      status: null,
-      title: null,
-      dateFrom: null,
-      dateTo: null,
-    }
-  ) => ["tasks", filtersToUrlParams(filters)],
+  cacheKey: (filters?: IFilterFormState) =>
+    filters ? ["tasks", filtersToUrlParams(filters)] : ["tasks"],
   run: (
     filters: IFilterFormState = {
       tags: null,
