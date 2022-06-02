@@ -32,6 +32,9 @@ def edit_task(task_id, **task_data):
     def is_interchangable_relation(relation):
         return relation.type == RelationType.Interchangable.value and str(relation.first_task_id) == task_id
 
+    def is_subtask_relation(relation):
+        return relation.type == RelationType.Subtask.value and str(relation.first_task_id) == task_id
+
     task = get_task(task_id)
 
     for key, value in task_data.items():
@@ -53,6 +56,16 @@ def edit_task(task_id, **task_data):
                     "status": TaskStatus.INDIRECTLY_DONE.value,
                 }
                 edit_task(str(related_task.id), **inter_task_data)
+            if is_subtask_relation(relation):
+                if related_task.status == TaskStatus.DONE.value:
+                    continue
+                subtask_data = {
+                    "title": related_task.title,
+                    "description": related_task.description,
+                    "due_date": related_task.due_date,
+                    "status": TaskStatus.DONE.value,
+                }
+                edit_task(str(related_task.id), **subtask_data)
 
     return task
 
