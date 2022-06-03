@@ -2,7 +2,7 @@ import tw, { TwStyle, styled } from "twin.macro";
 
 import CheckboxBlankIcon from "remixicon-react/CheckboxBlankCircleLineIcon";
 import CheckboxCheckedIcon from "remixicon-react/CheckboxCircleLineIcon";
-import CheckboxIndirectlyDoneIcon from "../../utils/indirectly_done_icon.svg";
+import CheckboxIndirectlyDoneIcon from "../../assets/indirectly_done_icon.svg";
 import DisabledIcon from "remixicon-react/IndeterminateCircleLineIcon";
 import { InputHTMLAttributes } from "react";
 import ReactTooltip from "react-tooltip";
