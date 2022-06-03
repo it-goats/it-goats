@@ -41,8 +41,7 @@ function RecurrenceForm({ onChange, value }: Props) {
   const [isRecurrent, setIsRecurrent] = useState(value !== null);
 
   useEffect(() => {
-    if (!isRecurrent) onChange(null);
-    else onChange(serializeRecurrenceRule(rule));
+    onChange(isRecurrent ? serializeRecurrenceRule(rule) : null);
   }, [isRecurrent, onChange, rule]);
 
   return (
