@@ -1,6 +1,11 @@
 import * as yup from "yup";
 
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import {
+  Controller,
+  FormProvider,
+  SubmitHandler,
+  useForm,
+} from "react-hook-form";
 import {
   DATE_TIME_FORMAT,
   TIME_FORMAT,
@@ -11,18 +16,24 @@ import tw, { styled } from "twin.macro";
 
 import DatePicker from "react-datepicker";
 import { ITask } from "../../types/task";
+import { TagsEdit } from "./TagsEdit";
+import TaskRelationsEdit from "./TaskRelationsEdit";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { zonedTimeToUtc } from "date-fns-tz";
 
 type Props = {
   onSubmit: (inputs: TaskFormInputs) => Promise<unknown>;
-  task: Omit<ITask, "id" | "relationTypes" | "isBlocked">;
+  task: Omit<ITask, "id" | "relationTypes" | "isBlocked"> & { id?: string };
 };
-export type TaskFormInputs = Omit<
-  ITask,
-  "id" | "dueDate" | "relationTypes" | "isBlocked"
-> & {
+export type TaskFormInputs = {
+  title: string;
+  description: string;
   dueDate: Date | null;
+  tags: string[];
+  relatedTasks: Array<{
+    relationType: string;
+    task: ITask;
+  }>;
 };
 
 const schema = yup.object({
@@ -30,7 +41,12 @@ const schema = yup.object({
   description: yup.string().max(1024),
   dueDate: yup.date().nullable(),
   tags: yup.array().of(yup.string()),
-  relatedTasks: yup.array().of(yup.object())
+  relatedTasks: yup.array().of(
+    yup.object({
+      relationType: yup.string(),
+      taskId: yup.string(),
+    })
+  ),
 });
 
 const fieldStyles = tw`w-full px-4 py-2 rounded-lg shadow-2xl bg-tertiary text-black placeholder:text-primary/60`;
@@ -54,6 +70,15 @@ const SubmitButton = styled.button(
 );
 
 export default function TaskForm({ task, onSubmit }: Props) {
+  const form = useForm<TaskFormInputs>({
+    resolver: yupResolver(schema),
+    defaultValues: {
+      ...task,
+      dueDate: parseUTC(task.dueDate),
+      tags: task.tags.map(({ name }) => name),
+    },
+  });
+
   const {
     control,
     formState: { errors, isSubmitting },
@@ -61,13 +86,7 @@ export default function TaskForm({ task, onSubmit }: Props) {
     register,
     reset,
     setError,
-  } = useForm<TaskFormInputs>({
-    resolver: yupResolver(schema),
-    defaultValues: {
-      ...task,
-      dueDate: parseUTC(task.dueDate),
-    },
-  });
+  } = form;
 
   const internalOnSubmit: SubmitHandler<TaskFormInputs> = async ({
     dueDate,
@@ -87,58 +106,63 @@ export default function TaskForm({ task, onSubmit }: Props) {
   };
 
   return (
-    <Form onSubmit={handleSubmit(internalOnSubmit)}>
-      <fieldset tw="space-y-2">
-        <div tw="space-y-2">
-          <Label htmlFor="task-title">Name:</Label>
-          <input
-            css={[tw`form-input`, fieldStyles]}
-            id="task-title"
-            type="text"
-            maxLength={80}
-            placeholder="My new task"
-            required
-            {...register("title")}
-          />
-        </div>
-        <div tw="space-y-2">
-          <Label htmlFor="task-description">Description:</Label>
-          <textarea
-            css={[tw`form-textarea text-sm`, fieldStyles]}
-            id="task-description"
-            maxLength={1024}
-            placeholder="My new task details"
-            rows={6}
-            {...register("description")}
-          ></textarea>
-        </div>
-        <div tw="space-y-2">
-          <Label htmlFor="title">Due date:</Label>
-          <Controller
-            control={control}
-            name="dueDate"
-            render={({ field: { onChange, onBlur, value } }) => (
-              <DatePicker
-                onChange={onChange}
-                onBlur={onBlur}
-                id="task-due-date"
-                placeholderText="Due date"
-                selected={value}
-                showTimeSelect
-                timeFormat={TIME_FORMAT}
-                timeIntervals={15}
-                timeCaption="time"
-                dateFormat={DATE_TIME_FORMAT}
-                calendarStartDay={1}
-              />
-            )}
-          />
-        </div>
-      </fieldset>
-      <SubmitButton type="submit" disabled={isSubmitting}>
-        Submit!
-      </SubmitButton>
-      <div tw="text-red-500 pt-1 mb-6">&nbsp;{errors.title?.message}</div>
-    </Form>
+    <FormProvider {...form}>
+      <Form onSubmit={handleSubmit(internalOnSubmit)}>
+        <fieldset tw="space-y-2">
+          <div tw="space-y-2">
+            <Label htmlFor="task-title">Name:</Label>
+            <input
+              css={[tw`form-input`, fieldStyles]}
+              id="task-title"
+              type="text"
+              maxLength={80}
+              placeholder="My new task"
+              required
+              {...register("title")}
+            />
+          </div>
+          <div tw="space-y-2">
+            <Label htmlFor="task-description">Description:</Label>
+            <textarea
+              css={[tw`form-textarea text-sm`, fieldStyles]}
+              id="task-description"
+              maxLength={1024}
+              placeholder="My new task details"
+              rows={6}
+              {...register("description")}
+            ></textarea>
+          </div>
+          <div tw="space-y-2">
+            <Label htmlFor="title">Due date:</Label>
+            <Controller
+              control={control}
+              name="dueDate"
+              render={({ field: { onChange, onBlur, value } }) => (
+                <DatePicker
+                  onChange={onChange}
+                  onBlur={onBlur}
+                  id="task-due-date"
+                  placeholderText="Due date"
+                  selected={value}
+                  showTimeSelect
+                  timeFormat={TIME_FORMAT}
+                  timeIntervals={15}
+                  timeCaption="time"
+                  dateFormat={DATE_TIME_FORMAT}
+                  calendarStartDay={1}
+                />
+              )}
+            />
+          </div>
+        </fieldset>
+
+        <TagsEdit />
+        <TaskRelationsEdit taskId={task.id} />
+        <SubmitButton type="submit" disabled={isSubmitting}>
+          Submit!
+        </SubmitButton>
+        <div tw="text-red-500 pt-1 mb-6">&nbsp;{errors.title?.message}</div>
+      </Form>
+    </FormProvider>
   );
 }

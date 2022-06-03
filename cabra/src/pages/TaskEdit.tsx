@@ -9,8 +9,6 @@ import { ArrowLeftIcon } from "@heroicons/react/solid";
 import Layout from "./components/Layout";
 import NavigationButton from "./components/NavigationButton";
 import SubtasksListEdit from "./components/SubtasksListEdit";
-import { TagsEdit } from "./components/TagsEdit";
-import TaskRelationsEdit from "./components/TaskRelationsEdit";
 import { routeHelpers } from "../routes";
 
 export default function TaskEditPage() {
@@ -50,8 +48,6 @@ export default function TaskEditPage() {
         </div>
         <TaskForm task={data.data} onSubmit={editTask.mutateAsync} />
         <div>
-          <TaskRelationsEdit taskId={id} />
-          <TagsEdit tags={data.data.tags} taskId={id} />
           <SubtasksListEdit parentId={id} />
         </div>
       </div>

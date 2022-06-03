@@ -1,21 +1,20 @@
+import { Controller, useFormContext } from "react-hook-form";
 import tw, { styled } from "twin.macro";
-import useTags, { TagOption } from "../hooks/useTagsEdit";
 
 import Creatable from "react-select/creatable";
-import { ITag } from "../../types/task";
-
-interface Props {
-  tags: ITag[];
-  taskId: string;
-}
+import { TaskFormInputs } from "./TaskForm";
+import useAvailableTags from "../hooks/useAvailableTags";
 
 const Label = styled.label(tw`text-gray-50 font-bold`);
 
-export function TagsEdit({ tags, taskId }: Props) {
-  const { selectedTags, allTags, onChangeHandle, isLoading, error } = useTags({
-    tags,
-    taskId,
-  });
+const tagNameToOption = (tagName: string) => ({
+  value: tagName,
+  label: tagName,
+});
+
+export function TagsEdit() {
+  const form = useFormContext<TaskFormInputs>();
+  const { tags, isLoading, error, createTag } = useAvailableTags();
 
   if (isLoading)
     return (
@@ -33,20 +32,28 @@ export function TagsEdit({ tags, taskId }: Props) {
       </div>
     );
 
-  const options: TagOption[] = allTags.map(({ id, name }) => ({
-    value: id,
-    label: name,
-  }));
+  const options = tags.map(({ name }) => tagNameToOption(name));
 
   return (
     <div tw="mt-3 mb-8">
       <Label>Tags:</Label>
-      <Creatable
-        isMulti
-        value={selectedTags}
-        options={options}
-        onChange={onChangeHandle}
-      />
+      <Controller
+        name="tags"
+        control={form.control}
+        render={({ field: { value, onChange } }) => (
+          <Creatable
+            isMulti
+            onChange={(selectedTags) =>
+              onChange(selectedTags.map(({ value }) => value))
+            }
+            options={options}
+            onCreateOption={(tagName) =>
+              createTag(tagName).then(() => onChange([...value, tagName]))
+            }
+            value={value.map(tagNameToOption)}
+          />
+        )}
+      ></Controller>
     </div>
   );
 }

@@ -4,8 +4,10 @@ import axios from "axios";
 export const deleteTag = (id: string) => (data: Omit<ITag, "id">) =>
   axios.delete<ITag>(`/tasks/${id}/tags`, { data });
 
-export const createTag = (id: string) => (data: Omit<ITag, "id">) =>
+export const addTagToTask = (id: string) => (data: Omit<ITag, "id">) =>
   axios.post<ITag>(`/tasks/${id}/tags`, data);
+
+export const addTag = (name: string) => axios.post<ITag>(`/tags`, { name });
 
 export const getTags = {
   cacheKey: "tags",
