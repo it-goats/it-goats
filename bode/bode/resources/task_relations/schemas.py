@@ -1,8 +1,6 @@
-from enum import Enum
-
 from marshmallow import ValidationError, fields, validate, validates_schema
 
-from bode.models.task_relation import RelationType
+from bode.models.enums import DirectedRelationType, RelationType
 from bode.resources.base_schema import BaseSchema
 from bode.resources.tasks.schemas import TaskSchema
 
@@ -25,21 +23,9 @@ class SimpleTaskRelationSchema(BaseSchema):
     type = fields.String()
 
 
-class DirectedRelationType(Enum):
-    IsDependentOn = "is_dependent_on"
-    DependsOn = "depends_on"
-    Subtask = "subtask"
-    Supertask = "supertask"
-    Interchangable = "interchangable"
-
-    @classmethod
-    def list(cls):
-        return [c.value for c in cls]
-
-
 SYMMETRIC_RELATION_TYPES = [DirectedRelationType.Interchangable.value]
-LHS_RELATION_TYPES = [DirectedRelationType.DependsOn.value, DirectedRelationType.Subtask.value]
-RHS_RELATION_TYPES = [DirectedRelationType.IsDependentOn.value, DirectedRelationType.Supertask.value]
+LHS_RELATION_TYPES = [DirectedRelationType.IsBlockedBy.value, DirectedRelationType.Subtask.value]
+RHS_RELATION_TYPES = [DirectedRelationType.Blocks.value, DirectedRelationType.Supertask.value]
 
 
 class DirectedRelationSchema(BaseSchema):

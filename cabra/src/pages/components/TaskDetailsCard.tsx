@@ -6,6 +6,7 @@ import { DirectedRelationType } from "../../types/taskRelation";
 import { Link } from "react-router-dom";
 import NavigationButton from "./NavigationButton";
 import RelatedTasksList from "./RelatedTaskList";
+import { TaskStatus } from "../../types/task";
 import { formatDateTime } from "../../utils/dates";
 import { routeHelpers } from "../../routes";
 import styled from "@emotion/styled";
@@ -48,9 +49,11 @@ export default function TaskDetails({ id }: Props) {
           </CardField>
           <Ctas align="center">
             <CheckBox
-              checked={task.isDone}
+              checked={task.status !== TaskStatus.TODO}
               id={`task-${task.id}`}
               onChange={handleStatusChange}
+              disabled={task.isBlocked}
+              status={task.status}
             />
             <Link to={routeHelpers.task.edit(task.id)}>
               <NavigationButton tw="text-amber-600 bg-amber-100">
@@ -75,21 +78,21 @@ export default function TaskDetails({ id }: Props) {
             tw="flex"
           />
         </CardField>
-        <CardField title="Is dependent on" span={1}>
+        <CardField title="Is blocked by" span={1}>
           <RelatedTasksList
-            relationType={DirectedRelationType.IsDependentOn}
-            parentTaskId={id}
-          />
-        </CardField>
-        <CardField title="Depends on" span={1}>
-          <RelatedTasksList
-            relationType={DirectedRelationType.DependsOn}
+            relationType={DirectedRelationType.IsBlockedBy}
             parentTaskId={id}
           />
         </CardField>
         <CardField title="Interchangeable tasks" span={1}>
           <RelatedTasksList
             relationType={DirectedRelationType.Interchangable}
+            parentTaskId={id}
+          />
+        </CardField>
+        <CardField title="Blocks" span={1}>
+          <RelatedTasksList
+            relationType={DirectedRelationType.Blocks}
             parentTaskId={id}
           />
         </CardField>

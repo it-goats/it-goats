@@ -1,11 +1,11 @@
 import "twin.macro";
 
+import { ITask, TaskStatus } from "../../types/task";
 import { getTask, getTasks, updateTask } from "../../api/tasks";
 import { useMutation, useQueryClient } from "react-query";
 
 import Checkbox from "./CheckBox";
 import { DirectedRelationType } from "../../types/taskRelation";
-import { ITask } from "../../types/task";
 import { getRelatedTasks } from "../../api/taskRelations";
 import { useState } from "react";
 
@@ -26,7 +26,7 @@ export default function RelatedTask({
   const client = useQueryClient();
   const editTask = useMutation((task: ITask) => updateTask(task.id, task), {
     onSuccess: () => {
-      client.invalidateQueries(getTasks.cacheKey);
+      client.invalidateQueries(getTasks.cacheKey());
       client.invalidateQueries(getTask.cacheKey(parentTaskId));
       client.invalidateQueries(
         getRelatedTasks.cacheKey(parentTaskId, relationType)
@@ -37,7 +37,8 @@ export default function RelatedTask({
     try {
       const updatedTask = {
         ...task,
-        isDone: !task.isDone,
+        status:
+          task.status === TaskStatus.DONE ? TaskStatus.TODO : TaskStatus.DONE,
       };
       await editTask.mutateAsync(updatedTask);
     } catch (error) {
@@ -56,8 +57,10 @@ export default function RelatedTask({
       <p tw="place-self-end">
         <Checkbox
           id={task.id}
-          checked={task.isDone}
+          checked={task.status !== TaskStatus.TODO}
           onChange={handleIsDoneChange}
+          disabled={task.isBlocked}
+          status={task.status}
         />
       </p>
       {errorMessage && (

@@ -1,7 +1,9 @@
+import { ITask, TaskStatus } from "../../types/task";
 import { deleteTask, getTask, getTasks, updateTask } from "../../api/tasks";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 
-import { ITask } from "../../types/task";
+import { DirectedRelationType } from "../../types/taskRelation";
+import { getRelatedTasks } from "../../api/taskRelations";
 import { routeHelpers } from "../../routes";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
@@ -23,14 +25,24 @@ const useTask = (id: string) => {
   const client = useQueryClient();
   const editTask = useMutation((task: ITask) => updateTask(task.id, task), {
     onSuccess: () => {
-      client.invalidateQueries(getTasks.cacheKey);
+      client.invalidateQueries(getTasks.cacheKey());
       client.invalidateQueries(getTask.cacheKey(task?.id));
+      client.invalidateQueries(
+        getRelatedTasks.cacheKey(task?.id, DirectedRelationType.IsBlockedBy)
+      );
+      client.invalidateQueries(
+        getRelatedTasks.cacheKey(task?.id, DirectedRelationType.Interchangable)
+      );
+      client.invalidateQueries(
+        getRelatedTasks.cacheKey(task?.id, DirectedRelationType.Blocks)
+      );
     },
   });
   const handleStatusChange = async () => {
     const updatedTask = {
       ...task,
-      isDone: !task?.isDone,
+      status:
+        task.status === TaskStatus.DONE ? TaskStatus.TODO : TaskStatus.DONE,
     };
     editTask.mutate(updatedTask);
   };

@@ -1,28 +1,36 @@
+import { ITask, TaskStatus } from "../../types/task";
 import { createTask, getTasks } from "../../api/tasks";
 import { useMutation, useQueryClient } from "react-query";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
-import { ITask } from "../../types/task";
 import TaskForm from "./TaskForm";
-import { routeHelpers } from "../../routes";
-import { useNavigate } from "react-router-dom";
 
-const emptyTask: Omit<ITask, "id"> = {
+const emptyTask: Omit<ITask, "id" | "relationTypes" | "isBlocked"> = {
   description: "",
   dueDate: null,
   title: "",
-  isDone: false,
+  status: TaskStatus.TODO,
   tags: [],
 };
 
 export default function CreateTaskForm() {
   const navigate = useNavigate();
+  const [params] = useSearchParams();
   const client = useQueryClient();
   const addTask = useMutation(createTask, {
     onSuccess: () => {
-      client.invalidateQueries(getTasks.cacheKey);
-      navigate(routeHelpers.tasks);
+      client.invalidateQueries(getTasks.cacheKey());
+      navigate(-1);
     },
   });
 
-  return <TaskForm onSubmit={addTask.mutateAsync} task={emptyTask} />;
+  return (
+    <TaskForm
+      onSubmit={addTask.mutateAsync}
+      task={{
+        ...emptyTask,
+        dueDate: params.get("date"),
+      }}
+    />
+  );
 }
