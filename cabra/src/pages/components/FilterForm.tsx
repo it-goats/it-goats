@@ -48,7 +48,7 @@ const Container = styled.div(
 const InputContainer = styled.div(
   tw`rounded-lg px-2 py-1 bg-secondary flex items-center space-x-5`
 );
-const Label = styled.label(tw`w-1/12`);
+const Label = styled.label(tw`w-10`);
 
 const HideButton = styled.button(
   tw`px-2 py-1 text-white font-bold bg-secondary`
@@ -85,48 +85,6 @@ export default function FilterForm({ filters, setFilters }: Props) {
         </button>
       </div>
       <InputContainer>
-        <Label>Tags:</Label>
-        <Select
-          tw="flex-1"
-          options={tagsData?.data.map(({ name }) => ({
-            value: name,
-            label: name,
-          }))}
-          styles={selectStyles}
-          isMulti
-          onChange={(options) =>
-            setFilters({
-              ...filters,
-              tags: options.map(({ value }) => value),
-            })
-          }
-          value={
-            filters.tags && tagsData
-              ? filters.tags.map((name) => ({ value: name, label: name }))
-              : []
-          }
-        />
-      </InputContainer>
-      <InputContainer>
-        <Label>Status:</Label>
-        <Select
-          tw="flex-1"
-          options={statusOptions}
-          styles={selectStyles}
-          onChange={(option) =>
-            setFilters({
-              ...filters,
-              status: option ? option.value : null,
-            })
-          }
-          value={
-            filters.status
-              ? statusOptions.find(({ value }) => value === filters.status)
-              : null
-          }
-        />
-      </InputContainer>
-      <InputContainer>
         <Label htmlFor="task-title-pattern">Title:</Label>
         <input
           tw="text-black flex-1 rounded-lg"
@@ -151,7 +109,7 @@ export default function FilterForm({ filters, setFilters }: Props) {
           id="date-from"
           placeholderText="Date from"
           dateFormat={DATE_FORMAT}
-          tw="text-black rounded-lg"
+          tw="text-black rounded-lg w-full"
         />
         <Label>To:</Label>
         <DatePicker
@@ -162,7 +120,49 @@ export default function FilterForm({ filters, setFilters }: Props) {
           id="date-to"
           placeholderText="Date to"
           dateFormat={DATE_FORMAT}
-          tw="text-black rounded-lg"
+          tw="text-black rounded-lg w-full"
+        />
+      </InputContainer>
+      <InputContainer>
+        <Label>Status:</Label>
+        <Select
+          tw="flex-1"
+          options={statusOptions}
+          styles={selectStyles}
+          onChange={(option) =>
+            setFilters({
+              ...filters,
+              status: option ? option.value : null,
+            })
+          }
+          value={
+            filters.status
+              ? statusOptions.find(({ value }) => value === filters.status)
+              : null
+          }
+        />
+      </InputContainer>
+      <InputContainer>
+        <Label>Tags:</Label>
+        <Select
+          tw="flex-1"
+          options={tagsData?.data.map(({ name }) => ({
+            value: name,
+            label: name,
+          }))}
+          styles={selectStyles}
+          isMulti
+          onChange={(options) =>
+            setFilters({
+              ...filters,
+              tags: options.map(({ value }) => value),
+            })
+          }
+          value={
+            filters.tags && tagsData
+              ? filters.tags.map((name) => ({ value: name, label: name }))
+              : []
+          }
         />
       </InputContainer>
     </Container>

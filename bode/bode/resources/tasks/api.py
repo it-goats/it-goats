@@ -4,9 +4,16 @@ from psycopg2 import IntegrityError
 from sqlalchemy import and_
 from sqlalchemy.exc import DataError, NoResultFound
 
-from bode.models import task_actions
-from bode.models.tag import Tag
-from bode.models.task import Task, TaskStatus
+from bode.models.enums import TaskStatus
+from bode.models.tag.model import Tag
+from bode.models.task.actions import (
+    add_tag_to_task,
+    create_task,
+    delete_task,
+    edit_task,
+    remove_tag_from_task,
+)
+from bode.models.task.model import Task
 from bode.resources.tags.schemas import TagInputSchema
 from bode.resources.tasks.schemas import TaskFiltersSchema, TaskInputSchema, TaskSchema
 
@@ -41,7 +48,7 @@ class Tasks(MethodView):
     @blueprint.arguments(TaskInputSchema)
     @blueprint.response(201, TaskSchema)
     def post(self, task_data):
-        return Task.create(**task_data)
+        return create_task(**task_data)
 
 
 @blueprint.route("/<task_id>")
@@ -57,14 +64,14 @@ class TasksById(MethodView):
     @blueprint.response(200, TaskSchema)
     def put(self, task_data, task_id):
         try:
-            return task_actions.edit_task(task_id, **task_data)
+            return edit_task(task_id, **task_data)
         except NoResultFound:
             abort(404, message="Item not found.")
 
     @blueprint.response(200, TaskSchema)
     def delete(self, task_id):
         try:
-            return task_actions.delete_task(task_id)
+            return delete_task(task_id)
         except NoResultFound:
             abort(404, message="Item not found.")
 
@@ -75,7 +82,7 @@ class TaskTags(MethodView):
     @blueprint.response(200, TaskSchema)
     def post(self, tags_data, task_id):
         try:
-            return Task.add_tag(task_id, **tags_data)
+            return add_tag_to_task(task_id, **tags_data)
         except IntegrityError:
             abort(409, message="Tag already assigned to the task.")
 
@@ -83,6 +90,6 @@ class TaskTags(MethodView):
     @blueprint.response(200, TaskSchema)
     def delete(self, tags_data, task_id):
         try:
-            return Task.remove_tag(task_id, **tags_data)
+            return remove_tag_from_task(task_id, **tags_data)
         except NoResultFound:
             abort(404, message="The task is not assigned to the task.")

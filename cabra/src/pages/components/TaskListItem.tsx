@@ -71,6 +71,7 @@ export default function TaskListItem({ task }: Props) {
               onChange={handleIsDoneChange}
               disabled={task.isBlocked}
               size="sm"
+              status={task.status}
             />
             <Link to={routeHelpers.task.details(task.id)} state={{ task }}>
               <NavigationButton tw="text-primary bg-tertiary rounded p-1 text-sm">

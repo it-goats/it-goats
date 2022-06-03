@@ -1,15 +1,19 @@
 import tw, { TwStyle, styled } from "twin.macro";
 
-import { CheckCircleIcon } from "@heroicons/react/outline";
+import CheckboxBlankIcon from "remixicon-react/CheckboxBlankCircleLineIcon";
+import CheckboxCheckedIcon from "remixicon-react/CheckboxCircleLineIcon";
+import CheckboxMultiIcon from "remixicon-react/CheckboxMultipleLineIcon";
+import DisabledIcon from "remixicon-react/IndeterminateCircleLineIcon";
 import { InputHTMLAttributes } from "react";
 import ReactTooltip from "react-tooltip";
+import { TaskStatus } from "../../types/task";
 
 type Props = Omit<
   InputHTMLAttributes<HTMLInputElement>,
   "type" | "id" | "size"
 > & {
-  className?: string;
   id: string;
+  status: TaskStatus;
   size?: Size;
 };
 type Size = "sm" | "base" | "lg";
@@ -22,42 +26,51 @@ const labelSizes: Record<Size, TwStyle> = {
   lg: tw`w-11 h-11`,
 };
 
-const iconSizes: Record<Size, { height: number; width: number }> = {
-  sm: { height: 20, width: 20 },
-  base: { height: 24, width: 24 },
-  lg: { height: 28, width: 28 },
+const iconSizes: Record<Size, { size: number }> = {
+  sm: { size: 20 },
+  base: { size: 24 },
+  lg: { size: 28 },
 };
-
 const Label = styled.label<{ size: Size }>`
   ${tw`select-none`}
 
-  .checkmark {
+  span {
     ${tw`place-items-center rounded grid cursor-pointer`}
-    ${tw`bg-slate-300 text-slate-400 transition-all shadow-xl`}
+    ${tw`transition-all shadow-xl text-secondary bg-tertiary`}
     ${({ size }) => labelSizes[size]}
   }
 
-  input:checked ~ .checkmark {
-    ${tw`bg-success text-green-900`}
+  input:disabled ~ span {
+    ${tw`bg-slate-500 cursor-auto`}
   }
-
-  input:focus ~ .checkmark {
-    ${tw`ring-2`}
-  }
-
-  input:disabled ~ .checkmark {
-    ${tw`bg-red-700`}
-  }
-
-  input:enabled ~ .checkmark {
+  input:enabled ~ span {
     ${tw`hover:opacity-60`}
   }
 `;
+
+const resolveIcon = (
+  status: TaskStatus,
+  size: Size,
+  disabled: boolean | undefined
+) => {
+  if (disabled) {
+    return <DisabledIcon {...iconSizes[size]} />;
+  }
+  switch (status) {
+    case TaskStatus.DONE:
+      return <CheckboxCheckedIcon {...iconSizes[size]} />;
+    case TaskStatus.TODO:
+      return <CheckboxBlankIcon {...iconSizes[size]} />;
+    case TaskStatus.INDIRECTLY_DONE:
+      return <CheckboxMultiIcon {...iconSizes[size]} />;
+  }
+};
 
 export default function Checkbox({
   id,
   size = "base",
   disabled,
+  status,
   ...props
 }: Props) {
   return (
@@ -70,9 +83,7 @@ export default function Checkbox({
         data-for={id}
       >
         <StyledInput {...props} disabled={disabled} id={id} type="checkbox" />
-        <span className="checkmark">
-          <CheckCircleIcon {...iconSizes[size]} />
-        </span>
+        <span>{resolveIcon(status, size, disabled)}</span>
       </Label>
       {disabled && (
         <ReactTooltip id={id} place="bottom" effect="solid">
