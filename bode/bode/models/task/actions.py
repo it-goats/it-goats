@@ -50,9 +50,6 @@ def edit_task(task_id, **task_data):
                 if related_task.status != TaskStatus.TODO.value:
                     continue
                 inter_task_data = {
-                    "title": related_task.title,
-                    "description": related_task.description,
-                    "due_date": related_task.due_date,
                     "status": TaskStatus.INDIRECTLY_DONE.value,
                 }
                 edit_task(str(related_task.id), **inter_task_data)
@@ -60,9 +57,6 @@ def edit_task(task_id, **task_data):
                 if related_task.status == TaskStatus.DONE.value:
                     continue
                 subtask_data = {
-                    "title": related_task.title,
-                    "description": related_task.description,
-                    "due_date": related_task.due_date,
                     "status": TaskStatus.DONE.value,
                 }
                 edit_task(str(related_task.id), **subtask_data)
