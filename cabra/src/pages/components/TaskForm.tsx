@@ -11,6 +11,8 @@ import tw, { styled } from "twin.macro";
 
 import DatePicker from "react-datepicker";
 import { ITask } from "../../types/task";
+import RecurrenceForm from "./RecurrenceForm";
+import { useEffect } from "react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { zonedTimeToUtc } from "date-fns-tz";
 
@@ -20,7 +22,7 @@ type Props = {
 };
 export type TaskFormInputs = Omit<
   ITask,
-  "id" | "dueDate" | "relationTypes" | "isBlocked"
+  "id" | "dueDate" | "isBlocked" | "relationTypes"
 > & {
   dueDate: Date | null;
 };
@@ -59,6 +61,8 @@ export default function TaskForm({ task, onSubmit }: Props) {
     register,
     reset,
     setError,
+    setValue,
+    watch,
   } = useForm<TaskFormInputs>({
     resolver: yupResolver(schema),
     defaultValues: {
@@ -83,6 +87,12 @@ export default function TaskForm({ task, onSubmit }: Props) {
       setError("title", { message: "Something went wrong :C " + error });
     }
   };
+
+  const dueDate = watch("dueDate");
+
+  useEffect(() => {
+    if (!dueDate) setValue("rrule", null);
+  }, [dueDate, setValue]);
 
   return (
     <Form onSubmit={handleSubmit(internalOnSubmit)}>
@@ -131,6 +141,17 @@ export default function TaskForm({ task, onSubmit }: Props) {
               />
             )}
           />
+        </div>
+        <div>
+          {dueDate && (
+            <Controller
+              control={control}
+              name="rrule"
+              render={({ field: { onChange, value } }) => (
+                <RecurrenceForm onChange={onChange} value={value} />
+              )}
+            />
+          )}
         </div>
       </fieldset>
       <SubmitButton type="submit" disabled={isSubmitting}>
