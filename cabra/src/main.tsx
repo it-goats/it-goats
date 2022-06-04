@@ -7,7 +7,9 @@ import ReactDOM from "react-dom";
 import { StrictMode } from "react";
 import axios from "axios";
 
-axios.defaults.baseURL = `${window.location.origin}/api/v1`;
+axios.defaults.baseURL = `${
+  import.meta.env.CABRA_API_URL || window.location.origin
+}/api/v1`;
 axios.defaults.headers.common["Content-Type"] = "application/json";
 
 ReactDOM.render(

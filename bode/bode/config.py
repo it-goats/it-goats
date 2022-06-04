@@ -2,6 +2,9 @@ import os
 
 
 def get_db_uri():
+    if os.getenv("DATABASE_URL") is not None:
+        return os.getenv("DATABASE_URL").replace("postgres://", "postgresql://")
+
     user = os.getenv("POSTGRES_USER", "root")
     password = os.getenv("POSTGRES_PASSWORD", "root")
     host = os.getenv("POSTGRES_HOST", "localhost")

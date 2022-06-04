@@ -19,7 +19,6 @@ def create_app():
     app.config["OPENAPI_VERSION"] = "3.0.2"
 
     app.config["SQLALCHEMY_DATABASE_URI"] = CONFIG.DATABASE_URI
-    app.config["SQLALCHEMY_ECHO"] = True
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
     register_extensions(app)
