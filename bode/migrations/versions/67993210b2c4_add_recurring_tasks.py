@@ -25,7 +25,7 @@ def upgrade():
         sa.Column("title", sa.String(length=80), nullable=True),
         sa.Column("description", sa.String(length=1024), nullable=True),
         sa.Column("due_date", sa.DateTime(timezone=False), nullable=True),
-        sa.Column("status", sa.Enum("TODO", "INDIRECTLY_DONE", "DONE", name="task_status"), nullable=True),
+        sa.Column("status", postgresql.ENUM(name="task_status", create_type=False), nullable=True),
         sa.Column("main_task_id", postgresql.UUID(as_uuid=True), nullable=False),
         sa.Column("instance_key", sa.String(length=64), nullable=False),
         sa.Column("is_deleted", sa.Boolean(), server_default="false", nullable=False),
