@@ -1,0 +1,36 @@
+name: "Deploy"
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  deploy-bode:
+    name: "Deploy Bode to Heroku"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: jctaveras/heroku-deploy@v3.1.0
+          with:
+          email: ${{ secrets.HEROKU_EMAIL }}
+          api_key: ${{ secrets.HEROKU_API_KEY }}
+          app_name: ${{ secrets.HEROKU_APP_NAME }}
+          dockerfile_path: '.'
+          process_type: 'web release'
+
+  deploy-cabra:
+    name: "Deploy Cabra to Netlify"
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./cabra
+    steps:
+      - uses: actions/checkout@v2
+      - uses: jsmrcaga/action-netlify-deploy@v1.8.0
+        with:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_DEPLOY_TO_PROD: true
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+          build_directory: 'dist'
+          build_command: 'npm run build'
+          node_version: '16.14.2'
