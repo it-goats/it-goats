@@ -1,0 +1,13 @@
+FROM python:3.10.4
+
+WORKDIR /app
+
+COPY bode/pyproject.toml bode/poetry.lock /app/
+
+RUN pip3 install poetry==1.1.13
+RUN poetry config virtualenvs.create false
+RUN poetry install
+
+COPY bode /app
+
+CMD gunicorn 'bode.app:create_app()' --bind 0.0.0.0:$PORT
