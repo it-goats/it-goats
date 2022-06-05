@@ -41,8 +41,6 @@ export const getTasks = {
     }
   ) => {
     const urlParams = filtersToUrlParams(filters);
-    // eslint-disable-next-line no-console
-    console.log(urlParams);
     return axios.get<ITask[]>("/tasks?" + urlParams);
   },
 };

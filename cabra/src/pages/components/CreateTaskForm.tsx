@@ -8,9 +8,10 @@ import TaskForm from "./TaskForm";
 const emptyTask: Omit<ITask, "id" | "relationTypes" | "isBlocked"> = {
   description: "",
   dueDate: null,
-  title: "",
+  rrule: null,
   status: TaskStatus.TODO,
   tags: [],
+  title: "",
 };
 
 export default function CreateTaskForm() {

@@ -9,6 +9,7 @@ import RelatedTasksList from "./RelatedTaskList";
 import { TaskStatus } from "../../types/task";
 import { formatDateTime } from "../../utils/dates";
 import { routeHelpers } from "../../routes";
+import { rrulestr } from "rrule";
 import styled from "@emotion/styled";
 import tw from "twin.macro";
 import useTaskDetails from "../hooks/useTaskDetails";
@@ -47,6 +48,11 @@ export default function TaskDetails({ id }: Props) {
           <CardField title="Deadline" align="center">
             {task?.dueDate ? formatDateTime(task.dueDate) : "<No deadline>"}
           </CardField>
+          {task.rrule && (
+            <CardField title="Recurrence" align="center">
+              {rrulestr(task.rrule).toText()}
+            </CardField>
+          )}
           <Ctas align="center">
             <CheckBox
               checked={task.status !== TaskStatus.TODO}

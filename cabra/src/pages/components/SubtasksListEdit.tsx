@@ -20,9 +20,10 @@ const Label = styled.label(tw`text-gray-50 font-bold`);
 const emptyTask: Omit<ITask, "id" | "relationTypes" | "isBlocked"> = {
   description: "",
   dueDate: null,
-  title: "",
+  rrule: null,
   status: TaskStatus.TODO,
   tags: [],
+  title: "",
 };
 
 interface Props {
