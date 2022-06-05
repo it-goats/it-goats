@@ -4,7 +4,11 @@ from bode.app import db
 from bode.models.enums import RelationType, TaskStatus
 from bode.models.tag.actions import create_tag, get_tag_by_name
 from bode.models.task.model import Task
-from bode.models.task_relation.actions import delete_task_relation, get_related_tasks
+from bode.models.task_relation.actions import (
+    create_task_relation,
+    delete_task_relation,
+    get_related_tasks,
+)
 
 
 def delete_task(task_id):
@@ -62,10 +66,47 @@ def get_task(task_id):
 
 
 def create_task(**task_data):
-    task = Task(**task_data)
-
+    # tworzenie taska
+    create_task_data = {
+        key: task_data[key] for key in task_data.keys() & {"title", "description", "due_date", "status"}
+    }
+    task = Task(**create_task_data)
     db.session.add(task)
     db.session.commit()
+
+    # dodanie tagów
+    tags_data = {key: task_data[key] for key in task_data.keys() & {"tags"}}["tags"]
+    for tag_name in tags_data:
+        tag = get_tag_by_name(tag_name)
+        if tag is None:
+            tag = create_tag(tag_name)
+        task.tags.append(tag)
+    db.session.commit()
+
+    # dodanie relacji
+    relations_data = {key: task_data[key] for key in task_data.keys() & {"relations"}}["relations"]
+    for relation_data in relations_data:
+        if relation_data["type"] == "blocks":
+            relation_input = {"first_task_id": relation_data["task_id"], "second_task_id": task.id, "type": "DEPENDENT"}
+        if relation_data["type"] == "is_blocked_by":
+            relation_input = {"first_task_id": task.id, "second_task_id": relation_data["task_id"], "type": "DEPENDENT"}
+        if relation_data["type"] == "interchangable":
+            relation_input = {
+                "first_task_id": task.id,
+                "second_task_id": relation_data["task_id"],
+                "type": "INTERCHANGABLE",
+            }
+        create_task_relation(**relation_input)
+
+    # dodanie subtasków
+    subtasks_data = {key: task_data[key] for key in task_data.keys() & {"subtasks"}}["subtasks"]
+    for subtask_title in subtasks_data:
+        subtask_input = {"title": subtask_title}
+        subtask = Task(**subtask_input)
+        db.session.add(subtask)
+        db.session.commit()
+        subtask_relation_input = {"first_task_id": task.id, "second_task_id": subtask.id, "type": "SUBTASK"}
+        create_task_relation(**subtask_relation_input)
 
     return task
 

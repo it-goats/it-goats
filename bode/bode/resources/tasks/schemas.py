@@ -3,7 +3,12 @@ from marshmallow import EXCLUDE, fields, validate
 from bode.models.enums import DirectedRelationType, TaskStatus
 from bode.models.task_relation.actions import is_task_blocked
 from bode.resources.base_schema import BaseSchema
-from bode.resources.tags.schemas import TagInputSchema, TagSchema
+from bode.resources.tags.schemas import TagSchema
+
+
+class RelationInputSchema(BaseSchema):
+    task_id = fields.UUID(required=True)
+    type = fields.String(validate=validate.OneOf(DirectedRelationType.list()), required=True)
 
 
 class TaskInputSchema(BaseSchema):
@@ -14,7 +19,9 @@ class TaskInputSchema(BaseSchema):
     description = fields.String(validate=validate.Length(0, 1024), default="")
     due_date = fields.DateTime(allow_none=True)
     status = fields.String(validate=validate.OneOf(TaskStatus.list()), default=TaskStatus.TODO.value)
-    tags = fields.List(fields.Nested(TagInputSchema), default=[])
+    tags = fields.List(fields.String, default=[])
+    relations = fields.List(fields.Nested(RelationInputSchema), default=[])
+    subtasks = fields.List(fields.String, default=[])
 
 
 class TaskSchema(BaseSchema):
