@@ -17,18 +17,23 @@ interface Props {
 export default function SubtasksListEdit({ parentTaskId }: Props) {
   const form = useFormContext<TaskFormInputs>();
   const { setValue } = form;
-  
+
   const subtasksQuery = useQuery(
-    parentTaskId ? getRelatedTasks.cacheKey(parentTaskId, DirectedRelationType.Subtask) : [],
-    () => (parentTaskId ? getRelatedTasks.run(parentTaskId, DirectedRelationType.Subtask) : null),
+    parentTaskId
+      ? getRelatedTasks.cacheKey(parentTaskId, DirectedRelationType.Subtask)
+      : [],
+    () =>
+      parentTaskId
+        ? getRelatedTasks.run(parentTaskId, DirectedRelationType.Subtask)
+        : null,
     { enabled: !!parentTaskId }
   );
 
   useEffect(() => {
     const subtasks =
       subtasksQuery?.data?.data?.map(({ task }) => ({
-        "subtaskTitle": task.title,
-        "subtaskId": task.id,
+        subtaskTitle: task.title,
+        subtaskId: task.id,
       })) ?? [];
 
     setValue("subtasks", subtasks);
@@ -39,9 +44,7 @@ export default function SubtasksListEdit({ parentTaskId }: Props) {
   return (
     <div>
       <Label>Subtasks:</Label>
-      <Container>
-        {subtasks.forEach(subtask => subtask.task.title)}
-      </Container>
+      <Container>{subtasks.map((subtask) => subtask.task.title)}</Container>
     </div>
   );
 }

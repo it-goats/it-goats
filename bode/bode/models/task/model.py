@@ -14,10 +14,11 @@ class Task(db.Model):
     __tablename__ = "tasks"
 
     id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    title = db.Column(db.String(80), nullable=False)
     description = db.Column(db.String(1024), nullable=False, server_default="")
     due_date = db.Column(UTCDateTime(), nullable=True)
+    rrule = db.Column(db.Text(), nullable=True)
     status = db.Column(Enum(*TaskStatus.list(), name="task_status"), nullable=False, server_default="TODO")
+    title = db.Column(db.String(80), nullable=False)
 
     tags = db.relationship("Tag", secondary=task_tag, back_populates="task")
 

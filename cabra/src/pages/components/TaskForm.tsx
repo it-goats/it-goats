@@ -16,9 +16,10 @@ import tw, { styled } from "twin.macro";
 
 import DatePicker from "react-datepicker";
 import { ITask } from "../../types/task";
-import SubtasksListEdit from "./SubtasksListEdit";
+import RecurrenceForm from "./RecurrenceForm";
 import { TagsEdit } from "./TagsEdit";
 import TaskRelationsEdit from "./TaskRelationsEdit";
+import { useEffect } from "react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { zonedTimeToUtc } from "date-fns-tz";
 
@@ -30,7 +31,7 @@ export type TaskFormInputs = {
   title: string;
   description: string;
   dueDate: Date | null;
-  tags: string[];
+  rrule: string | null;
   relatedTasks: Array<{
     relationType: string;
     task: ITask;
@@ -39,6 +40,7 @@ export type TaskFormInputs = {
     subtaskTitle: string;
     subtaskId: string | null;
   }>;
+  tags: string[];
 };
 
 const schema = yup.object({
@@ -55,9 +57,9 @@ const schema = yup.object({
   subtasks: yup.array().of(
     yup.object({
       subtaskTitle: yup.string().required("Subtask's title is needed!").max(80),
-      subtaskId: yup.string().nullable()
+      subtaskId: yup.string().nullable(),
     })
-  )
+  ),
 });
 
 const fieldStyles = tw`w-full px-4 py-2 rounded-lg shadow-2xl bg-tertiary text-black placeholder:text-primary/60`;
@@ -97,6 +99,8 @@ export default function TaskForm({ task, onSubmit }: Props) {
     register,
     reset,
     setError,
+    setValue,
+    watch,
   } = form;
 
   const internalOnSubmit: SubmitHandler<TaskFormInputs> = async ({
@@ -104,7 +108,7 @@ export default function TaskForm({ task, onSubmit }: Props) {
     ...data
   }) => {
     // eslint-disable-next-line no-console
-    console.log("dupa", data)
+    console.log("dupa", data);
     try {
       const inputs = {
         ...data,
@@ -117,6 +121,12 @@ export default function TaskForm({ task, onSubmit }: Props) {
       setError("title", { message: "Something went wrong :C " + error });
     }
   };
+
+  const dueDate = watch("dueDate");
+
+  useEffect(() => {
+    if (!dueDate) setValue("rrule", null);
+  }, [dueDate, setValue]);
 
   return (
     <FormProvider {...form}>
@@ -166,6 +176,17 @@ export default function TaskForm({ task, onSubmit }: Props) {
                 />
               )}
             />
+          </div>
+          <div>
+            {dueDate && (
+              <Controller
+                control={control}
+                name="rrule"
+                render={({ field: { onChange, value } }) => (
+                  <RecurrenceForm onChange={onChange} value={value} />
+                )}
+              />
+            )}
           </div>
         </fieldset>
         <TagsEdit />

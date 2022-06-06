@@ -8,7 +8,6 @@ import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeftIcon } from "@heroicons/react/solid";
 import Layout from "./components/Layout";
 import NavigationButton from "./components/NavigationButton";
-import SubtasksListEdit from "./components/SubtasksListEdit";
 import { routeHelpers } from "../routes";
 
 export default function TaskEditPage() {
