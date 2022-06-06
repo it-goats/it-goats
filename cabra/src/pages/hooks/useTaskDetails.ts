@@ -36,6 +36,9 @@ const useTask = (id: string) => {
       client.invalidateQueries(
         getRelatedTasks.cacheKey(task?.id, DirectedRelationType.Blocks)
       );
+      client.invalidateQueries(
+        getRelatedTasks.cacheKey(task?.id, DirectedRelationType.Subtask)
+      );
     },
   });
   const handleStatusChange = async () => {

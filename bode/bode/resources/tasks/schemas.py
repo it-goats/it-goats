@@ -33,7 +33,7 @@ class TaskSchema(BaseSchema):
     due_date = fields.DateTime()
     status = fields.String(validate=validate.OneOf(TaskStatus.list()))
     rrule = fields.String()
-    is_blocked = fields.Function(lambda task: task.status != TaskStatus.DONE.value and is_task_blocked(task.id))
+    is_blocked = fields.Function(lambda task: is_task_blocked(task.id))
     tags = fields.List(fields.Nested(TagSchema))
     relation_types = fields.List(fields.String(validate=validate.OneOf(DirectedRelationType.list())))
 
