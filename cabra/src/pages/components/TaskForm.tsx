@@ -16,6 +16,7 @@ import tw, { styled } from "twin.macro";
 
 import DatePicker from "react-datepicker";
 import { ITask } from "../../types/task";
+import SubtasksListEdit from "./SubtasksListEdit";
 import { TagsEdit } from "./TagsEdit";
 import TaskRelationsEdit from "./TaskRelationsEdit";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -34,10 +35,14 @@ export type TaskFormInputs = {
     relationType: string;
     task: ITask;
   }>;
+  subtasks: Array<{
+    subtaskTitle: string;
+    subtaskId: string | null;
+  }>;
 };
 
 const schema = yup.object({
-  title: yup.string().required("Your task's name is needed!").max(80),
+  title: yup.string().required("Your task's title is needed!").max(80),
   description: yup.string().max(1024),
   dueDate: yup.date().nullable(),
   tags: yup.array().of(yup.string()),
@@ -47,6 +52,12 @@ const schema = yup.object({
       taskId: yup.string(),
     })
   ),
+  subtasks: yup.array().of(
+    yup.object({
+      subtaskTitle: yup.string().required("Subtask's title is needed!").max(80),
+      subtaskId: yup.string().nullable()
+    })
+  )
 });
 
 const fieldStyles = tw`w-full px-4 py-2 rounded-lg shadow-2xl bg-tertiary text-black placeholder:text-primary/60`;
@@ -92,6 +103,8 @@ export default function TaskForm({ task, onSubmit }: Props) {
     dueDate,
     ...data
   }) => {
+    // eslint-disable-next-line no-console
+    console.log("dupa", data)
     try {
       const inputs = {
         ...data,
@@ -155,9 +168,9 @@ export default function TaskForm({ task, onSubmit }: Props) {
             />
           </div>
         </fieldset>
-
         <TagsEdit />
         <TaskRelationsEdit taskId={task.id} />
+        {/* <SubtasksListEdit parentTaskId={task.id} /> */}
         <SubmitButton type="submit" disabled={isSubmitting}>
           Submit!
         </SubmitButton>

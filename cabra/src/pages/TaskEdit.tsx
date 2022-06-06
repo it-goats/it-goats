@@ -47,9 +47,6 @@ export default function TaskEditPage() {
           </NavigationButton>
         </div>
         <TaskForm task={data.data} onSubmit={editTask.mutateAsync} />
-        <div>
-          <SubtasksListEdit parentId={id} />
-        </div>
       </div>
     </Layout>
   );
