@@ -48,6 +48,7 @@ const selectStyles = {
     ...provided,
     borderRadius: "8px",
     fontWeight: "normal",
+    backgroundColor: "#beccef",
   }),
 };
 
@@ -145,11 +146,11 @@ export default function TaskRelationsEdit({ taskId }: Props) {
             key={task.id}
             tw="grid grid-cols-[1fr 2rem] gap-x-2 py-0 items-center font-normal"
           >
-            <p tw="bg-white p-2 rounded flex gap-x-2">
+            <p tw="bg-white p-2 rounded-lg bg-tertiary flex gap-x-2">
               <span tw="w-max bg-secondary py-0.5 px-1 text-white rounded text-sm tracking-wide">
                 {resolveRelationTypeLabel(relationType)}
               </span>
-              <span tw="font-semibold">{task.title}</span>
+              <span>{task.title}</span>
             </p>
             <button
               type="button"

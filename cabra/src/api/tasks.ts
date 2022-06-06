@@ -1,4 +1,4 @@
-import { ITag, ITask } from "../types/task";
+import { ITask, TaskStatus } from "../types/task";
 
 import { IFilterFormState } from "../types/filterFormState";
 import axios from "axios";
@@ -22,11 +22,13 @@ export const filtersToUrlParams = (
   return params.toString();
 };
 
-interface TaskApiInput {
+export interface TaskApiInput {
   title: string;
   description: string;
   dueDate: Date | string | null;
-  tags: string[] | ITag[];
+  tags: string[];
+  subtasks: Array<{ title: string; id: string | null }>;
+  relatedTasks: Array<{ taskId: string; relationType: string }>;
 }
 
 export const getTask = {
@@ -62,6 +64,9 @@ export const deleteTask = (id: string) => axios.delete<ITask>(`/tasks/${id}`);
 
 export const updateTask = (id: string, data: TaskApiInput) =>
   axios.put<ITask>(`/tasks/${id}`, data);
+
+export const updateTaskStatus = (id: string, status: TaskStatus) =>
+  axios.put<ITask>(`/tasks/${id}`, { status });
 
 export const createTask = (data: TaskApiInput) =>
   axios.post<ITask>("/tasks", data);

@@ -17,6 +17,7 @@ import tw, { styled } from "twin.macro";
 import DatePicker from "react-datepicker";
 import { ITask } from "../../types/task";
 import RecurrenceForm from "./RecurrenceForm";
+import SubtasksListEdit from "./SubtasksListEdit";
 import { TagsEdit } from "./TagsEdit";
 import TaskRelationsEdit from "./TaskRelationsEdit";
 import { useEffect } from "react";
@@ -37,8 +38,8 @@ export type TaskFormInputs = {
     task: ITask;
   }>;
   subtasks: Array<{
-    subtaskTitle: string;
-    subtaskId: string | null;
+    title: string;
+    id: string | null;
   }>;
   tags: string[];
 };
@@ -89,6 +90,8 @@ export default function TaskForm({ task, onSubmit }: Props) {
       ...task,
       dueDate: parseUTC(task.dueDate),
       tags: task.tags.map(({ name }) => name),
+      relatedTasks: [],
+      subtasks: [],
     },
   });
 
@@ -107,8 +110,6 @@ export default function TaskForm({ task, onSubmit }: Props) {
     dueDate,
     ...data
   }) => {
-    // eslint-disable-next-line no-console
-    console.log("dupa", data);
     try {
       const inputs = {
         ...data,
@@ -191,7 +192,7 @@ export default function TaskForm({ task, onSubmit }: Props) {
         </fieldset>
         <TagsEdit />
         <TaskRelationsEdit taskId={task.id} />
-        {/* <SubtasksListEdit parentTaskId={task.id} /> */}
+        <SubtasksListEdit parentTaskId={task.id} />
         <SubmitButton type="submit" disabled={isSubmitting}>
           Submit!
         </SubmitButton>

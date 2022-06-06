@@ -1,9 +1,8 @@
 import { ITask, TaskStatus } from "../../types/task";
-import { createTask, getTasks } from "../../api/tasks";
+import { TaskApiInput, createTask, getTasks } from "../../api/tasks";
+import TaskForm, { TaskFormInputs } from "./TaskForm";
 import { useMutation, useQueryClient } from "react-query";
 import { useNavigate, useSearchParams } from "react-router-dom";
-
-import TaskForm from "./TaskForm";
 
 const emptyTask: Omit<ITask, "id" | "relationTypes" | "isBlocked"> = {
   description: "",
@@ -25,9 +24,21 @@ export default function CreateTaskForm() {
     },
   });
 
+  const onSubmit = (inputs: TaskFormInputs) => {
+    const variables: TaskApiInput = {
+      ...inputs,
+      relatedTasks: inputs.relatedTasks.map(({ relationType, task }) => ({
+        relationType,
+        taskId: task.id,
+      })),
+    };
+
+    return addTask.mutateAsync(variables);
+  };
+
   return (
     <TaskForm
-      onSubmit={addTask.mutateAsync}
+      onSubmit={onSubmit}
       task={{
         ...emptyTask,
         dueDate: params.get("date"),

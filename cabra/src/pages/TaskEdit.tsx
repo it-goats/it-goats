@@ -1,7 +1,7 @@
 import "twin.macro";
 
+import { TaskApiInput, getTask, getTasks, updateTask } from "../api/tasks";
 import TaskForm, { TaskFormInputs } from "./components/TaskForm";
-import { getTask, getTasks, updateTask } from "../api/tasks";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -23,13 +23,25 @@ export default function TaskEditPage() {
     }
   );
 
-  const editTask = useMutation((task: TaskFormInputs) => updateTask(id, task), {
+  const editTask = useMutation((task: TaskApiInput) => updateTask(id, task), {
     onSuccess: () => {
       client.invalidateQueries(getTasks.cacheKey());
       client.invalidateQueries(getTask.cacheKey(id));
       navigate(-1);
     },
   });
+
+  const onSubmit = (inputs: TaskFormInputs) => {
+    const variables: TaskApiInput = {
+      ...inputs,
+      relatedTasks: inputs.relatedTasks.map(({ relationType, task }) => ({
+        relationType,
+        taskId: task.id,
+      })),
+    };
+
+    return editTask.mutateAsync(variables);
+  };
 
   if (isLoading || !data) return <Layout>Loading</Layout>;
   return (
@@ -45,7 +57,7 @@ export default function TaskEditPage() {
             Go Back
           </NavigationButton>
         </div>
-        <TaskForm task={data.data} onSubmit={editTask.mutateAsync} />
+        <TaskForm task={data.data} onSubmit={onSubmit} />
       </div>
     </Layout>
   );
