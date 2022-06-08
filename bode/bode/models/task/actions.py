@@ -34,6 +34,9 @@ def edit_task(task_id, **task_data):
     def is_interchangable_relation(relation):
         return relation.type == RelationType.Interchangable.value and str(relation.first_task_id) == task_id
 
+    def is_subtask_relation(relation):
+        return relation.type == RelationType.Subtask.value and str(relation.first_task_id) == task_id
+
     """Edit task data"""
     task = get_task(task_id)
     edit_task_data = {key: task_data[key] for key in task_data.keys() & {"title", "description", "due_date", "status"}}
@@ -42,7 +45,6 @@ def edit_task(task_id, **task_data):
     db.session.commit()
 
     """If task is checked, check all interchangable tasks indirectly as well."""
-
     new_status = {key: task_data[key] for key in task_data.keys() & {"status"}}
     if new_status:
         if new_status["status"] != TaskStatus.TODO.value:
@@ -51,12 +53,16 @@ def edit_task(task_id, **task_data):
                     if related_task.status != TaskStatus.TODO.value:
                         continue
                     inter_task_data = {
-                        "title": related_task.title,
-                        "description": related_task.description,
-                        "due_date": related_task.due_date,
                         "status": TaskStatus.INDIRECTLY_DONE.value,
                     }
                     edit_task(str(related_task.id), **inter_task_data)
+                if is_subtask_relation(relation):
+                    if related_task.status == TaskStatus.DONE.value:
+                        continue
+                    subtask_data = {
+                        "status": TaskStatus.DONE.value,
+                    }
+                    edit_task(str(related_task.id), **subtask_data)
 
     """Delete tags"""
     tags_to_delete_data = {key: task_data[key] for key in task_data.keys() & {"tags_to_delete"}}

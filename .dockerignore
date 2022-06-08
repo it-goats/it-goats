@@ -1,0 +1,6 @@
+bode/.venv/
+bode/.hooks
+
+cabra/node_modules/
+cabra/dist/
+cabra/.hooks

@@ -69,7 +69,7 @@ export default function TaskListItem({ task }: Props) {
               checked={task.status !== TaskStatus.TODO}
               id={`task-${task.id}`}
               onChange={handleIsDoneChange}
-              disabled={task.isBlocked}
+              blocked={task.isBlocked}
               size="sm"
               status={task.status}
             />
@@ -85,7 +85,7 @@ export default function TaskListItem({ task }: Props) {
             task.relationTypes.includes(type) ? (
               <TaskTypeIcon key={type} type={type} />
             ) : (
-              <EmptyIcon />
+              <EmptyIcon key={type} />
             )
           )}
         </Card>
