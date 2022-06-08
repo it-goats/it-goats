@@ -3,6 +3,7 @@ import { Route, Routes } from "react-router-dom";
 import CalendarPage from "./pages/Calendar";
 import HomePage from "./pages/Home";
 import NotFoundPage from "./pages/NotFound";
+import RelationFlow from "./pages/RelationFlow";
 import TaskCreatePage from "./pages/TaskCreate";
 import TaskDetailsPage from "./pages/TaskDetails";
 import TaskEditPage from "./pages/TaskEdit";
@@ -12,6 +13,7 @@ export function AppRoutes() {
     <Routes>
       <Route path="/" element={<HomePage />} />
       <Route path="/calendar" element={<CalendarPage />} />
+      <Route path="/relation-flow" element={<RelationFlow />} />
       <Route path="/task/new" element={<TaskCreatePage />} />
       <Route path="/task/:id" element={<TaskDetailsPage />} />
       <Route path="/task/:id/edit" element={<TaskEditPage />} />
@@ -22,6 +24,7 @@ export function AppRoutes() {
 
 export const routeHelpers = {
   calendar: "/calendar",
+  relationFlow: "/relation-flow",
   notFound: "/not-found",
   tasks: "/",
   task: {
