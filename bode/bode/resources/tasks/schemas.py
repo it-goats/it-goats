@@ -24,6 +24,21 @@ class TaskInputSchema(BaseSchema):
     subtasks = fields.List(fields.String, default=[])
 
 
+class TaskEditionInputSchema(BaseSchema):
+    class Meta:
+        unknown = EXCLUDE
+
+    title = fields.String(validate=validate.Length(1, 80), required=True)
+    description = fields.String(validate=validate.Length(0, 1024), default="")
+    due_date = fields.DateTime(allow_none=True)
+    status = fields.String(validate=validate.OneOf(TaskStatus.list()), default=TaskStatus.TODO.value)
+    tags_to_add = fields.List(fields.String, default=[])
+    tags_to_delete = fields.List(fields.String, default=[])
+    relations_to_add = fields.List(fields.Nested(RelationInputSchema), default=[])
+    relations_to_delete = fields.List(fields.String, default=[])
+    subtasks_to_add = fields.List(fields.String, default=[])
+
+
 class TaskSchema(BaseSchema):
     id = fields.UUID(dump_only=True)
     title = fields.String()
