@@ -49,6 +49,24 @@ const useTask = (id: string) => {
       },
     }
   );
+  // const editTask = useMutation((task: ITask) => updateTask(task.id, task), {
+  //   onSuccess: () => {
+  //     client.invalidateQueries(getTasks.cacheKey());
+  //     client.invalidateQueries(getTask.cacheKey(task?.id));
+  //     client.invalidateQueries(
+  //       getRelatedTasks.cacheKey(task?.id, DirectedRelationType.IsBlockedBy)
+  //     );
+  //     client.invalidateQueries(
+  //       getRelatedTasks.cacheKey(task?.id, DirectedRelationType.Interchangable)
+  //     );
+  //     client.invalidateQueries(
+  //       getRelatedTasks.cacheKey(task?.id, DirectedRelationType.Blocks)
+  //     );
+  //     client.invalidateQueries(
+  //       getRelatedTasks.cacheKey(task?.id, DirectedRelationType.Subtask)
+  //     );
+  //   },
+  // });
   const handleStatusChange = async () => {
     const status =
       task.status === TaskStatus.DONE ? TaskStatus.TODO : TaskStatus.DONE;

@@ -60,7 +60,7 @@ export default function RelatedTask({
           id={task.id}
           checked={task.status !== TaskStatus.TODO}
           onChange={handleIsDoneChange}
-          disabled={task.isBlocked}
+          blocked={task.isBlocked}
           status={task.status}
         />
       </p>
