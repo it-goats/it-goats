@@ -36,6 +36,7 @@ class TaskSchema(BaseSchema):
     is_blocked = fields.Function(lambda task: is_task_blocked(task.id))
     tags = fields.List(fields.Nested(TagSchema))
     relation_types = fields.List(fields.String(validate=validate.OneOf(DirectedRelationType.list())))
+    instance_key = fields.Integer(default=None)
 
 
 class TaskFiltersSchema(BaseSchema):

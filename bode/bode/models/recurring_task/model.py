@@ -21,5 +21,11 @@ class RecurringTask(db.Model):
     instance_key = db.Column(db.String(64), nullable=False)
     is_deleted = db.Column(db.Boolean(), nullable=False, server_default="false")
 
+    def edit(recurring_task_id, **recurring_task_data):
+        recurring_task = RecurringTask.query.get_or_404(recurring_task_id)
+
+        for key, value in recurring_task_data.items():
+            setattr(recurring_task, key, value)
+
     def __repr__(self):
         return f'<RecurringTask {self.id} \n  parent_id="{self.main_task_id}">'

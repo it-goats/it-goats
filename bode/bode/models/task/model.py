@@ -36,3 +36,7 @@ class Task(db.Model):
 
     def __repr__(self):
         return f'<Task {self.id} \n  title="{self.title}">'
+
+    def __iter__(self):
+        for column in Task.__table__.columns:
+            yield (column.name, str(getattr(self, column.name)))
