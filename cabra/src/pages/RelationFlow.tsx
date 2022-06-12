@@ -5,6 +5,7 @@ import { ITask } from "../types/task";
 import Layout from "./components/Layout";
 import { Link } from "react-router-dom";
 import NavigationButton from "./components/NavigationButton";
+import RelationGraph from "./components/RelationGraph";
 import Select from "react-select";
 import { getTasks } from "../api/tasks";
 import { useQuery } from "react-query";
@@ -60,6 +61,13 @@ export default function RelationFlow() {
               />
             </div>
             {`Selected task: ${selectedTask?.title}`}
+            <br></br>
+            {selectedTask && selectedTask.id && (
+              <RelationGraph
+                task={selectedTask}
+                key={`task_id${selectedTask.id}_${Math.random()}`}
+              ></RelationGraph>
+            )}
           </Layout>
         </div>
       </div>
