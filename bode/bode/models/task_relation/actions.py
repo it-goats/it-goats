@@ -124,18 +124,6 @@ def get_transitive_interchangable_related_tasks(task_id, filters=list()):
     )
 
 
-class bcolors:
-    HEADER = "\033[95m"
-    OKBLUE = "\033[94m"
-    OKCYAN = "\033[96m"
-    OKGREEN = "\033[92m"
-    WARNING = "\033[93m"
-    FAIL = "\033[91m"
-    ENDC = "\033[0m"
-    BOLD = "\033[1m"
-    UNDERLINE = "\033[4m"
-
-
 def add_untyped_graph_edge(relation: TaskRelation, graph: Graph, uuids: list()):
     first_task_id, second_task_id = relation.second_task_id, relation.first_task_id
     graph.add_edge(str(first_task_id), str(second_task_id))

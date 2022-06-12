@@ -1,20 +1,11 @@
 import {
   DirectedRelationType,
   IRelatedTask,
+  IRelatedTasksFlow,
   ITaskRelation,
 } from "../types/taskRelation";
 
-import { ITask } from "../types/task";
 import axios from "axios";
-
-export interface TypedTaskRelationship {
-  task: ITask;
-  relationType: string;
-}
-export interface IRelatedTasksFlow {
-  taskVertex: ITask;
-  adjacencyList: TypedTaskRelationship[];
-}
 
 export const getRelatedTasks = {
   cacheKey: (taskId: string, type: DirectedRelationType) => [

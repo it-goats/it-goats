@@ -1,10 +1,8 @@
-import {
-  IRelatedTasksFlow,
-  getRelatedTasksFlow,
-} from "../../api/taskRelations";
 import tw, { styled } from "twin.macro";
 
+import { IRelatedTasksFlow } from "../../types/taskRelation";
 import { ITask } from "../../types/task";
+import { getRelatedTasksFlow } from "../../api/taskRelations";
 import { useQuery } from "react-query";
 
 interface Props {
@@ -25,15 +23,32 @@ export default function RelationGraph({ task }: Props) {
 
   const relatedTasks: IRelatedTasksFlow[] = data.data;
 
+  const randomDOMElementKey = function (id: string) {
+    return `unique_key_${id}_${Math.random()}`;
+  };
+
   return (
     <>
-      <div>RelationGraph {task.title}</div>
+      <div>RelationGraph</div>
       <div>
-        ------
-        {relatedTasks.map((taskObj) => (
-          <h2 key={taskObj.taskVertex.id}>{taskObj.taskVertex.title}</h2>
+        -----------------------------------------------------------------
+        {relatedTasks.map(({ taskVertex: tv, adjacencyList: adjList }) => (
+          <div key={randomDOMElementKey(tv.id)}>
+            <li key={tv.id}>{tv.title}</li>
+            Related tasks:
+            <h2 key={randomDOMElementKey(tv.id)}>
+              {adjList &&
+                adjList.map(({ task: t, relationType: r }) => {
+                  return (
+                    <h3 key={randomDOMElementKey(tv.id)}>
+                      {t.title} - {r}
+                    </h3>
+                  );
+                })}
+            </h2>
+          </div>
         ))}
-        --------
+        -----------------------------------------------------------------
       </div>
     </>
   );

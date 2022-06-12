@@ -11,6 +11,11 @@ class SimpleTaskRelationSchema(BaseSchema):
     type = fields.String()
 
 
+class TaskRelationTuplesListSchema(BaseSchema):
+    task = fields.Nested(TaskSchema)
+    relation_type = fields.String()
+
+
 class TaskRelationGraphSchema(BaseSchema):
     task_vertex = fields.Nested(TaskSchema)
-    adjacency_list = fields.List(fields.Tuple((fields.Nested(TaskSchema), fields.String())))
+    adjacency_list = fields.List(fields.Nested(TaskRelationTuplesListSchema))

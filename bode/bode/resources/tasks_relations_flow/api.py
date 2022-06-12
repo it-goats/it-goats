@@ -26,4 +26,12 @@ class TasksFlowInRelationWith(MethodView):
     def get(self, task_id: UUID):
         query_result = get_relation_flow_graph(task_id)
 
-        return [{"task_vertex": task, "adjacency_list": adjacency_list} for task, adjacency_list in query_result]
+        return [
+            {
+                "task_vertex": task_vertex,
+                "adjacency_list": [
+                    {"task": task, "relation_type": relation_type} for task, relation_type in adjacency_list
+                ],
+            }
+            for task_vertex, adjacency_list in query_result
+        ]
