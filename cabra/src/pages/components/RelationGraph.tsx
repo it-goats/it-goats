@@ -1,8 +1,10 @@
 import tw, { styled } from "twin.macro";
 
+import FlowGraph from "./FlowGraph";
 import { IRelatedTasksFlow } from "../../types/taskRelation";
 import { ITask } from "../../types/task";
 import { getRelatedTasksFlow } from "../../api/taskRelations";
+import { randomDOMElementKey } from "../../utils/helperFunctions";
 import { useQuery } from "react-query";
 
 interface Props {
@@ -22,10 +24,6 @@ export default function RelationGraph({ task }: Props) {
   if (!data?.data) return <Container />;
 
   const relatedTasks: IRelatedTasksFlow[] = data.data;
-
-  const randomDOMElementKey = function (id: string) {
-    return `unique_key_${id}_${Math.random()}`;
-  };
 
   return (
     <>
@@ -49,6 +47,7 @@ export default function RelationGraph({ task }: Props) {
           </div>
         ))}
         -----------------------------------------------------------------
+        <FlowGraph task={task} tasksFlowGraph={relatedTasks} />
       </div>
     </>
   );
