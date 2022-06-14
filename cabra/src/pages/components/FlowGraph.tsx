@@ -1,9 +1,11 @@
-import ReactFlow, { applyNodeChanges } from "react-flow-renderer";
-import { useCallback, useState } from "react";
+import { CSSProperties, useCallback, useState } from "react";
+import ReactFlow, {
+  applyEdgeChanges,
+  applyNodeChanges,
+} from "react-flow-renderer";
 
 import { IRelatedTasksFlow } from "../../types/taskRelation";
 import { ITask } from "../../types/task";
-import { applyEdgeChanges } from "react-flow-renderer";
 import { randomDOMElementKey } from "../../utils/helperFunctions";
 
 interface Props {
@@ -28,75 +30,100 @@ interface flowEdge {
   source: string;
   target: string;
   animated?: boolean;
+  style?: CSSProperties;
 }
 
-// const initialNodes = [
-//     {
-//       id: '1',
-//       type: 'input',
-//       data: { label: 'Input Node' },
-//       position: { x: 250, y: 25 },
-//     },
-//     {
-//       id: '2',
-//       // you can also pass a React component as a label
-//       data: { label: '<div>Default Node</div>' },
-//       position: { x: 100, y: 125 },
-//     },
-//     {
-//       id: '3',
-//       type: 'output',
-//       data: { label: 'Output Node' },
-//       position: { x: 250, y: 250 },
-//     },
-// ];
+function createNode(task: ITask): flowNode {
+  return {
+    id: task.id,
+    // type: 'output',
+    data: {
+      label: task.title,
+    },
+    position: {
+      x: 100 + Math.random() * 100,
+      y: 300 + Math.random() * 100,
+    },
+  };
+}
 
-// const initialEdges = [
-//     { id: 'e1-2', source: '1', target: '2' },
-//     { id: 'e2-3', source: '2', target: '3', animated: true },
-// ];
-
-const getInitialNodes = function (
-  tasksFlowGraph: IRelatedTasksFlow[]
-): flowNode[] {
-  const initialNodes: flowNode[] = [];
-  tasksFlowGraph.forEach(({ taskVertex }, index) => {
-    const node: flowNode = {
-      id: String(index),
-      type: "output",
-      data: {
-        label: taskVertex.title,
-      },
-      position: {
-        x: 100 + Math.random() * 100,
-        y: 300 + Math.random() * 100,
-      },
+function createEdge(
+  sourceId: string,
+  targetId: string,
+  animated?: boolean
+): flowEdge {
+  if (animated) {
+    return {
+      id: `e${sourceId}-${targetId}`,
+      source: sourceId,
+      target: targetId,
+      animated: true,
+      style: { stroke: "black" },
     };
-    initialNodes.push(node);
-  });
-  return initialNodes;
-};
+  }
+  return {
+    id: `e${sourceId}-${targetId}`,
+    source: sourceId,
+    target: targetId,
+    style: { stroke: "black" },
+  };
+}
+
+function getInitialNodes(
+  tasksFlowGraph: IRelatedTasksFlow[],
+  nodeDictionary: Map<string, flowNode>
+): flowNode[] {
+  tasksFlowGraph
+    .flatMap(({ taskVertex, adjacencyList }) => {
+      nodeDictionary.set(taskVertex.id, createNode(taskVertex));
+      return adjacencyList;
+    })
+    .map(({ task }) => {
+      nodeDictionary.set(task.id, createNode(task));
+    });
+  return Array.from(nodeDictionary.values());
+}
 
 const getInitialEdges = function (
-  tasksFlowGraph: IRelatedTasksFlow[]
+  tasksFlowGraph: IRelatedTasksFlow[],
+  edgeDictionary: Map<string, flowEdge>
 ): flowEdge[] {
-  const initialEdges: flowEdge[] = [];
-  tasksFlowGraph.forEach(({ adjacencyList }, idx1) => {
-    adjacencyList.forEach((idx2) => {
-      const edge: flowEdge = {
-        id: `e${idx1}-${idx2}`,
-        source: String(idx1),
-        target: String(idx2),
-      };
-      initialEdges.push(edge);
+  tasksFlowGraph.forEach(({ taskVertex, adjacencyList }) => {
+    adjacencyList.forEach(({ task, relationType }) => {
+      if (relationType.toLowerCase().includes("inter")) {
+        const edge = createEdge(taskVertex.id, task.id, true);
+        edgeDictionary.set(edge.id, edge);
+      } else if (relationType.toLowerCase().includes("isblockedby")) {
+        const edge = createEdge(task.id, taskVertex.id);
+        edgeDictionary.set(edge.id, edge);
+      } else if (relationType.toLowerCase().includes("blocks")) {
+        const edge = createEdge(taskVertex.id, task.id);
+        edgeDictionary.set(edge.id, edge);
+      }
     });
   });
-  return initialEdges;
+  return Array.from(edgeDictionary.values());
+};
+
+const getVerticesNodes = function (tasksFlowGraph: IRelatedTasksFlow[]) {
+  return tasksFlowGraph
+    .flatMap((e) => e.adjacencyList)
+    .map((t) => (
+      <h4 key={randomDOMElementKey(t.task.id)}>
+        {t.task.title} - {t.relationType}
+      </h4>
+    ));
 };
 
 export default function FlowGraph({ task, tasksFlowGraph }: Props) {
-  const [nodes, setNodes] = useState(getInitialNodes(tasksFlowGraph));
-  const [edges, setEdges] = useState(getInitialEdges(tasksFlowGraph));
+  const nodeDictionary: Map<string, flowNode> = new Map();
+  const edgeDictionary: Map<string, flowEdge> = new Map();
+  const [nodes, setNodes] = useState(
+    getInitialNodes(tasksFlowGraph, nodeDictionary)
+  );
+  const [edges, setEdges] = useState(
+    getInitialEdges(tasksFlowGraph, edgeDictionary)
+  );
 
   const onNodesChange = useCallback(
     (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
@@ -111,11 +138,17 @@ export default function FlowGraph({ task, tasksFlowGraph }: Props) {
     <>
       <div>FlowGraph</div>
       Task title: {task.title}
-      {tasksFlowGraph.map((el) => (
-        <h4 key={randomDOMElementKey(el.taskVertex.id)}>
-          {el.taskVertex.title}
-        </h4>
-      ))}
+      {/* {tasksFlowGraph.map((el) => (
+            <h4 key={randomDOMElementKey(el.taskVertex.id)}>
+            {el.taskVertex.title}
+            </h4>
+        ))} */}
+      <br></br>
+      Nodess{edges.length}
+      <br></br>
+      <div>VerticesNodes{getVerticesNodes(tasksFlowGraph)}</div>
+      <br></br>
+      <br></br>
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -123,7 +156,6 @@ export default function FlowGraph({ task, tasksFlowGraph }: Props) {
         onEdgesChange={onEdgesChange}
         fitView
       />
-      ;
     </>
   );
 }
