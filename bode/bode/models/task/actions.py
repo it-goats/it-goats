@@ -26,14 +26,25 @@ def delete_task(task_id):
     return task
 
 
-def edit_task(task_id, **task_data):
-    """Function edits task. If task is checked, all interchangable tasks with status todo will be indirectly checked."""
+def edit_task(task_id, check_equivalence_class=True, **task_data):
+    """
+    Function edits task. If task is checked, all interchangable tasks with status todo will be indirectly checked.
+    If task is checked, all subtask will be checked.
+    """
 
-    def is_interchangable_relation(relation):
-        return relation.type == RelationType.Interchangable.value and str(relation.first_task_id) == task_id
+    def is_interchangable_relation(relation, inter_task_id=task_id):
+        return relation.type == RelationType.Interchangable.value and str(relation.first_task_id) == inter_task_id
 
     def is_subtask_relation(relation):
         return relation.type == RelationType.Subtask.value and str(relation.first_task_id) == task_id
+
+    def get_equivalence_set(related_task_id, equivalence_set):
+        for relation, related_task in get_related_tasks(related_task_id):
+            if is_interchangable_relation(relation, related_task_id):
+                if str(related_task.id) in equivalence_set.keys():
+                    continue
+                equivalence_set[str(related_task.id)] = related_task.status
+                get_equivalence_set(str(related_task.id), equivalence_set)
 
     task = get_task(task_id)
 
@@ -44,22 +55,35 @@ def edit_task(task_id, **task_data):
 
     db.session.commit()
 
-    if task_data["status"] != TaskStatus.TODO.value:
-        for relation, related_task in get_related_tasks(task_id):
-            if is_interchangable_relation(relation):
-                if related_task.status != TaskStatus.TODO.value:
-                    continue
-                inter_task_data = {
-                    "status": TaskStatus.INDIRECTLY_DONE.value,
-                }
-                edit_task(str(related_task.id), **inter_task_data)
-            if is_subtask_relation(relation):
-                if related_task.status == TaskStatus.DONE.value:
-                    continue
-                subtask_data = {
-                    "status": TaskStatus.DONE.value,
-                }
-                edit_task(str(related_task.id), **subtask_data)
+    for relation, related_task in get_related_tasks(task_id):
+        if task_data["status"] != TaskStatus.TODO.value and is_subtask_relation(relation):
+            if related_task.status == TaskStatus.DONE.value:
+                continue
+            subtask_data = {
+                "status": TaskStatus.DONE.value,
+            }
+            edit_task(str(related_task.id), **subtask_data)
+
+    if check_equivalence_class:
+        equivalence_set = {}
+        equivalence_set[task_id] = task_data["status"]
+        get_equivalence_set(task_id, equivalence_set)
+        if len(equivalence_set.keys()) == 1:
+            return task
+        new_status = (
+            TaskStatus.INDIRECTLY_DONE.value
+            if TaskStatus.DONE.value in equivalence_set.values()
+            else TaskStatus.TODO.value
+        )
+        for related_task_id, related_task_status in equivalence_set.items():
+            if related_task_status == TaskStatus.DONE.value:
+                continue
+            if related_task_status == new_status:
+                continue
+            inter_task_data = {
+                "status": new_status,
+            }
+            edit_task(str(related_task_id), check_equivalence_class=False, **inter_task_data)
 
     return task
 
