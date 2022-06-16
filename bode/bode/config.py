@@ -17,3 +17,6 @@ def get_db_uri():
 class Config:
     DATABASE_URI = get_db_uri()
     AUTO_MIGRATE = os.getenv("AUTO_MIGRATE", False)
+
+
+mailjet_key = (os.getenv("MAILJET_API_KEY"), os.getenv("MAILJET_API_SECRET"))
