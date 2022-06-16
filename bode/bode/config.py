@@ -19,4 +19,4 @@ class Config:
     AUTO_MIGRATE = os.getenv("AUTO_MIGRATE", False)
 
 
-mailjet_key = (os.getenv("MAILJET_API_KEY"), os.getenv("MAILJET_API_SECRET"))
+sendgrid_key = os.getenv("SENDGRID_API_KEY")

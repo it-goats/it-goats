@@ -6,29 +6,29 @@ from threading import Thread
 import schedule
 
 from dateutil import tz
-from mailjet_rest import Client
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail
 
-from bode.config import mailjet_key
+from bode.config import sendgrid_key
 from bode.extensions import db
 from bode.models.enums import TaskStatus
 from bode.models.task.model import Task
 
-mailjet = Client(auth=mailjet_key, version="v3.1")
+client = SendGridAPIClient(sendgrid_key)
 
 
 def send_notification(address, title, due_date, link):
-    data = {
-        "Messages": [
-            {
-                "From": {"Email": "itgoatsteam@gmail.com", "Name": "IT Goats"},
-                "To": [{"Email": address}],
-                "Subject": "Notification",
-                "HTMLPart": f"<h3>Thee deadline is approaching for task:</h3><h4>TITLE: </h4>{title}<br /><h4>"
-                f"DUE DATE: </h4>{due_date}<br /><a href='{link}'><h4>CLICK</h4></a>",
-            }
-        ]
-    }
-    mailjet.send.create(data=data)
+    message = Mail(
+        from_email="itgoatsteam@gmail.com",
+        to_emails=address,
+        subject="Notification",
+        html_content=f"<h3>The deadline is approaching for task:</h3><h4>TITLE: </h4>{title}<br /><h4>"
+        f"DUE DATE: </h4>{due_date}<br /><a href='{link}'><h4>CLICK</h4></a>",
+    )
+    client.send(message)
+
+
+send_notification
 
 
 def start_notify(app):
