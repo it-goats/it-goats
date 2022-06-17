@@ -28,9 +28,6 @@ def send_notification(address, title, due_date, link):
     client.send(message)
 
 
-send_notification
-
-
 def start_notify(app):
     def check_task_to_notify():
         nowutc = datetime.utcnow().replace(second=0, microsecond=0)
