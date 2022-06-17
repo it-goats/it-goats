@@ -3,7 +3,7 @@ import uuid
 from sqlalchemy import Enum
 from sqlalchemy.dialects.postgresql import UUID
 
-from bode.app import db
+from bode.extensions import db
 from bode.models.enums import TaskStatus
 from bode.models.tag.model import task_tag
 from bode.models.utc_datetime import UTCDateTime

@@ -2,7 +2,7 @@ import uuid
 
 from sqlalchemy.dialects.postgresql import UUID
 
-from bode.app import db
+from bode.extensions import db
 
 task_tag = db.Table(
     "task_tag", db.Column("task_id", db.ForeignKey("tasks.id")), db.Column("tag_id", db.ForeignKey("tags.id"))
