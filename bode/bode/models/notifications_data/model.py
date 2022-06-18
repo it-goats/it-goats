@@ -14,7 +14,7 @@ class NotificationsData(db.Model):
     __table_args__ = (db.CheckConstraint(f"id = '{default_id}'", name="single_row_check"),)
 
     def get():
-        return NotificationsData.get(default_id)
+        return NotificationsData.query.get(default_id)
 
     def update_email(email):
         data = NotificationsData.get()
