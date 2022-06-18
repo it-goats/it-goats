@@ -9,3 +9,7 @@ class SettingsInputSchema(BaseSchema):
 
 class SettingsSchema(BaseSchema):
     email = fields.Email()
+
+
+class OKSchema(BaseSchema):
+    ok = fields.String()
