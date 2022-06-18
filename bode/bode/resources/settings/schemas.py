@@ -4,7 +4,7 @@ from bode.resources.base_schema import BaseSchema
 
 
 class SettingsInputSchema(BaseSchema):
-    email = fields.Email(required=True)
+    email = fields.Email(required=True, allow_none=True)
 
 
 class SettingsSchema(BaseSchema):

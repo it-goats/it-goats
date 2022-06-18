@@ -29,8 +29,8 @@ function SettingsForm() {
     setValue("email", email);
   }, [email, setValue]);
 
-  async function onSubmit(data: ISettings) {
-    await updateSettings(data);
+  async function onSubmit({ email }: ISettings) {
+    await updateSettings({ email: email ? email : null });
   }
 
   return (

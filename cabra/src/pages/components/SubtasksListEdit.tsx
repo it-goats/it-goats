@@ -20,6 +20,7 @@ const Label = styled.label(tw`text-gray-50 font-bold`);
 const emptyTask: Omit<ITask, "id" | "relationTypes" | "isBlocked"> = {
   description: "",
   dueDate: null,
+  notifyBeforeMinutes: null,
   rrule: null,
   status: TaskStatus.TODO,
   tags: [],

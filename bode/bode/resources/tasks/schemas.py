@@ -24,6 +24,7 @@ class TaskInputSchema(BaseSchema):
     status = fields.String(validate=validate.OneOf(TaskStatus.list()), default=TaskStatus.TODO.value)
     tags = fields.List(fields.Nested(TagInputSchema), default=[])
     title = fields.String(validate=validate.Length(1, 80), required=True)
+    notify_before_minutes = fields.Integer(strict=True, validate=validate.Range(min=1), allow_none=True)
 
 
 class TaskSchema(BaseSchema):
@@ -33,6 +34,7 @@ class TaskSchema(BaseSchema):
     due_date = fields.DateTime()
     status = fields.String(validate=validate.OneOf(TaskStatus.list()))
     rrule = fields.String()
+    notify_before_minutes = fields.Integer()
     is_blocked = fields.Function(lambda task: is_task_blocked(task.id))
     tags = fields.List(fields.Nested(TagSchema))
     relation_types = fields.List(fields.String(validate=validate.OneOf(DirectedRelationType.list())))
