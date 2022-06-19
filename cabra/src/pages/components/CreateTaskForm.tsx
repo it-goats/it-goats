@@ -7,6 +7,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 const emptyTask: Omit<ITask, "id" | "relationTypes" | "isBlocked"> = {
   description: "",
   dueDate: null,
+  notifyBeforeMinutes: null,
   rrule: null,
   status: TaskStatus.TODO,
   tags: [],

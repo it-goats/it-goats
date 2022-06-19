@@ -5,11 +5,9 @@ from flask_cors import CORS
 from flask_migrate import upgrade
 from flask_smorest import Blueprint
 
-from bode.mail_service.sending import start_notify
-
 from .config import Config
 from .extensions import api, db, migrate
-from .resources import tags, task_relations, tasks
+from .resources import settings, tags, task_relations, tasks
 
 CONFIG = Config()
 
@@ -30,8 +28,6 @@ def create_app():
         if CONFIG.AUTO_MIGRATE:
             upgrade()
 
-    start_notify(app)
-
     return app
 
 
@@ -45,6 +41,7 @@ def register_extensions(app):
 
 def register_blueprints(app):
     api_blueprint = Blueprint("api", "api", url_prefix="/api/v1")
+    api_blueprint.register_blueprint(settings.api.blueprint)
     api_blueprint.register_blueprint(tasks.api.blueprint)
     api_blueprint.register_blueprint(tags.api.blueprint)
     api_blueprint.register_blueprint(task_relations.api.blueprint)

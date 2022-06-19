@@ -13,14 +13,16 @@ import {
   parseUTC,
 } from "../../utils/dates";
 import tw, { styled } from "twin.macro";
+import { useContext, useEffect } from "react";
 
 import DatePicker from "react-datepicker";
 import { ITask } from "../../types/task";
+import NotificationForm from "./NotificationForm";
 import RecurrenceForm from "./RecurrenceForm";
+import { SettingsContext } from "./SettingsContext";
 import SubtasksListEdit from "./SubtasksListEdit";
 import { TagsEdit } from "./TagsEdit";
 import TaskRelationsEdit from "./TaskRelationsEdit";
-import { useEffect } from "react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { zonedTimeToUtc } from "date-fns-tz";
 
@@ -32,6 +34,7 @@ export type TaskFormInputs = {
   title: string;
   description: string;
   dueDate: Date | null;
+  notifyBeforeMinutes: number | null;
   rrule: string | null;
   relatedTasks: Array<{
     relationType: string;
@@ -106,6 +109,8 @@ export default function TaskForm({ task, onSubmit }: Props) {
     watch,
   } = form;
 
+  const { email } = useContext(SettingsContext);
+
   const internalOnSubmit: SubmitHandler<TaskFormInputs> = async ({
     dueDate,
     ...data
@@ -127,7 +132,10 @@ export default function TaskForm({ task, onSubmit }: Props) {
   const dueDate = watch("dueDate");
 
   useEffect(() => {
-    if (!dueDate) setValue("rrule", null);
+    if (!dueDate) {
+      setValue("notifyBeforeMinutes", null);
+      setValue("rrule", null);
+    }
   }, [dueDate, setValue]);
 
   return (
@@ -178,6 +186,17 @@ export default function TaskForm({ task, onSubmit }: Props) {
                 />
               )}
             />
+          </div>
+          <div>
+            {dueDate && email && (
+              <Controller
+                control={control}
+                name="notifyBeforeMinutes"
+                render={({ field: { onChange, value } }) => (
+                  <NotificationForm onChange={onChange} value={value} />
+                )}
+              />
+            )}
           </div>
           <div>
             {dueDate && (
