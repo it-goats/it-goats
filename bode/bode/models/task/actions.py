@@ -97,7 +97,7 @@ def edit_task(task_id, check_equivalence_class=True, **task_data):
 
     """Edit task data"""
     task = get_task(task_id)
-    edit_task_keys = {"title", "description", "due_date", "status"}
+    edit_task_keys = {"title", "description", "due_date", "status", "notify_before_minutes"}
     edit_task_data = {key: task_data[key] for key in task_data.keys() & edit_task_keys}
     for key, value in edit_task_data.items():
         setattr(task, key, value)
@@ -174,7 +174,7 @@ def get_task(task_id):
 
 def create_task(**task_data):
     """Create task"""
-    create_task_keys = {"title", "description", "due_date", "status"}
+    create_task_keys = {"title", "description", "due_date", "status", "notify_before_minutes"}
     create_task_data = {key: task_data[key] for key in task_data.keys() & create_task_keys}
     task = Task(**create_task_data)
     db.session.add(task)
