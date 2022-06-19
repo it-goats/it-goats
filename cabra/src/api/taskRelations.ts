@@ -7,13 +7,17 @@ import {
 import axios from "axios";
 
 export const getRelatedTasks = {
-  cacheKey: (taskId: string, type: DirectedRelationType) => [
+  cacheKey: (taskId: string, type?: DirectedRelationType) => [
     "task-relations",
     taskId,
     type,
   ],
-  run: (taskId: string, type: DirectedRelationType) =>
-    axios.get<IRelatedTask[]>(`/task-relations/${taskId}?relationType=${type}`),
+  run: (taskId: string, type?: DirectedRelationType) =>
+    type
+      ? axios.get<IRelatedTask[]>(
+          `/task-relations/${taskId}?relationType=${type}`
+        )
+      : axios.get<IRelatedTask[]>(`/task-relations/${taskId}`),
 };
 
 export const createRelation = (data: Omit<ITaskRelation, "id">) =>

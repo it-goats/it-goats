@@ -1,7 +1,7 @@
 import "twin.macro";
 
 import { ITask, TaskStatus } from "../../types/task";
-import { getTask, getTasks, updateTask } from "../../api/tasks";
+import { getTask, getTasks, updateTaskStatus } from "../../api/tasks";
 import { useMutation, useQueryClient } from "react-query";
 
 import Checkbox from "./CheckBox";
@@ -24,23 +24,24 @@ export default function RelatedTask({
 }: Props) {
   const [errorMessage, setErrorMessage] = useState("");
   const client = useQueryClient();
-  const editTask = useMutation((task: ITask) => updateTask(task.id, task), {
-    onSuccess: () => {
-      client.invalidateQueries(getTasks.cacheKey());
-      client.invalidateQueries(getTask.cacheKey(parentTaskId));
-      client.invalidateQueries(
-        getRelatedTasks.cacheKey(parentTaskId, relationType)
-      );
-    },
-  });
+  const editTaskStatus = useMutation(
+    (status: TaskStatus) => updateTaskStatus(task.id, status),
+    {
+      onSuccess: () => {
+        client.invalidateQueries(getTasks.cacheKey());
+        client.invalidateQueries(getTask.cacheKey(parentTaskId));
+        client.invalidateQueries(
+          getRelatedTasks.cacheKey(parentTaskId, relationType)
+        );
+      },
+    }
+  );
   const handleIsDoneChange = async () => {
     try {
-      const updatedTask = {
-        ...task,
-        status:
-          task.status === TaskStatus.DONE ? TaskStatus.TODO : TaskStatus.DONE,
-      };
-      await editTask.mutateAsync(updatedTask);
+      const status =
+        task.status === TaskStatus.DONE ? TaskStatus.TODO : TaskStatus.DONE;
+
+      await editTaskStatus.mutateAsync(status);
     } catch (error) {
       setErrorMessage(
         "Something went wrong :C, It's not possible to uncheck the task."
@@ -59,7 +60,7 @@ export default function RelatedTask({
           id={task.id}
           checked={task.status !== TaskStatus.TODO}
           onChange={handleIsDoneChange}
-          disabled={task.isBlocked}
+          blocked={task.isBlocked}
           status={task.status}
         />
       </p>

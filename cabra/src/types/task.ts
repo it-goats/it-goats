@@ -12,12 +12,14 @@ export enum TaskStatus {
 }
 
 export interface ITask {
-  id: string;
-  title: string;
   description: string;
   dueDate: string | null;
-  status: TaskStatus;
+  id: string;
   isBlocked: boolean;
-  tags: ITag[];
+  notifyBeforeMinutes: number | null;
   relationTypes: DirectedRelationType[];
+  rrule: string | null;
+  status: TaskStatus;
+  tags: ITag[];
+  title: string;
 }
