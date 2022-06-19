@@ -1,5 +1,10 @@
 import { ITask, TaskStatus } from "../../types/task";
-import { deleteTask, getTask, getTasks, updateTask } from "../../api/tasks";
+import {
+  deleteTask,
+  getTask,
+  getTasks,
+  updateTaskStatus,
+} from "../../api/tasks";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 
 import { DirectedRelationType } from "../../types/taskRelation";
@@ -23,31 +28,31 @@ const useTask = (id: string) => {
 
   const [error, setError] = useState("");
   const client = useQueryClient();
-  const editTask = useMutation((task: ITask) => updateTask(task.id, task), {
-    onSuccess: () => {
-      client.invalidateQueries(getTasks.cacheKey());
-      client.invalidateQueries(getTask.cacheKey(task?.id));
-      client.invalidateQueries(
-        getRelatedTasks.cacheKey(task?.id, DirectedRelationType.IsBlockedBy)
-      );
-      client.invalidateQueries(
-        getRelatedTasks.cacheKey(task?.id, DirectedRelationType.Interchangable)
-      );
-      client.invalidateQueries(
-        getRelatedTasks.cacheKey(task?.id, DirectedRelationType.Blocks)
-      );
-      client.invalidateQueries(
-        getRelatedTasks.cacheKey(task?.id, DirectedRelationType.Subtask)
-      );
-    },
-  });
+  const editTaskStatus = useMutation(
+    (status: TaskStatus) => updateTaskStatus(task.id, status),
+    {
+      onSuccess: () => {
+        client.invalidateQueries(getTasks.cacheKey());
+        client.invalidateQueries(getTask.cacheKey(task?.id));
+        client.invalidateQueries(
+          getRelatedTasks.cacheKey(task?.id, DirectedRelationType.IsBlockedBy)
+        );
+        client.invalidateQueries(
+          getRelatedTasks.cacheKey(
+            task?.id,
+            DirectedRelationType.Interchangable
+          )
+        );
+        client.invalidateQueries(
+          getRelatedTasks.cacheKey(task?.id, DirectedRelationType.Blocks)
+        );
+      },
+    }
+  );
   const handleStatusChange = async () => {
-    const updatedTask = {
-      ...task,
-      status:
-        task.status === TaskStatus.DONE ? TaskStatus.TODO : TaskStatus.DONE,
-    };
-    editTask.mutate(updatedTask);
+    const status =
+      task.status === TaskStatus.DONE ? TaskStatus.TODO : TaskStatus.DONE;
+    editTaskStatus.mutate(status);
   };
 
   const { mutateAsync: removeTask } = useMutation(() => deleteTask(task?.id), {

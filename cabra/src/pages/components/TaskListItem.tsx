@@ -1,6 +1,6 @@
 import { EmptyIcon, TaskTypeIcon } from "./TaskTypeIcon";
 import { ITask, TaskStatus } from "../../types/task";
-import { getTask, getTasks, updateTask } from "../../api/tasks";
+import { getTask, getTasks, updateTaskStatus } from "../../api/tasks";
 import tw, { styled } from "twin.macro";
 import { useMutation, useQueryClient } from "react-query";
 
@@ -24,21 +24,20 @@ const TagChip = styled.div(tw`rounded-full px-2 bg-tertiary text-secondary`);
 export default function TaskListItem({ task }: Props) {
   const [errorMessage, setErrorMessage] = useState("");
   const client = useQueryClient();
-  const editTask = useMutation((task: ITask) => updateTask(task.id, task), {
-    onSuccess: () => {
-      client.invalidateQueries(getTask.cacheKey(task.id));
-      client.invalidateQueries(getTasks.cacheKey());
-    },
-  });
+  const editTaskStatus = useMutation(
+    (status: TaskStatus) => updateTaskStatus(task.id, status),
+    {
+      onSuccess: () => {
+        client.invalidateQueries(getTask.cacheKey(task.id));
+        client.invalidateQueries(getTasks.cacheKey());
+      },
+    }
+  );
   const handleIsDoneChange = async () => {
     const newStatus =
       task.status === TaskStatus.DONE ? TaskStatus.TODO : TaskStatus.DONE;
     try {
-      const updatedTask = {
-        ...task,
-        status: newStatus,
-      };
-      await editTask.mutateAsync(updatedTask);
+      await editTaskStatus.mutateAsync(newStatus);
     } catch (error) {
       setErrorMessage(
         "Something went wrong :C, It's not possible to uncheck the task."

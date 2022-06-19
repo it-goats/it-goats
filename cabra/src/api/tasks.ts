@@ -1,12 +1,16 @@
+import { ITask, TaskStatus } from "../types/task";
+
 import { IFilterFormState } from "../types/filterFormState";
-import { ITask } from "../types/task";
 import axios from "axios";
 
-export const filtersToUrlParams = (filters: IFilterFormState): string => {
+export const filtersToUrlParams = (
+  filters: Partial<IFilterFormState>
+): string => {
   const params = new URLSearchParams();
   Object.entries(filters)
     .filter(([_, value]) => value)
     .forEach(([key, value]) => {
+      if (!value) return;
       if (Array.isArray(value)) {
         value.forEach((element) => params.append(key, element));
       } else if (value instanceof Date) {
@@ -18,9 +22,24 @@ export const filtersToUrlParams = (filters: IFilterFormState): string => {
   return params.toString();
 };
 
-interface TaskApiInput
-  extends Omit<ITask, "id" | "dueDate" | "relationTypes" | "isBlocked"> {
+export interface CreateTaskApiInput {
+  title: string;
+  description: string;
   dueDate: Date | string | null;
+  tags: string[];
+  relations: Array<{ taskId: string; type: string }>;
+  subtasks: string[];
+}
+
+export interface EditTaskApiInput {
+  title: string;
+  description: string;
+  dueDate: Date | string | null;
+  tagsToAdd: string[];
+  tagsToDelete: string[];
+  relationsToAdd: Array<{ taskId: string; type: string }>;
+  relationsToDelete: string[];
+  subtasksToAdd: string[];
 }
 
 export const getTask = {
@@ -29,10 +48,17 @@ export const getTask = {
 };
 
 export const getTasks = {
-  cacheKey: (filters?: IFilterFormState) =>
-    filters ? ["tasks", filtersToUrlParams(filters)] : ["tasks"],
+  cacheKey: (
+    filters: Partial<IFilterFormState> = {
+      tags: null,
+      status: null,
+      title: null,
+      dateFrom: null,
+      dateTo: null,
+    }
+  ) => ["tasks", filtersToUrlParams(filters)],
   run: (
-    filters: IFilterFormState = {
+    filters: Partial<IFilterFormState> = {
       tags: null,
       status: null,
       title: null,
@@ -47,8 +73,11 @@ export const getTasks = {
 
 export const deleteTask = (id: string) => axios.delete<ITask>(`/tasks/${id}`);
 
-export const updateTask = (id: string, data: TaskApiInput) =>
+export const updateTask = (id: string, data: EditTaskApiInput) =>
   axios.put<ITask>(`/tasks/${id}`, data);
 
-export const createTask = (data: TaskApiInput) =>
+export const updateTaskStatus = (id: string, status: TaskStatus) =>
+  axios.put<ITask>(`/tasks/${id}`, { status });
+
+export const createTask = (data: CreateTaskApiInput) =>
   axios.post<ITask>("/tasks", data);
