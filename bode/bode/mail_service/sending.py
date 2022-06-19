@@ -37,8 +37,8 @@ def check_tasks_to_notify():
 
     filters = [
         Task.status == TaskStatus.TODO.value,
-        Task.due_date is not None,
-        Task.notify_before_minutes is not None,
+        Task.due_date.is_not(None),
+        Task.notify_before_minutes.is_not(None),
         Task.due_date > now,
     ]
 
