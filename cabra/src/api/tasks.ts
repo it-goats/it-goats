@@ -22,13 +22,24 @@ export const filtersToUrlParams = (
   return params.toString();
 };
 
-export interface TaskApiInput {
+export interface CreateTaskApiInput {
   title: string;
   description: string;
   dueDate: Date | string | null;
   tags: string[];
-  subtasks: Array<{ title: string; id: string | null }>;
-  relatedTasks: Array<{ taskId: string; relationType: string }>;
+  relations: Array<{ taskId: string; type: string }>;
+  subtasks: string[];
+}
+
+export interface EditTaskApiInput {
+  title: string;
+  description: string;
+  dueDate: Date | string | null;
+  tagsToAdd: string[];
+  tagsToDelete: string[];
+  relationsToAdd: Array<{ taskId: string; type: string }>;
+  relationsToDelete: string[];
+  subtasksToAdd: string[];
 }
 
 export const getTask = {
@@ -62,11 +73,11 @@ export const getTasks = {
 
 export const deleteTask = (id: string) => axios.delete<ITask>(`/tasks/${id}`);
 
-export const updateTask = (id: string, data: TaskApiInput) =>
+export const updateTask = (id: string, data: EditTaskApiInput) =>
   axios.put<ITask>(`/tasks/${id}`, data);
 
 export const updateTaskStatus = (id: string, status: TaskStatus) =>
   axios.put<ITask>(`/tasks/${id}`, { status });
 
-export const createTask = (data: TaskApiInput) =>
+export const createTask = (data: CreateTaskApiInput) =>
   axios.post<ITask>("/tasks", data);

@@ -48,19 +48,19 @@ const schema = yup.object({
   title: yup.string().required("Your task's title is needed!").max(80),
   description: yup.string().max(1024),
   dueDate: yup.date().nullable(),
-  tags: yup.array().of(yup.string()),
   relatedTasks: yup.array().of(
     yup.object({
       relationType: yup.string(),
-      taskId: yup.string(),
+      task: yup.object({ id: yup.string() }),
     })
   ),
   subtasks: yup.array().of(
     yup.object({
-      subtaskTitle: yup.string().required("Subtask's title is needed!").max(80),
-      subtaskId: yup.string().nullable(),
+      title: yup.string().required("Subtask's title is needed!").max(80),
+      id: yup.string().nullable(),
     })
   ),
+  tags: yup.array().of(yup.string()),
 });
 
 const fieldStyles = tw`w-full px-4 py-2 rounded-lg shadow-2xl bg-tertiary text-black placeholder:text-primary/60`;
@@ -115,6 +115,7 @@ export default function TaskForm({ task, onSubmit }: Props) {
         ...data,
         dueDate: dueDate && zonedTimeToUtc(dueDate, getTimezone()),
       };
+
       await onSubmit(inputs);
 
       reset();

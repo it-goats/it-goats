@@ -1,5 +1,5 @@
+import { CreateTaskApiInput, createTask, getTasks } from "../../api/tasks";
 import { ITask, TaskStatus } from "../../types/task";
-import { TaskApiInput, createTask, getTasks } from "../../api/tasks";
 import TaskForm, { TaskFormInputs } from "./TaskForm";
 import { useMutation, useQueryClient } from "react-query";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -24,13 +24,14 @@ export default function CreateTaskForm() {
     },
   });
 
-  const onSubmit = (inputs: TaskFormInputs) => {
-    const variables: TaskApiInput = {
+  const onSubmit = ({ relatedTasks, ...inputs }: TaskFormInputs) => {
+    const variables: CreateTaskApiInput = {
       ...inputs,
-      relatedTasks: inputs.relatedTasks.map(({ relationType, task }) => ({
-        relationType,
+      relations: relatedTasks.map(({ relationType, task }) => ({
         taskId: task.id,
+        type: relationType,
       })),
+      subtasks: inputs.subtasks.map(({ title }) => title),
     };
 
     return addTask.mutateAsync(variables);

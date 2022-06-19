@@ -71,10 +71,18 @@ export default function TaskRelationsEdit({ taskId }: Props) {
 
   useEffect(() => {
     const relatedTasks =
-      relatedTasksQuery?.data?.data?.map(({ relationType, task }) => ({
-        relationType,
-        task,
-      })) ?? [];
+      relatedTasksQuery?.data?.data
+        ?.filter(
+          (rel) =>
+            !(
+              rel.relationType === DirectedRelationType.Subtask ||
+              rel.relationType === DirectedRelationType.Supertask
+            )
+        )
+        .map(({ relationType, task }) => ({
+          relationType,
+          task,
+        })) ?? [];
 
     setValue("relatedTasks", relatedTasks);
   }, [relatedTasksQuery?.data?.data, setValue]);
