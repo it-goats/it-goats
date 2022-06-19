@@ -5,6 +5,8 @@ from flask_cors import CORS
 from flask_migrate import upgrade
 from flask_smorest import Blueprint
 
+from bode.mail_service.sending import start_notify
+
 from .config import Config
 from .extensions import api, db, migrate
 from .resources import tags, task_relations, tasks
@@ -27,6 +29,8 @@ def create_app():
     with app.app_context():
         if CONFIG.AUTO_MIGRATE:
             upgrade()
+
+    start_notify(app)
 
     return app
 
