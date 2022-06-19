@@ -33,4 +33,14 @@ class DirectedRelationType(Enum):
         return [c.value for c in cls]
 
 
+class DirectedRelationTypeWithoutSubtaskAndSupertask(Enum):
+    Blocks = "blocks"
+    IsBlockedBy = "is_blocked_by"
+    Interchangable = "interchangable"
+
+    @classmethod
+    def list(cls):
+        return [c.value for c in cls]
+
+
 SYMMETRIC_RELATIONS = [RelationType.Interchangable.value]

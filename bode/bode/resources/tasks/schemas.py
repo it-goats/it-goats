@@ -1,7 +1,11 @@
 from dateutil import rrule
 from marshmallow import EXCLUDE, ValidationError, fields, validate
 
-from bode.models.enums import DirectedRelationType, TaskStatus
+from bode.models.enums import (
+    DirectedRelationType,
+    DirectedRelationTypeWithoutSubtaskAndSupertask,
+    TaskStatus,
+)
 from bode.models.task_relation.actions import is_task_blocked
 from bode.resources.base_schema import BaseSchema
 from bode.resources.tags.schemas import TagSchema
@@ -9,7 +13,7 @@ from bode.resources.tags.schemas import TagSchema
 
 class RelationInputSchema(BaseSchema):
     task_id = fields.UUID(required=True)
-    type = fields.String(validate=validate.OneOf(DirectedRelationType.list()), required=True)
+    type = fields.String(validate=validate.OneOf(DirectedRelationTypeWithoutSubtaskAndSupertask.list()), required=True)
 
 
 def validate_rrule(rrule_str: str):
