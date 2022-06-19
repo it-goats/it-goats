@@ -113,28 +113,6 @@ def edit_task(task_id, check_equivalence_class=True, **task_data):
             }
             edit_task(str(related_task.id), **subtask_data)
 
-    """If task is checked, check all interchangable tasks indirectly as well."""
-    if check_equivalence_class:
-        equivalence_set = {}
-        equivalence_set[task_id] = task_data["status"]
-        get_equivalence_set(task_id, equivalence_set)
-        if len(equivalence_set.keys()) == 1:
-            return task
-        new_status = (
-            TaskStatus.INDIRECTLY_DONE.value
-            if TaskStatus.DONE.value in equivalence_set.values()
-            else TaskStatus.TODO.value
-        )
-        for related_task_id, related_task_status in equivalence_set.items():
-            if related_task_status == TaskStatus.DONE.value:
-                continue
-            if related_task_status == new_status:
-                continue
-            inter_task_data = {
-                "status": new_status,
-            }
-            edit_task(str(related_task_id), check_equivalence_class=False, **inter_task_data)
-
     """Delete tags"""
     tags_to_delete_data = task_data.get("tags_to_delete")
     if tags_to_delete_data:
@@ -164,6 +142,28 @@ def edit_task(task_id, check_equivalence_class=True, **task_data):
             delete_task_relation(relation_id)
 
     add_relations_and_subtasks(task_data, task, "edition")
+
+    """If task is checked, check all interchangable tasks indirectly as well."""
+    if check_equivalence_class:
+        equivalence_set = {}
+        equivalence_set[task_id] = task_data["status"]
+        get_equivalence_set(task_id, equivalence_set)
+        if len(equivalence_set.keys()) == 1:
+            return task
+        new_status = (
+            TaskStatus.INDIRECTLY_DONE.value
+            if TaskStatus.DONE.value in equivalence_set.values()
+            else TaskStatus.TODO.value
+        )
+        for related_task_id, related_task_status in equivalence_set.items():
+            if related_task_status == TaskStatus.DONE.value:
+                continue
+            if related_task_status == new_status:
+                continue
+            inter_task_data = {
+                "status": new_status,
+            }
+            edit_task(str(related_task_id), check_equivalence_class=False, **inter_task_data)
 
     return task
 
