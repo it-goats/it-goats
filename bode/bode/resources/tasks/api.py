@@ -15,7 +15,12 @@ from bode.models.task.actions import (
 )
 from bode.models.task.model import Task
 from bode.resources.tags.schemas import TagInputSchema
-from bode.resources.tasks.schemas import TaskFiltersSchema, TaskInputSchema, TaskSchema
+from bode.resources.tasks.schemas import (
+    TaskEditionInputSchema,
+    TaskFiltersSchema,
+    TaskInputSchema,
+    TaskSchema,
+)
 
 blueprint = Blueprint("tasks", "tasks", url_prefix="/tasks")
 
@@ -60,7 +65,7 @@ class TasksById(MethodView):
         except DataError:
             abort(404)
 
-    @blueprint.arguments(TaskInputSchema)
+    @blueprint.arguments(TaskEditionInputSchema)
     @blueprint.response(200, TaskSchema)
     def put(self, task_data, task_id):
         try:
