@@ -1,12 +1,15 @@
-import { CSSProperties, useCallback, useState } from "react";
+import { CSSProperties, useCallback, useEffect, useState } from "react";
 import ReactFlow, {
   applyEdgeChanges,
   applyNodeChanges,
 } from "react-flow-renderer";
 
+import ELK from "elkjs/lib/elk.bundled.js";
 import { IRelatedTasksFlow } from "../../types/taskRelation";
 import { ITask } from "../../types/task";
 import { randomDOMElementKey } from "../../utils/helperFunctions";
+
+const elk = new ELK();
 
 interface Props {
   task: ITask;
@@ -33,6 +36,23 @@ interface flowEdge {
   style?: CSSProperties;
 }
 
+interface IGraph {
+  id: string;
+  layoutOptions?: unknown;
+  children?:
+    | Array<{
+        id: string;
+        width?: number | undefined;
+        height?: number | undefined;
+        x?: number;
+        y?: number;
+      }>
+    | undefined;
+  edges?:
+    | Array<{ id: string; sources: Array<string>; targets: Array<string> }>
+    | undefined;
+}
+
 function createNode(task: ITask): flowNode {
   return {
     id: task.id,
@@ -41,8 +61,8 @@ function createNode(task: ITask): flowNode {
       label: task.title,
     },
     position: {
-      x: 100 + Math.random() * 100,
-      y: 300 + Math.random() * 100,
+      x: 0,
+      y: 0,
     },
   };
 }
@@ -133,6 +153,72 @@ export default function FlowGraph({ task, tasksFlowGraph }: Props) {
     (changes) => setEdges((eds) => applyEdgeChanges(changes, eds)),
     [setEdges]
   );
+
+  const [positions, setPositions] = useState<IGraph | null>(null);
+
+  // const graph = {
+  //   id: "root",
+  //   layoutOptions: { 'elk.algorithm': 'layered' },
+  //   children: nodes.map((node) => ({id: node.id, width: 30, height: 30})),
+  //   edges: edges.map((edge) => ({id: edge.id, sources: [edge.source], targets: [edge.target]}))
+  // }
+
+  useEffect(() => {
+    const graph = {
+      id: "root",
+      layoutOptions: { "elk.algorithm": "layered" },
+      children: nodes.map((node) => ({ id: node.id, width: 30, height: 30 })),
+      edges: edges.map((edge) => ({
+        id: edge.id,
+        sources: [edge.source],
+        targets: [edge.target],
+      })),
+    };
+
+    let isMounted = true;
+    elk
+      .layout(graph)
+      .then((g) => {
+        if (isMounted) {
+          setPositions(g);
+
+          if (g.children) {
+            const children = g.children;
+
+            children?.map((child: { id: string }, i: number) => {
+              const node = nodes.find(({ id }) => id === child.id);
+              // eslint-disable-next-line no-console
+              console.log(`[node: ${node?.data.label}] [child ${i}]`);
+            });
+          }
+        }
+      })
+      // eslint-disable-next-line no-console
+      .catch(console.error);
+    return () => {
+      isMounted = false;
+    };
+  }, [edges, nodes]);
+
+  // if (!positions) return null;
+
+  // const { children } = positions;
+  // if (!children) return null;
+
+  // children.map((child, i) => {
+  //   const node = nodes.find(({ id }) => id === child.id);
+  //   // eslint-disable-next-line no-console
+  //   console.log(`[node: ${node?.data.label}] [child ${i}]`);
+  // });
+
+  // nodes.forEach((node) => {
+  //   const graphNode = graph.children.find(({ id }) => id === node.id);
+  //   node.position.x = graphNode.x;
+  //   node.position.y = graphNode.y;
+  // });
+
+  // eslint-disable-next-line no-console
+  console.log("Positions: ", positions);
 
   return (
     <>
