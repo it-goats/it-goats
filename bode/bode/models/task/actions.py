@@ -1,4 +1,4 @@
-from dateutil import rrule
+from dateutil import rrule, tz
 from sqlalchemy.exc import IntegrityError, NoResultFound
 from sqlalchemy.orm.session import make_transient
 
@@ -297,7 +297,7 @@ def get_tasks_from_rrule(task, after, before):
             continue
         new_task = get_task(task.id)
         make_transient(new_task)
-        new_task.due_date = date
+        new_task.due_date = date.replace(hour=task.due_date.hour, minute=task.due_date.minute, tzinfo=tz.UTC)
         new_task.instance_key = num
         result.append(new_task)
     return result

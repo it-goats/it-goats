@@ -26,7 +26,9 @@ def make_recurring_task_data_from_task(task, instance_key):
         task.due_date.replace(tzinfo=None), count=instance_key, inc=True
     )
     *_, due_date = rrule_generator
-    recurring_task_data["due_date"] = due_date.replace(tzinfo=tz.UTC)
+    recurring_task_data["due_date"] = due_date.replace(tzinfo=tz.UTC).replace(
+        hour=task.due_date.hour, minute=task.due_date.minute
+    )
     recurring_task_data["instance_key"] = instance_key
     recurring_task_data["main_task_id"] = task.id
     recurring_task_data["is_deleted"] = False
