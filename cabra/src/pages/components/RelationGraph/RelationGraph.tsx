@@ -1,9 +1,9 @@
 import tw, { styled } from "twin.macro";
 
-import FlowGraph from "./FlowGraph";
-import { IRelatedTasksFlow } from "../../types/taskRelation";
-import { ITask } from "../../types/task";
-import { getRelatedTasksFlow } from "../../api/taskRelations";
+import FlowGraph from "../RelationGraph/FlowGraph";
+import { IRelatedTasksFlow } from "../../../types/taskRelation";
+import { ITask } from "../../../types/task";
+import { getRelatedTasksFlow } from "../../../api/taskRelations";
 import { useQuery } from "react-query";
 
 interface Props {

@@ -5,7 +5,7 @@ import { ITask } from "../types/task";
 import Layout from "./components/Layout";
 import { Link } from "react-router-dom";
 import NavigationButton from "./components/NavigationButton";
-import RelationGraph from "./components/RelationGraph";
+import RelationGraph from "./components/RelationGraph/RelationGraph";
 import Select from "react-select";
 import { getTasks } from "../api/tasks";
 import { useQuery } from "react-query";

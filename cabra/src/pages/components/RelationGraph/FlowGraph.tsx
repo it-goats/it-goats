@@ -1,115 +1,25 @@
-import { CSSProperties, useCallback, useEffect, useState } from "react";
+import {
+  DEFAULT_NODE_HEIGHT,
+  DEFAULT_NODE_WIDTH,
+  SUPREME_TASK_COLOUR,
+  createFlowEdge,
+  createFlowNode,
+  rfStyle,
+} from "./Visualisation";
+import ELK, { ElkNode } from "elkjs/lib/elk.bundled.js";
+import { Props, flowEdge, flowNode } from "../../../types/relationGraph";
 import ReactFlow, {
+  MarkerType,
   applyEdgeChanges,
   applyNodeChanges,
 } from "react-flow-renderer";
+import { useCallback, useEffect, useState } from "react";
 
-import ELK from "elkjs/lib/elk.bundled.js";
-import { IRelatedTasksFlow } from "../../types/taskRelation";
-import { ITask } from "../../types/task";
+import { IRelatedTasksFlow } from "../../../types/taskRelation";
 
-interface Props {
-  task: ITask;
-  tasksFlowGraph: IRelatedTasksFlow[];
-}
-
-interface flowNode {
-  id: string;
-  type?: string;
-  data: {
-    label: string;
-  };
-  position: {
-    x: number;
-    y: number;
-  };
-}
-
-interface flowEdge {
-  id: string;
-  source: string;
-  target: string;
-  animated?: boolean;
-  style?: CSSProperties;
-}
-
-// interface IGraph {
-//   id: string;
-//   layoutOptions?: unknown;
-//   children?:
-//     | Array<{
-//         id: string;
-//         width?: number | undefined;
-//         height?: number | undefined;
-//         x?: number;
-//         y?: number;
-//       }>
-//     | undefined;
-//   edges?:
-//     | Array<{ id: string; sources: Array<string>; targets: Array<string> }>
-//     | undefined;
-// }
-
-const DEFAULT_NODE_WIDTH = 160;
-const DEFAULT_NODE_HEIGHT = 120;
-
-function createFlowNode(
-  task: { id: string; title: string },
-  position?: { x: number; y: number },
-  type?: string
-): flowNode {
-  const node = {
-    id: task.id,
-    type: "default", // 'output'
-    data: {
-      label: task.title,
-    },
-    position: {
-      x: 0,
-      y: 0,
-    },
-  };
-
-  if (position) {
-    node.position = position;
-  }
-
-  if (type) {
-    node.type = type;
-  }
-
-  return node;
-}
-
-function createFlowEdge(
-  sourceId: string,
-  targetId: string,
-  animated?: boolean,
-  style?: CSSProperties
-): flowEdge {
-  const edge: {
-    id: string;
-    source: string;
-    target: string;
-    animated?: boolean;
-    style?: CSSProperties;
-  } = {
-    id: `e${sourceId}-${targetId}`,
-    source: sourceId,
-    target: targetId,
-    style: { stroke: "black" },
-  };
-
-  if (animated) {
-    edge.animated = true;
-  }
-
-  if (style) {
-    edge.style = style;
-  }
-
-  return edge;
-}
+const isSupremeTask = function (taskId: string, motherTaskId: string): boolean {
+  return taskId === motherTaskId;
+};
 
 function getInitialELKNodes(
   tasksFlowGraph: IRelatedTasksFlow[],
@@ -148,13 +58,44 @@ const getEdges = function (
   tasksFlowGraph.forEach(({ taskVertex, adjacencyList }) => {
     adjacencyList.forEach(({ task, relationType }) => {
       if (relationType.toLowerCase().includes("inter")) {
-        const edge = createFlowEdge(taskVertex.id, task.id, true);
+        const edge = createFlowEdge(
+          taskVertex.id,
+          task.id,
+          true,
+          {},
+          undefined,
+          "interchangeable"
+        );
         edgeDictionary.set(edge.id, edge);
       } else if (relationType.toLowerCase().includes("isblockedby")) {
-        const edge = createFlowEdge(task.id, taskVertex.id);
+        const markerEnd = {
+          type: MarkerType.ArrowClosed,
+        };
+        const edge = createFlowEdge(
+          task.id,
+          taskVertex.id,
+          false,
+          {},
+          undefined,
+          undefined,
+          markerEnd
+        );
+
+        // const edge = createFlowEdge(taskVertex.id, task.id, false, {}, markerEnd);
         edgeDictionary.set(edge.id, edge);
       } else if (relationType.toLowerCase().includes("blocks")) {
-        const edge = createFlowEdge(taskVertex.id, task.id);
+        const markerEnd = {
+          type: MarkerType.ArrowClosed,
+        };
+        const edge = createFlowEdge(
+          task.id,
+          taskVertex.id,
+          false,
+          {},
+          undefined,
+          undefined,
+          markerEnd
+        );
         edgeDictionary.set(edge.id, edge);
       }
     });
@@ -162,7 +103,7 @@ const getEdges = function (
   return Array.from(edgeDictionary.values());
 };
 
-const getGraph = function (
+const getELKGraph = function (
   nodes: { id: string; width: number; height: number }[],
   edges: flowEdge[]
 ) {
@@ -176,6 +117,39 @@ const getGraph = function (
       targets: [edge.target],
     })),
   };
+};
+
+const applyNodePositioning = function (
+  children: ElkNode[],
+  elkNodeDict: Map<string, { title: string }>,
+  flowNodeDict: Map<string, flowNode>,
+  motherTaskId: string
+) {
+  children?.map((child: { id: string; x?: number; y?: number }) => {
+    if (child.x && child.y) {
+      const position = { x: child.x, y: child.y };
+      const node = elkNodeDict.get(child.id);
+      let flowNode;
+      if (node !== undefined) {
+        if (isSupremeTask(child.id, motherTaskId)) {
+          const supremeTaskStyle = {
+            background: SUPREME_TASK_COLOUR,
+          };
+          flowNode = createFlowNode(
+            { id: child.id, title: node.title },
+            position,
+            supremeTaskStyle
+          );
+        } else {
+          flowNode = createFlowNode(
+            { id: child.id, title: node.title },
+            position
+          );
+        }
+        flowNodeDict.set(child.id, flowNode);
+      }
+    }
+  });
 };
 
 export default function FlowGraph({ task, tasksFlowGraph }: Props) {
@@ -201,34 +175,24 @@ export default function FlowGraph({ task, tasksFlowGraph }: Props) {
     const initialNodes = getInitialELKNodes(tasksFlowGraph, elkNodeDict);
     const initialEdges = getEdges(tasksFlowGraph, edgeDict);
 
-    const graph = getGraph(initialNodes, initialEdges);
+    const graph = getELKGraph(initialNodes, initialEdges);
 
     elk
       .layout(graph)
       .then((g) => {
-        if (g.children) {
-          const children = g.children;
+        const children = g.children;
 
-          children?.map((child: { id: string; x?: number; y?: number }) => {
-            if (child.x && child.y) {
-              const position = { x: child.x, y: child.y };
-              const node = elkNodeDict.get(child.id);
-              if (node !== undefined) {
-                flowNodeDict.set(
-                  child.id,
-                  createFlowNode({ id: child.id, title: node.title }, position)
-                );
-              }
-            }
-          });
+        if (children) {
+          applyNodePositioning(children, elkNodeDict, flowNodeDict, task.id);
         }
 
         setNodes(Array.from(flowNodeDict.values()));
         setEdges(Array.from(edgeDict.values()));
       })
-      // eslint-disable-next-line no-console
-      .catch(console.error);
-  }, [tasksFlowGraph]);
+      .catch((err) => {
+        return <div>An error has occurred :c {err}</div>;
+      });
+  }, [task.id, tasksFlowGraph]);
 
   return (
     <>
@@ -239,6 +203,7 @@ export default function FlowGraph({ task, tasksFlowGraph }: Props) {
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         fitView
+        style={rfStyle}
       />
     </>
   );
