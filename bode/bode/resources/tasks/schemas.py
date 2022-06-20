@@ -72,6 +72,6 @@ class TaskSchema(BaseSchema):
 class TaskFiltersSchema(BaseSchema):
     status = fields.String()
     tags = fields.List(fields.String())
-    date_from = fields.DateTime()
-    date_to = fields.DateTime()
+    date_from = fields.DateTime(required=True)
+    date_to = fields.DateTime(required=True)
     title = fields.String()
