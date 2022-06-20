@@ -1,5 +1,6 @@
 from dateutil import rrule
 from sqlalchemy.exc import IntegrityError, NoResultFound
+from sqlalchemy.orm.session import make_transient
 
 from bode.app import db
 from bode.models.enums import DirectedRelationType, RelationType, TaskStatus
@@ -13,7 +14,7 @@ from bode.models.task_relation.actions import (
 )
 from bode.models.utils import make_recurring_task_data_from_task
 
-recurring_task_parameters = ["due_date", "description", "status"]
+recurring_task_parameters = ["status", "due_date"]
 
 
 def add_relations_and_subtasks(task_data, task, type_of_operation):
@@ -67,7 +68,7 @@ def delete_task(task_id, instance_key=None):
     def is_subtask_relation(relation):
         return relation.type == RelationType.Subtask.value and str(relation.first_task_id) == task_id
 
-    if instance_key is not None:
+    if instance_key is not None and instance_key != 1:
         task = get_task(task_id)
         recurring_task = RecurringTask.query.filter(
             RecurringTask.main_task_id == task_id, RecurringTask.instance_key == instance_key
@@ -81,6 +82,11 @@ def delete_task(task_id, instance_key=None):
             recurring_task.is_deleted = True
         db.session.commit()
         return task
+
+    exceptions = RecurringTask.query.filter(RecurringTask.main_task_id == task_id).all()
+    for task in exceptions:
+        db.session.delete(task)
+    db.session.commit()
 
     relation_task_pairs = get_related_tasks(task_id)
 
@@ -118,21 +124,23 @@ def edit_task(task_id, check_equivalence_class=True, **task_data):
     """Edit task data"""
     task = get_task(task_id)
     recurring_task_data = {}
-    edit_task_keys = {"title", "description", "due_date", "status", "notify_before_minutes"}
+    edit_task_keys = {"title", "description", "due_date", "status", "notify_before_minutes", "rrule"}
     edit_task_data = {key: task_data[key] for key in task_data.keys() & edit_task_keys}
     for key, value in edit_task_data.items():
-        if task.rrule and key in recurring_task_parameters:
+        if task.rrule and key == "status":
             recurring_task_data[key] = value
             continue
         setattr(task, key, value)
 
     if recurring_task_data:
         recurring_task_key = task_data["instance_key"]
+        if recurring_task_key is None:
+            recurring_task_key = 1
         recurring_task = RecurringTask.query.filter(
-            RecurringTask.main_task_id == task_id, RecurringTask.instance_key == recurring_task_key
+            RecurringTask.main_task_id == task_id, RecurringTask.instance_key == str(recurring_task_key)
         ).one_or_none()
         if recurring_task is not None:
-            RecurringTask.edit(recurring_task.id, recurring_task_data)
+            RecurringTask.edit(recurring_task.id, **recurring_task_data)
         else:
             recurring_task_old_data = make_recurring_task_data_from_task(task, int(recurring_task_key))
             for key, value in recurring_task_data.items():
@@ -211,47 +219,9 @@ def get_task(task_id):
     return Task.query.get_or_404(task_id)
 
 
-def make_task_from_reccuring_task(reccuring_task):
-    task = get_task(reccuring_task.main_task_id).copy()
-    for key in recurring_task_parameters:
-        setattr(task, key, getattr(reccuring_task, key))
-    task.instance_key = reccuring_task.instance_key
-    return task
-
-
-def get_tasks_from_rrule(task, after, before):
-    rrule_object = rrule.rrulestr(task.rrule)
-    instance_num = 1 if task.due_date == after else len(rrule_object.between(task.due_date, after)) + 2
-    dates = rrule_object.between(after, before, inc=True)
-    result = []
-    for num, date in zip(range(instance_num, instance_num + len(dates)), dates):
-        new_task = task.copy()
-        new_task.due_date = date
-        new_task.instance_key = num
-        result.append(new_task)
-    return result
-
-
-def get_tasks_between(after, before):
-    # tasks without rrule
-    list1 = Task.query.filter(Task.rrule is None, Task.due_date >= after, Task.due_date <= before).all()
-
-    # tasks from reccuring table
-    recurring_tasks = RecurringTask.query.filter(
-        not RecurringTask.is_deleted, RecurringTask.due_date >= after, RecurringTask.due_date <= before
-    ).all()
-    list2 = [make_task_from_reccuring_task(reccuring_task) for reccuring_task in recurring_tasks]
-
-    # tasks from rrule
-    rrule_tasks = Task.query.filter(Task.rrule is not None).all()
-    list3 = [new_task for task in rrule_tasks for new_task in get_tasks_from_rrule(task, after, before)]
-
-    return list1 + list2 + list3
-
-
 def create_task(**task_data):
     """Create task"""
-    create_task_keys = {"title", "description", "due_date", "status", "notify_before_minutes"}
+    create_task_keys = {"title", "description", "due_date", "status", "notify_before_minutes", "rrule"}
     create_task_data = {key: task_data[key] for key in task_data.keys() & create_task_keys}
     task = Task(**create_task_data)
     db.session.add(task)
@@ -300,3 +270,34 @@ def remove_tag_from_task(task_id, **tag_data):
     db.session.commit()
 
     return task
+
+
+def make_task_from_reccuring_task(reccuring_task):
+    task = get_task(reccuring_task.main_task_id)
+    make_transient(task)
+    for key in recurring_task_parameters:
+        setattr(task, key, getattr(reccuring_task, key))
+    task.instance_key = reccuring_task.instance_key
+    return task
+
+
+def get_tasks_from_rrule(task, after, before):
+    due_date = task.due_date.replace(tzinfo=None)
+    after = after.replace(tzinfo=None)
+    before = before.replace(tzinfo=None)
+    rrule_object = rrule.rrulestr(str(task.rrule))
+    instance_num = 1 if due_date >= after else len(rrule_object.between(due_date, after)) + 2
+    dates = rrule_object.between(max(after, due_date), before, inc=True)
+    result = []
+    for num, date in zip(range(instance_num, instance_num + len(dates)), dates):
+        recurring_task = RecurringTask.query.filter(
+            RecurringTask.instance_key == str(num), RecurringTask.main_task_id == task.id
+        ).one_or_none()
+        if recurring_task is not None:
+            continue
+        new_task = get_task(task.id)
+        make_transient(new_task)
+        new_task.due_date = date
+        new_task.instance_key = num
+        result.append(new_task)
+    return result

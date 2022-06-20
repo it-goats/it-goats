@@ -45,6 +45,7 @@ export type TaskFormInputs = {
     id: string | null;
   }>;
   tags: string[];
+  instanceKey: number | null;
 };
 
 const schema = yup.object({

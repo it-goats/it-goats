@@ -38,7 +38,7 @@ class Task(db.Model):
         return {get_directed_relation_type(relation, self.id) for relation in relations}
 
     def __repr__(self):
-        return f'<Task {self.id} \n  title="{self.title}">'
+        return f'<Task {self.id} \n  title="{self.title}" due date={str(self.due_date)} status={self.status}>'
 
     def __iter__(self):
         for column in Task.__table__.columns:

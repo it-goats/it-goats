@@ -40,6 +40,7 @@ export interface EditTaskApiInput {
   relationsToAdd: Array<{ taskId: string; type: string }>;
   relationsToDelete: string[];
   subtasksToAdd: string[];
+  instanceKey: number | null;
 }
 
 export const getTask = {
@@ -76,8 +77,15 @@ export const deleteTask = (id: string) => axios.delete<ITask>(`/tasks/${id}`);
 export const updateTask = (id: string, data: EditTaskApiInput) =>
   axios.put<ITask>(`/tasks/${id}`, data);
 
-export const updateTaskStatus = (id: string, status: TaskStatus) =>
-  axios.put<ITask>(`/tasks/${id}`, { status });
+export const updateTaskStatus = (
+  id: string,
+  status: TaskStatus,
+  instanceKey: number | null
+) =>
+  axios.put<ITask>(`/tasks/${id}`, {
+    status: status,
+    instanceKey: instanceKey,
+  });
 
 export const createTask = (data: CreateTaskApiInput) =>
   axios.post<ITask>("/tasks", data);

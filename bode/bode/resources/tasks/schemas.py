@@ -36,6 +36,7 @@ class TaskInputSchema(BaseSchema):
     tags = fields.List(fields.String, default=[])
     relations = fields.List(fields.Nested(RelationInputSchema), default=[])
     subtasks = fields.List(fields.String, default=[])
+    instance_key = fields.Integer(default=None, allow_none=True)
 
 
 class TaskEditionInputSchema(BaseSchema):
@@ -53,6 +54,7 @@ class TaskEditionInputSchema(BaseSchema):
     relations_to_add = fields.List(fields.Nested(RelationInputSchema), default=[])
     relations_to_delete = fields.List(fields.String, default=[])
     subtasks_to_add = fields.List(fields.String, default=[])
+    instance_key = fields.Integer(default=None, allow_none=True)
 
 
 class TaskSchema(BaseSchema):
@@ -66,12 +68,12 @@ class TaskSchema(BaseSchema):
     is_blocked = fields.Function(lambda task: is_task_blocked(task.id))
     tags = fields.List(fields.Nested(TagSchema))
     relation_types = fields.List(fields.String(validate=validate.OneOf(DirectedRelationType.list())))
-    instance_key = fields.Integer(default=None)
+    instance_key = fields.Integer(default=None, allow_none=True)
 
 
 class TaskFiltersSchema(BaseSchema):
     status = fields.String()
     tags = fields.List(fields.String())
-    date_from = fields.DateTime(required=True)
-    date_to = fields.DateTime(required=True)
+    date_from = fields.DateTime()
+    date_to = fields.DateTime()
     title = fields.String()

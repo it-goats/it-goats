@@ -25,7 +25,7 @@ export default function RelatedTask({
   const [errorMessage, setErrorMessage] = useState("");
   const client = useQueryClient();
   const editTaskStatus = useMutation(
-    (status: TaskStatus) => updateTaskStatus(task.id, status),
+    (status: TaskStatus) => updateTaskStatus(task.id, status, task.instanceKey),
     {
       onSuccess: () => {
         client.invalidateQueries(getTasks.cacheKey());

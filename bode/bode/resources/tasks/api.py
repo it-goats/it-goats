@@ -1,23 +1,20 @@
-import sqlalchemy
-
-from dateutil import rrule
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
 from psycopg2 import IntegrityError
-from sqlalchemy import and_, false, null
+from sqlalchemy import and_
 from sqlalchemy.exc import DataError, NoResultFound
-
-from bode.models.recurring_task.model import RecurringTask
-
-recurring_task_parameters = ["due_date", "description", "status"]
+from sqlalchemy.orm.session import make_transient
 
 from bode.models.enums import TaskStatus
+from bode.models.recurring_task.model import RecurringTask
 from bode.models.tag.model import Tag
 from bode.models.task.actions import (
     add_tag_to_task,
     create_task,
     delete_task,
     edit_task,
+    get_tasks_from_rrule,
+    make_task_from_reccuring_task,
     remove_tag_from_task,
 )
 from bode.models.task.model import Task
@@ -43,32 +40,60 @@ class Tasks(MethodView):
         date_to = params.get("date_to")
         title = params.get("title")
 
-        all_filters = []
+        if date_from and date_to:
+            all_filters = [Task.rrule == None]
+        else:
+            all_filters = []
+        filters_reccuring_table = [RecurringTask.is_deleted == False]
+        filters_without_dates = [Task.rrule != None]
         if status and status in TaskStatus.list():
             all_filters.append(Task.status == status)  # noqa
+            filters_reccuring_table.append(RecurringTask.status == status)
+            filters_without_dates.append(Task.status == status)
         if title:
             all_filters.append(Task.title.ilike(f"%{title}%"))
+            filters_reccuring_table.append(RecurringTask.title.ilike(f"%{title}%"))
+            filters_without_dates.append(Task.title.ilike(f"%{title}%"))
         if date_from:
             all_filters.append(Task.due_date >= date_from)
+            filters_reccuring_table.append(RecurringTask.due_date >= date_from)
         if date_to:
             all_filters.append(Task.due_date <= date_to)
+            filters_reccuring_table.append(RecurringTask.due_date <= date_to)
         if tags:
             or_filters = [Task.tags.any(Tag.name == tag) for tag in tags]
             all_filters.append(and_(*or_filters))
+            filters_without_dates.append(and_(*or_filters))
         # lists1 = Task.query.order_by(Task.status, Task.due_date).filter(*all_filters).all()
 
         # tasks without rrule
+        list1 = Task.query.order_by(Task.status, Task.due_date).filter(*all_filters).all()
+        if not date_from or not date_to:
+            result = []
+            for task in list1:
+                make_transient(task)
+                recurring_task = RecurringTask.query.filter(
+                    RecurringTask.instance_key == str(1), RecurringTask.main_task_id == task.id
+                ).one_or_none()
+                if recurring_task is not None:
+                    task.status = recurring_task.status
+                result.append(task)
+            return result
 
-        list1 = Task.query.order_by(Task.status, Task.due_date).filter(Task.rrule == None, *all_filters).all()
-
-        recurring_tasks = RecurringTask.query.filter(RecurringTask.is_deleted == False, *all_filters).all()
+        # tasks from reccuring table
+        recurring_tasks = RecurringTask.query.filter(*filters_reccuring_table).all()
         list2 = [make_task_from_reccuring_task(reccuring_task) for reccuring_task in recurring_tasks]
+        if tags:
+            list2 = [task for task in list2 if len(set(task.tags) & set(tags)) > 0]
 
         # tasks from rrule
-        rrule_tasks = Task.query.order_by(Task.status, Task.due_date).filter(Task.rrule != None, *all_filters).all()
+        rrule_tasks = Task.query.filter(*filters_without_dates).filter().all()
         list3 = [new_task for task in rrule_tasks for new_task in get_tasks_from_rrule(task, date_from, date_to)]
 
-        return set(list1 + list2 + list3)
+        all_elements = list1 + list2 + list3
+        all_elements.sort(key=lambda task: task.due_date.replace(tzinfo=None))
+        all_elements.sort(key=lambda task: task.status, reverse=True)
+        return all_elements
 
     @blueprint.arguments(TaskInputSchema)
     @blueprint.response(201, TaskSchema)
@@ -81,7 +106,14 @@ class TasksById(MethodView):
     @blueprint.response(200, TaskSchema)
     def get(self, task_id):
         try:
-            return Task.query.get(task_id) or abort(404)
+            task = Task.query.get(task_id) or abort(404)
+            make_transient(task)
+            recurring_task = RecurringTask.query.filter(
+                RecurringTask.instance_key == str(1), RecurringTask.main_task_id == task.id
+            ).one_or_none()
+            if recurring_task is not None:
+                task.status = recurring_task.status
+            return task
         except DataError:
             abort(404)
 
@@ -118,44 +150,6 @@ class TaskTags(MethodView):
             return remove_tag_from_task(task_id, **tags_data)
         except NoResultFound:
             abort(404, message="The task is not assigned to the task.")
-
-
-def make_task_from_reccuring_task(reccuring_task):
-    task = get_task(reccuring_task.main_task_id).copy()
-    for key in recurring_task_parameters:
-        setattr(task, key, getattr(reccuring_task, key))
-    task.instance_key = reccuring_task.instance_key
-    return task
-
-
-def get_tasks_from_rrule(task, after, before):
-    rrule_object = rrule.rrulestr(str(task.rrule))
-    instance_num = 1 if task.due_date == after else len(rrule_object.between(task.due_date, after)) + 2
-    dates = rrule_object.between(after, before, inc=True)
-    result = []
-    for num, date in zip(range(instance_num, instance_num + len(dates)), dates):
-        new_task = task.copy()
-        new_task.due_date = date
-        new_task.instance_key = num
-        result.append(new_task)
-    return result
-
-
-def get_tasks_between(after, before):
-    # tasks without rrule
-    list1 = Task.query.filter(Task.rrule is None, Task.due_date >= after, Task.due_date <= before).all()
-
-    # tasks from reccuring table
-    recurring_tasks = RecurringTask.query.filter(
-        not RecurringTask.is_deleted, RecurringTask.due_date >= after, RecurringTask.due_date <= before
-    ).all()
-    list2 = [make_task_from_reccuring_task(reccuring_task) for reccuring_task in recurring_tasks]
-
-    # tasks from rrule
-    rrule_tasks = Task.query.filter(Task.rrule is not None).all()
-    list3 = [new_task for task in rrule_tasks for new_task in get_tasks_from_rrule(task, after, before)]
-
-    return list1 + list2 + list3
 
 
 def get_task(task_id):

@@ -29,7 +29,7 @@ const useTask = (id: string) => {
   const [error, setError] = useState("");
   const client = useQueryClient();
   const editTaskStatus = useMutation(
-    (status: TaskStatus) => updateTaskStatus(task.id, status),
+    (status: TaskStatus) => updateTaskStatus(task.id, status, task.instanceKey),
     {
       onSuccess: () => {
         client.invalidateQueries(getTasks.cacheKey());

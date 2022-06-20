@@ -25,10 +25,11 @@ export default function TaskListItem({ task }: Props) {
   const [errorMessage, setErrorMessage] = useState("");
   const client = useQueryClient();
   const editTaskStatus = useMutation(
-    (status: TaskStatus) => updateTaskStatus(task.id, status),
+    (status: TaskStatus) => updateTaskStatus(task.id, status, task.instanceKey),
     {
       onSuccess: () => {
         client.invalidateQueries(getTask.cacheKey(task.id));
+        client.invalidateQueries(["tasks"]);
         client.invalidateQueries(getTasks.cacheKey());
       },
     }
@@ -40,7 +41,8 @@ export default function TaskListItem({ task }: Props) {
       await editTaskStatus.mutateAsync(newStatus);
     } catch (error) {
       setErrorMessage(
-        "Something went wrong :C, It's not possible to uncheck the task."
+        "Something went wrong :C, It's not possible to uncheck the task." +
+          error
       );
     }
   };

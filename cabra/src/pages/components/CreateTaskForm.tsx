@@ -12,6 +12,7 @@ const emptyTask: Omit<ITask, "id" | "relationTypes" | "isBlocked"> = {
   status: TaskStatus.TODO,
   tags: [],
   title: "",
+  instanceKey: null,
 };
 
 export default function CreateTaskForm() {

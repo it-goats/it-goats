@@ -22,4 +22,5 @@ export interface ITask {
   status: TaskStatus;
   tags: ITag[];
   title: string;
+  instanceKey: number | null;
 }
