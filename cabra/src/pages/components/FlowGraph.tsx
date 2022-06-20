@@ -7,9 +7,6 @@ import ReactFlow, {
 import ELK from "elkjs/lib/elk.bundled.js";
 import { IRelatedTasksFlow } from "../../types/taskRelation";
 import { ITask } from "../../types/task";
-import { randomDOMElementKey } from "../../utils/helperFunctions";
-
-const elk = new ELK();
 
 interface Props {
   task: ITask;
@@ -36,27 +33,34 @@ interface flowEdge {
   style?: CSSProperties;
 }
 
-interface IGraph {
-  id: string;
-  layoutOptions?: unknown;
-  children?:
-    | Array<{
-        id: string;
-        width?: number | undefined;
-        height?: number | undefined;
-        x?: number;
-        y?: number;
-      }>
-    | undefined;
-  edges?:
-    | Array<{ id: string; sources: Array<string>; targets: Array<string> }>
-    | undefined;
-}
+// interface IGraph {
+//   id: string;
+//   layoutOptions?: unknown;
+//   children?:
+//     | Array<{
+//         id: string;
+//         width?: number | undefined;
+//         height?: number | undefined;
+//         x?: number;
+//         y?: number;
+//       }>
+//     | undefined;
+//   edges?:
+//     | Array<{ id: string; sources: Array<string>; targets: Array<string> }>
+//     | undefined;
+// }
 
-function createNode(task: ITask): flowNode {
-  return {
+const DEFAULT_NODE_WIDTH = 150;
+const DEFAULT_NODE_HEIGHT = 100;
+
+function createFlowNode(
+  task: { id: string; title: string },
+  position?: { x: number; y: number },
+  type?: string
+): flowNode {
+  const node = {
     id: task.id,
-    // type: 'output',
+    type: "default", // 'output'
     data: {
       label: task.title,
     },
@@ -65,59 +69,92 @@ function createNode(task: ITask): flowNode {
       y: 0,
     },
   };
+
+  if (position) {
+    node.position = position;
+  }
+
+  if (type) {
+    node.type = type;
+  }
+
+  return node;
 }
 
-function createEdge(
+function createFlowEdge(
   sourceId: string,
   targetId: string,
-  animated?: boolean
+  animated?: boolean,
+  style?: CSSProperties
 ): flowEdge {
-  if (animated) {
-    return {
-      id: `e${sourceId}-${targetId}`,
-      source: sourceId,
-      target: targetId,
-      animated: true,
-      style: { stroke: "black" },
-    };
-  }
-  return {
+  const edge: {
+    id: string;
+    source: string;
+    target: string;
+    animated?: boolean;
+    style?: CSSProperties;
+  } = {
     id: `e${sourceId}-${targetId}`,
     source: sourceId,
     target: targetId,
     style: { stroke: "black" },
   };
+
+  if (animated) {
+    edge.animated = true;
+  }
+
+  if (style) {
+    edge.style = style;
+  }
+
+  return edge;
 }
 
-function getInitialNodes(
+function getInitialELKNodes(
   tasksFlowGraph: IRelatedTasksFlow[],
-  nodeDictionary: Map<string, flowNode>
-): flowNode[] {
+  nodeDict: Map<string, { title: string }>
+): { id: string; width: number; height: number }[] {
+  const elkNodeDict: Map<
+    string,
+    { id: string; width: number; height: number }
+  > = new Map();
+
   tasksFlowGraph
     .flatMap(({ taskVertex, adjacencyList }) => {
-      nodeDictionary.set(taskVertex.id, createNode(taskVertex));
+      elkNodeDict.set(taskVertex.id, {
+        id: taskVertex.id,
+        width: DEFAULT_NODE_WIDTH,
+        height: DEFAULT_NODE_HEIGHT,
+      });
+      nodeDict.set(taskVertex.id, { title: taskVertex.title });
       return adjacencyList;
     })
     .map(({ task }) => {
-      nodeDictionary.set(task.id, createNode(task));
+      elkNodeDict.set(task.id, {
+        id: task.id,
+        width: DEFAULT_NODE_WIDTH,
+        height: DEFAULT_NODE_HEIGHT,
+      });
+      nodeDict.set(task.id, { title: task.title });
     });
-  return Array.from(nodeDictionary.values());
+  return Array.from(elkNodeDict.values());
 }
 
-const getInitialEdges = function (
+const getEdges = function (
   tasksFlowGraph: IRelatedTasksFlow[],
   edgeDictionary: Map<string, flowEdge>
 ): flowEdge[] {
   tasksFlowGraph.forEach(({ taskVertex, adjacencyList }) => {
     adjacencyList.forEach(({ task, relationType }) => {
       if (relationType.toLowerCase().includes("inter")) {
-        const edge = createEdge(taskVertex.id, task.id, true);
+        const edge = createFlowEdge(taskVertex.id, task.id, true);
         edgeDictionary.set(edge.id, edge);
       } else if (relationType.toLowerCase().includes("isblockedby")) {
-        const edge = createEdge(task.id, taskVertex.id);
+        const edge = createFlowEdge(task.id, taskVertex.id);
         edgeDictionary.set(edge.id, edge);
       } else if (relationType.toLowerCase().includes("blocks")) {
-        const edge = createEdge(taskVertex.id, task.id);
+        const edge = createFlowEdge(taskVertex.id, task.id);
         edgeDictionary.set(edge.id, edge);
       }
     });
@@ -125,25 +162,25 @@ const getInitialEdges = function (
   return Array.from(edgeDictionary.values());
 };
 
-const getVerticesNodes = function (tasksFlowGraph: IRelatedTasksFlow[]) {
-  return tasksFlowGraph
-    .flatMap((e) => e.adjacencyList)
-    .map((t) => (
-      <h4 key={randomDOMElementKey(t.task.id)}>
-        {t.task.title} - {t.relationType}
-      </h4>
-    ));
+const getGraph = function (
+  nodes: { id: string; width: number; height: number }[],
+  edges: flowEdge[]
+) {
+  return {
+    id: "root",
+    layoutOptions: { "elk.algorithm": "layered" },
+    children: nodes,
+    edges: edges.map((edge) => ({
+      id: edge.id,
+      sources: [edge.source],
+      targets: [edge.target],
+    })),
+  };
 };
 
 export default function FlowGraph({ task, tasksFlowGraph }: Props) {
-  const nodeDictionary: Map<string, flowNode> = new Map();
-  const edgeDictionary: Map<string, flowEdge> = new Map();
-  const [nodes, setNodes] = useState(
-    getInitialNodes(tasksFlowGraph, nodeDictionary)
-  );
-  const [edges, setEdges] = useState(
-    getInitialEdges(tasksFlowGraph, edgeDictionary)
-  );
+  const [nodes, setNodes] = useState<flowNode[] | []>([]);
+  const [edges, setEdges] = useState<flowEdge[] | []>([]);
 
   const onNodesChange = useCallback(
     (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
@@ -154,87 +191,48 @@ export default function FlowGraph({ task, tasksFlowGraph }: Props) {
     [setEdges]
   );
 
-  const [positions, setPositions] = useState<IGraph | null>(null);
-
-  // const graph = {
-  //   id: "root",
-  //   layoutOptions: { 'elk.algorithm': 'layered' },
-  //   children: nodes.map((node) => ({id: node.id, width: 30, height: 30})),
-  //   edges: edges.map((edge) => ({id: edge.id, sources: [edge.source], targets: [edge.target]}))
-  // }
-
   useEffect(() => {
-    const graph = {
-      id: "root",
-      layoutOptions: { "elk.algorithm": "layered" },
-      children: nodes.map((node) => ({ id: node.id, width: 30, height: 30 })),
-      edges: edges.map((edge) => ({
-        id: edge.id,
-        sources: [edge.source],
-        targets: [edge.target],
-      })),
-    };
+    const elk = new ELK();
 
-    let isMounted = true;
+    const flowNodeDict: Map<string, flowNode> = new Map();
+    const elkNodeDict: Map<string, { title: string }> = new Map();
+    const edgeDict: Map<string, flowEdge> = new Map();
+
+    const initialNodes = getInitialELKNodes(tasksFlowGraph, elkNodeDict);
+    const initialEdges = getEdges(tasksFlowGraph, edgeDict);
+
+    const graph = getGraph(initialNodes, initialEdges);
+
     elk
       .layout(graph)
       .then((g) => {
-        if (isMounted) {
-          setPositions(g);
+        if (g.children) {
+          const children = g.children;
 
-          if (g.children) {
-            const children = g.children;
-
-            children?.map((child: { id: string }, i: number) => {
-              const node = nodes.find(({ id }) => id === child.id);
-              // eslint-disable-next-line no-console
-              console.log(`[node: ${node?.data.label}] [child ${i}]`);
-            });
-          }
+          children?.map((child: { id: string; x?: number; y?: number }) => {
+            if (child.x && child.y) {
+              const position = { x: child.x, y: child.y };
+              const node = elkNodeDict.get(child.id);
+              if (node !== undefined) {
+                flowNodeDict.set(
+                  child.id,
+                  createFlowNode({ id: child.id, title: node.title }, position)
+                );
+              }
+            }
+          });
         }
+
+        setNodes(Array.from(flowNodeDict.values()));
+        setEdges(Array.from(edgeDict.values()));
       })
       // eslint-disable-next-line no-console
       .catch(console.error);
-    return () => {
-      isMounted = false;
-    };
-  }, [edges, nodes]);
-
-  // if (!positions) return null;
-
-  // const { children } = positions;
-  // if (!children) return null;
-
-  // children.map((child, i) => {
-  //   const node = nodes.find(({ id }) => id === child.id);
-  //   // eslint-disable-next-line no-console
-  //   console.log(`[node: ${node?.data.label}] [child ${i}]`);
-  // });
-
-  // nodes.forEach((node) => {
-  //   const graphNode = graph.children.find(({ id }) => id === node.id);
-  //   node.position.x = graphNode.x;
-  //   node.position.y = graphNode.y;
-  // });
-
-  // eslint-disable-next-line no-console
-  console.log("Positions: ", positions);
+  }, [tasksFlowGraph]);
 
   return (
     <>
-      <div>FlowGraph</div>
       Task title: {task.title}
-      {/* {tasksFlowGraph.map((el) => (
-            <h4 key={randomDOMElementKey(el.taskVertex.id)}>
-            {el.taskVertex.title}
-            </h4>
-        ))} */}
-      <br></br>
-      Nodess{edges.length}
-      <br></br>
-      <div>VerticesNodes{getVerticesNodes(tasksFlowGraph)}</div>
-      <br></br>
-      <br></br>
       <ReactFlow
         nodes={nodes}
         edges={edges}

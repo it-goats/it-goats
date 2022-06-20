@@ -45,7 +45,6 @@ export default function RelationFlow() {
           </Link>
         </div>
         <div>
-          Relation Flow component
           <Layout>
             <div tw="text-gray-50 font-bold mb-3">Select the task:</div>
             <div tw="flex space-x-5 justify-evenly self-stretch object-fill mb-3">
@@ -60,8 +59,6 @@ export default function RelationFlow() {
                 tw="flex-1"
               />
             </div>
-            {`Selected task: ${selectedTask?.title}`}
-            <br></br>
             {selectedTask && selectedTask.id && (
               <RelationGraph
                 task={selectedTask}

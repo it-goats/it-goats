@@ -4,7 +4,6 @@ import FlowGraph from "./FlowGraph";
 import { IRelatedTasksFlow } from "../../types/taskRelation";
 import { ITask } from "../../types/task";
 import { getRelatedTasksFlow } from "../../api/taskRelations";
-import { randomDOMElementKey } from "../../utils/helperFunctions";
 import { useQuery } from "react-query";
 
 interface Props {
@@ -27,28 +26,7 @@ export default function RelationGraph({ task }: Props) {
 
   return (
     <>
-      <div>RelationGraph</div>
-      <div>
-        -----------------------------------------------------------------
-        {relatedTasks.map(({ taskVertex: tv, adjacencyList: adjList }) => (
-          <div key={randomDOMElementKey(tv.id)}>
-            <li key={tv.id}>{tv.title}</li>
-            Related tasks:
-            <h2 key={randomDOMElementKey(tv.id)}>
-              {adjList &&
-                adjList.map(({ task: t, relationType: r }) => {
-                  return (
-                    <h3 key={randomDOMElementKey(tv.id)}>
-                      {t.title} - {r}
-                    </h3>
-                  );
-                })}
-            </h2>
-          </div>
-        ))}
-        -----------------------------------------------------------------
-        <FlowGraph task={task} tasksFlowGraph={relatedTasks} />
-      </div>
+      <FlowGraph task={task} tasksFlowGraph={relatedTasks} />
     </>
   );
 }
