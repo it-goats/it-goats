@@ -64,7 +64,6 @@ class Tasks(MethodView):
             or_filters = [Task.tags.any(Tag.name == tag) for tag in tags]
             all_filters.append(and_(*or_filters))
             filters_without_dates.append(and_(*or_filters))
-        # lists1 = Task.query.order_by(Task.status, Task.due_date).filter(*all_filters).all()
 
         # tasks without rrule
         list1 = Task.query.order_by(Task.status, Task.due_date).filter(*all_filters).all()

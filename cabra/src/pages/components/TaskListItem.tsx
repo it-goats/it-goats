@@ -41,8 +41,7 @@ export default function TaskListItem({ task }: Props) {
       await editTaskStatus.mutateAsync(newStatus);
     } catch (error) {
       setErrorMessage(
-        "Something went wrong :C, It's not possible to uncheck the task." +
-          error
+        "Something went wrong :C, It's not possible to uncheck the task."
       );
     }
   };
