@@ -50,8 +50,8 @@ interface flowEdge {
 //     | undefined;
 // }
 
-const DEFAULT_NODE_WIDTH = 150;
-const DEFAULT_NODE_HEIGHT = 100;
+const DEFAULT_NODE_WIDTH = 160;
+const DEFAULT_NODE_HEIGHT = 120;
 
 function createFlowNode(
   task: { id: string; title: string },
