@@ -1,6 +1,7 @@
 import {
   DirectedRelationType,
   IRelatedTask,
+  IRelatedTasksFlow,
   ITaskRelation,
 } from "../types/taskRelation";
 
@@ -25,3 +26,9 @@ export const createRelation = (data: Omit<ITaskRelation, "id">) =>
 
 export const deleteRelation = (id: string) =>
   axios.delete<ITaskRelation>(`/task-relations/${id}`);
+
+export const getRelatedTasksFlow = {
+  cacheKey: (taskId: string) => ["task-relations-flow", taskId],
+  run: (taskId: string) =>
+    axios.get<IRelatedTasksFlow[]>(`/task-relations-flow/${taskId}`),
+};

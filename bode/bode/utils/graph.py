@@ -1,4 +1,8 @@
 from collections import defaultdict
+from typing import Tuple
+
+from bode.models.enums import DirectedRelationType
+from bode.models.task.model import Task
 
 
 class DisjointSets:
@@ -47,3 +51,16 @@ class Graph:
                 self.disjoint_sets.union(u, v)
 
         return self.disjoint_sets.parents
+
+
+class ExtendedRelationGraph:
+    def __init__(self):
+        self.graph = defaultdict(list)
+
+    def get_typed_edge(self, v: Task, dir_relation_type: DirectedRelationType) -> Tuple[Task, DirectedRelationType]:
+        return (v, dir_relation_type)
+
+    def add_typed_edge(self, u: str, v: Task, relation_type: DirectedRelationType):
+        typed_edge = self.get_typed_edge(v, relation_type)
+        if typed_edge not in self.graph[u]:
+            self.graph[u].append(typed_edge)

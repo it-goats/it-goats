@@ -7,7 +7,7 @@ from flask_smorest import Blueprint
 
 from .config import Config
 from .extensions import api, db, migrate
-from .resources import settings, tags, task_relations, tasks
+from .resources import settings, tags, task_relations, tasks, tasks_relations_flow
 
 CONFIG = Config()
 
@@ -45,6 +45,7 @@ def register_blueprints(app):
     api_blueprint.register_blueprint(tasks.api.blueprint)
     api_blueprint.register_blueprint(tags.api.blueprint)
     api_blueprint.register_blueprint(task_relations.api.blueprint)
+    api_blueprint.register_blueprint(tasks_relations_flow.api.blueprint)
 
     app.register_blueprint(api_blueprint)
     return None

@@ -7,6 +7,7 @@ import Layout from "./components/Layout";
 import { Link } from "react-router-dom";
 import NavigationButton from "./components/NavigationButton";
 import { PlusIcon } from "@heroicons/react/solid";
+import { PresentationChartBarIcon } from "@heroicons/react/outline";
 import TasksList from "./components/TasksList";
 import { getTasks } from "../api/tasks";
 import { routeHelpers } from "../routes";
@@ -34,6 +35,11 @@ export default function HomePage() {
     <Layout>
       <div tw="w-[90%] max-w-2xl space-y-6 relative z-10">
         <div tw="w-full flex justify-between gap-x-2">
+          <Link to={routeHelpers.relationFlow}>
+            <NavigationButton tw="bg-secondary text-stone-50">
+              <PresentationChartBarIcon width={20} height={20} /> Relation Flow
+            </NavigationButton>
+          </Link>
           <Link to={routeHelpers.calendar}>
             <NavigationButton tw="bg-secondary text-stone-50">
               <CalendarIcon width={20} height={20} /> Calendar
