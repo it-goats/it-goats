@@ -44,29 +44,27 @@ export default function RelationFlow() {
             </NavigationButton>
           </Link>
         </div>
-        <div>
-          <Layout>
-            <div tw="text-gray-50 font-bold mb-3">Select the task</div>
-            <div tw="flex space-x-5 justify-evenly self-stretch object-fill mb-3 z-40">
-              <Select
-                onChange={(selected) => {
-                  if (selected?.value) {
-                    setSelectedTask(selected.value);
-                  }
-                }}
-                options={formattedTasks}
-                key={`unique_select_key__${selectedTask}`}
-                tw="flex-1"
-              />
-            </div>
-            {selectedTask && selectedTask.id && (
-              <RelationGraph
-                task={selectedTask}
-                key={`task_id${selectedTask.id}_${Math.random()}`}
-              ></RelationGraph>
-            )}
-          </Layout>
-        </div>
+        <Layout>
+          <div tw="text-gray-50 font-bold mb-3">Select the task</div>
+          <div tw="flex space-x-5 justify-evenly self-stretch object-fill mb-3 z-40">
+            <Select
+              onChange={(selected) => {
+                if (selected?.value) {
+                  setSelectedTask(selected.value);
+                }
+              }}
+              options={formattedTasks}
+              key={`unique_select_key__${selectedTask}`}
+              tw="flex-1"
+            />
+          </div>
+          {selectedTask && selectedTask.id && (
+            <RelationGraph
+              task={selectedTask}
+              key={`task_id${selectedTask.id}_${Math.random()}`}
+            ></RelationGraph>
+          )}
+        </Layout>
       </div>
     </Layout>
   );

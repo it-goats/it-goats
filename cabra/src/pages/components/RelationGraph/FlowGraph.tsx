@@ -1,3 +1,5 @@
+import "twin.macro";
+
 import {
   DEFAULT_NODE_COLOUR,
   DEFAULT_NODE_HEIGHT,
@@ -212,7 +214,9 @@ export default function FlowGraph({ task, tasksFlowGraph }: Props) {
 
   return (
     <>
-      <div>Relation graph for: {task.title}</div>
+      <div tw="text-gray-50 font-bold mb-3">
+        Relation graph for <span tw="text-red-400">{task.title}</span>
+      </div>
       {nodes.length === 0 && <div>There are no related tasks</div>}
       <ReactFlow
         nodes={nodes}
