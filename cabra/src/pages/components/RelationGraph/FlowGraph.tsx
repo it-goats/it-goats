@@ -4,10 +4,16 @@ import {
   SUPREME_TASK_COLOUR,
   createFlowEdge,
   createFlowNode,
+  mapStringRelationTypeToEnum,
   rfStyle,
 } from "./Visualisation";
+import {
+  DirectedRelationFlowType,
+  Props,
+  flowEdge,
+  flowNode,
+} from "../../../types/relationGraph";
 import ELK, { ElkNode } from "elkjs/lib/elk.bundled.js";
-import { Props, flowEdge, flowNode } from "../../../types/relationGraph";
 import ReactFlow, {
   MarkerType,
   applyEdgeChanges,
@@ -57,17 +63,27 @@ const getEdges = function (
 ): flowEdge[] {
   tasksFlowGraph.forEach(({ taskVertex, adjacencyList }) => {
     adjacencyList.forEach(({ task, relationType }) => {
-      if (relationType.toLowerCase().includes("inter")) {
+      const relationTypeEnum = mapStringRelationTypeToEnum(relationType);
+      if (relationTypeEnum === DirectedRelationFlowType.Interchangable) {
+        const edge = createFlowEdge(taskVertex.id, task.id, true, {
+          stroke: "black",
+        });
+        edgeDictionary.set(edge.id, edge);
+      } else if (relationTypeEnum === DirectedRelationFlowType.IsBlockedBy) {
+        const markerEnd = {
+          type: MarkerType.ArrowClosed,
+        };
         const edge = createFlowEdge(
           taskVertex.id,
           task.id,
-          true,
-          {},
+          false,
+          { stroke: "black" },
           undefined,
-          "interchangeable"
+          undefined,
+          markerEnd
         );
         edgeDictionary.set(edge.id, edge);
-      } else if (relationType.toLowerCase().includes("isblockedby")) {
+      } else if (relationTypeEnum === DirectedRelationFlowType.Blocks) {
         const markerEnd = {
           type: MarkerType.ArrowClosed,
         };
@@ -75,26 +91,25 @@ const getEdges = function (
           task.id,
           taskVertex.id,
           false,
-          {},
+          { stroke: "black" },
           undefined,
           undefined,
           markerEnd
         );
-
-        // const edge = createFlowEdge(taskVertex.id, task.id, false, {}, markerEnd);
         edgeDictionary.set(edge.id, edge);
-      } else if (relationType.toLowerCase().includes("blocks")) {
-        const markerEnd = {
-          type: MarkerType.ArrowClosed,
-        };
+      } else if (
+        relationTypeEnum === DirectedRelationFlowType.Supertask ||
+        relationTypeEnum === DirectedRelationFlowType.Subtask
+      ) {
         const edge = createFlowEdge(
           task.id,
           taskVertex.id,
           false,
-          {},
+          { stroke: "navy" },
+          "straight",
+          "subtask",
           undefined,
-          undefined,
-          markerEnd
+          { fill: "navy", color: "black", fillOpacity: 0.3 }
         );
         edgeDictionary.set(edge.id, edge);
       }
@@ -123,29 +138,25 @@ const applyNodePositioning = function (
   children: ElkNode[],
   elkNodeDict: Map<string, { title: string }>,
   flowNodeDict: Map<string, flowNode>,
-  motherTaskId: string
+  supremeTaskId: string
 ) {
   children?.map((child: { id: string; x?: number; y?: number }) => {
     if (child.x && child.y) {
       const position = { x: child.x, y: child.y };
       const node = elkNodeDict.get(child.id);
-      let flowNode;
+
       if (node !== undefined) {
-        if (isSupremeTask(child.id, motherTaskId)) {
-          const supremeTaskStyle = {
+        const flowNode = createFlowNode(
+          { id: child.id, title: node.title },
+          position
+        );
+
+        if (isSupremeTask(child.id, supremeTaskId)) {
+          flowNode.style = {
             background: SUPREME_TASK_COLOUR,
           };
-          flowNode = createFlowNode(
-            { id: child.id, title: node.title },
-            position,
-            supremeTaskStyle
-          );
-        } else {
-          flowNode = createFlowNode(
-            { id: child.id, title: node.title },
-            position
-          );
         }
+
         flowNodeDict.set(child.id, flowNode);
       }
     }
@@ -186,7 +197,7 @@ export default function FlowGraph({ task, tasksFlowGraph }: Props) {
           applyNodePositioning(children, elkNodeDict, flowNodeDict, task.id);
         }
 
-        setNodes(Array.from(flowNodeDict.values()));
+        setNodes(Array.from(flowNodeDict.values()).sort());
         setEdges(Array.from(edgeDict.values()));
       })
       .catch((err) => {

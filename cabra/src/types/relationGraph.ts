@@ -26,3 +26,11 @@ export interface flowEdge {
   animated?: boolean;
   style?: CSSProperties;
 }
+
+export enum DirectedRelationFlowType {
+  Supertask = "supertask",
+  Subtask = "subtask",
+  IsBlockedBy = "isblockedby",
+  Interchangable = "interchangable",
+  Blocks = "blocks",
+}
