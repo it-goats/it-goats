@@ -18,7 +18,6 @@ import { useContext, useEffect } from "react";
 import DatePicker from "react-datepicker";
 import { ITask } from "../../types/task";
 import NotificationForm from "./NotificationForm";
-import RecurrenceForm from "./RecurrenceForm";
 import { SettingsContext } from "./SettingsContext";
 import SubtasksListEdit from "./SubtasksListEdit";
 import { TagsEdit } from "./TagsEdit";
@@ -198,7 +197,7 @@ export default function TaskForm({ task, onSubmit }: Props) {
               />
             )}
           </div>
-          <div>
+          {/* <div>
             {dueDate && (
               <Controller
                 control={control}
@@ -208,7 +207,7 @@ export default function TaskForm({ task, onSubmit }: Props) {
                 )}
               />
             )}
-          </div>
+          </div> */}
         </fieldset>
         <TagsEdit />
         <TaskRelationsEdit taskId={task.id} />
