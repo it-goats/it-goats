@@ -30,6 +30,7 @@ export default function TaskListItem({ task }: Props) {
       onSuccess: () => {
         client.invalidateQueries(getTask.cacheKey(task.id));
         client.invalidateQueries(getTasks.cacheKey());
+        client.invalidateQueries(["tasks"]);
       },
     }
   );

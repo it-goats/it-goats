@@ -20,3 +20,8 @@ export enum DirectedRelationType {
   Interchangable = "interchangable",
   Blocks = "blocks",
 }
+
+export interface IRelatedTasksFlow {
+  taskVertex: ITask;
+  adjacencyList: Array<{ task: ITask; relationType: string }>;
+}
