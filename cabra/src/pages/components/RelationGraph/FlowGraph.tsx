@@ -1,4 +1,5 @@
 import {
+  DEFAULT_NODE_COLOUR,
   DEFAULT_NODE_HEIGHT,
   DEFAULT_NODE_WIDTH,
   SUPREME_TASK_COLOUR,
@@ -151,6 +152,10 @@ const applyNodePositioning = function (
           position
         );
 
+        flowNode.style = {
+          background: DEFAULT_NODE_COLOUR,
+        };
+
         if (isSupremeTask(child.id, supremeTaskId)) {
           flowNode.style = {
             background: SUPREME_TASK_COLOUR,
@@ -207,7 +212,8 @@ export default function FlowGraph({ task, tasksFlowGraph }: Props) {
 
   return (
     <>
-      Task title: {task.title}
+      <div>Relation graph for: {task.title}</div>
+      {nodes.length === 0 && <div>There are no related tasks</div>}
       <ReactFlow
         nodes={nodes}
         edges={edges}

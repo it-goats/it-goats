@@ -46,8 +46,8 @@ export default function RelationFlow() {
         </div>
         <div>
           <Layout>
-            <div tw="text-gray-50 font-bold mb-3">Select the task:</div>
-            <div tw="flex space-x-5 justify-evenly self-stretch object-fill mb-3">
+            <div tw="text-gray-50 font-bold mb-3">Select the task</div>
+            <div tw="flex space-x-5 justify-evenly self-stretch object-fill mb-3 z-40">
               <Select
                 onChange={(selected) => {
                   if (selected?.value) {

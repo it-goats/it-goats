@@ -9,7 +9,8 @@ import { MarkerType } from "react-flow-renderer";
 export const DEFAULT_NODE_WIDTH = 200; // 160
 export const DEFAULT_NODE_HEIGHT = 120; // 120
 
-export const SUPREME_TASK_COLOUR = "azure";
+export const SUPREME_TASK_COLOUR = "#FECACA";
+export const DEFAULT_NODE_COLOUR = "white";
 
 export const rfStyle = {
   // backgroundColor: '#D0C0F7',
