@@ -4,6 +4,7 @@ import CalendarPage from "./pages/Calendar";
 import HomePage from "./pages/Home";
 import NotFoundPage from "./pages/NotFound";
 import RelationFlow from "./pages/RelationFlow";
+import SettingsPage from "./pages/Settings";
 import TaskCreatePage from "./pages/TaskCreate";
 import TaskDetailsPage from "./pages/TaskDetails";
 import TaskEditPage from "./pages/TaskEdit";
@@ -17,6 +18,7 @@ export function AppRoutes() {
       <Route path="/task/new" element={<TaskCreatePage />} />
       <Route path="/task/:id" element={<TaskDetailsPage />} />
       <Route path="/task/:id/edit" element={<TaskEditPage />} />
+      <Route path="/settings" element={<SettingsPage />} />
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
@@ -35,4 +37,5 @@ export const routeHelpers = {
     details: (id: string) => `/task/${id}`,
     edit: (id: string) => `/task/${id}/edit`,
   },
+  settings: "/settings",
 };

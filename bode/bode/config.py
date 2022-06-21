@@ -17,3 +17,6 @@ def get_db_uri():
 class Config:
     DATABASE_URI = get_db_uri()
     AUTO_MIGRATE = os.getenv("AUTO_MIGRATE", False)
+
+
+sendgrid_key = os.getenv("SENDGRID_API_KEY")

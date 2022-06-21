@@ -16,6 +16,7 @@ export interface ITask {
   dueDate: string | null;
   id: string;
   isBlocked: boolean;
+  notifyBeforeMinutes: number | null;
   relationTypes: DirectedRelationType[];
   rrule: string | null;
   status: TaskStatus;

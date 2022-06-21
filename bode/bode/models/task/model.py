@@ -3,7 +3,7 @@ import uuid
 from sqlalchemy import Enum
 from sqlalchemy.dialects.postgresql import UUID
 
-from bode.app import db
+from bode.extensions import db
 from bode.models.enums import TaskStatus
 from bode.models.tag.model import task_tag
 from bode.models.utc_datetime import UTCDateTime
@@ -16,6 +16,7 @@ class Task(db.Model):
     id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     description = db.Column(db.String(1024), nullable=False, server_default="")
     due_date = db.Column(UTCDateTime(), nullable=True)
+    notify_before_minutes = db.Column(db.Integer(), nullable=True)
     rrule = db.Column(db.Text(), nullable=True)
     status = db.Column(Enum(*TaskStatus.list(), name="task_status"), nullable=False, server_default="TODO")
     title = db.Column(db.String(80), nullable=False)
@@ -24,6 +25,8 @@ class Task(db.Model):
 
     lhs_relations = db.relationship("TaskRelation", primaryjoin="Task.id==TaskRelation.first_task_id")
     rhs_relations = db.relationship("TaskRelation", primaryjoin="Task.id==TaskRelation.second_task_id")
+
+    __table_args__ = (db.CheckConstraint("notify_before_minutes > 0", name="positive_notify_before_minutes"),)
 
     @property
     def relations(self):
